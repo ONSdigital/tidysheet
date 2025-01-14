@@ -30,16 +30,21 @@ If you find a bug or have a feature request, please open an issue and provide as
 ## Testing
 
 Run the tests to ensure your changes do not break existing functionality. 
-To run test coverage, 
-covr::package_coverage(path = ".",
-                       type = "all",
-                       combine_types = FALSE,
-                       relative_path = TRUE,
-                       quiet = TRUE,
-                       clean = TRUE,
-                       line_exclusions = NULL,
-                       function_exclusions = NULL,
-                       pre_clean = TRUE)
+
+To run test coverage, use the following code:
+
+```r
+covr::package_coverage(
+    path = ".",
+    type = "all",
+    combine_types = FALSE,
+    relative_path = TRUE,
+    quiet = TRUE,
+    clean = TRUE,
+    line_exclusions = NULL,
+    function_exclusions = NULL,
+    pre_clean = TRUE
+)
 
 output:
 tutorial Tests Coverage: 100.00%
