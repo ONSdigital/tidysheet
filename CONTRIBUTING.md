@@ -34,6 +34,8 @@ Run the tests to ensure your changes do not break existing functionality.
 To run test coverage, use the following code:
 
 ```r
+install.packages("covr")
+library(covr)
 covr::package_coverage(
     path = ".",
     type = "all",
