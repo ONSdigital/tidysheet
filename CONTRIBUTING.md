@@ -1,6 +1,6 @@
-# Contributing to [Project Name]
+# Contributing to tidysheet
 
-Thank you for considering contributing to [Project Name]! We welcome contributions from everyone. Here are some guidelines to help you get started.
+Thank you for considering contributing to tidysheet! We welcome contributions from our colleagues in ONS. Here are some guidelines to help you get started.
 
 ## Code of Conduct
 
@@ -29,7 +29,27 @@ If you find a bug or have a feature request, please open an issue and provide as
 
 ## Testing
 
-Run the tests to ensure your changes do not break existing functionality. Instructions for running tests can be found in the README.
+Run the tests to ensure your changes do not break existing functionality. 
+To run test coverage, 
+covr::package_coverage(path = ".",
+                       type = "all",
+                       combine_types = FALSE,
+                       relative_path = TRUE,
+                       quiet = TRUE,
+                       clean = TRUE,
+                       line_exclusions = NULL,
+                       function_exclusions = NULL,
+                       pre_clean = TRUE)
+
+output:
+tutorial Tests Coverage: 100.00%
+R/hello_world.R: 100.00%
+
+tutorial Vignettes Coverage: 0.00%
+R/hello_world.R: 0.00%
+
+tutorial Examples Coverage: 0.00%
+R/hello_world.R: 0.00%
 
 ## Documentation
 
@@ -37,7 +57,8 @@ If your changes affect the documentation, please update it accordingly. This inc
 
 ## Communication
 
-Join our Slack channel or Discord server to discuss issues, ask questions, and collaborate with other contributors.
+Join our Slack channel or Discord server to discuss issues, ask questions, and collaborate with other contributors ;-)
+Actaully, just message us on Teams. We don't have a Discord server.
 
 ---
 
