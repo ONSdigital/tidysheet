@@ -55,7 +55,7 @@ R/hello_world.R: 0.00%
 
 tutorial Examples Coverage: 0.00%
 R/hello_world.R: 0.00%
-
+```
 ## Documentation
 
 If your changes affect the documentation, please update it accordingly. This includes the README, inline comments, and any other relevant documentation files.
