@@ -41,6 +41,8 @@ covr::package_coverage(path = ".",
                        vignettes = TRUE)
 
 
+
+
 #tidysheet Tests Coverage: 100.00%
 #R/hello.R: 100.00%
 
