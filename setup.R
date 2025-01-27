@@ -1,6 +1,10 @@
 install.packages("renv")
 renv::init()
 
+usethis::use_test("main.R")
+testthat::test_file("tests/testthat/test-main.R")
+
+
 install.packages("reticulate")
 library(reticulate)
 
