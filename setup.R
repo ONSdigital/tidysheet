@@ -1,6 +1,10 @@
 install.packages("renv")
 renv::init()
 
+usethis::use_test("main.R")
+testthat::test_file("tests/testthat/test-main.R")
+
+
 install.packages("reticulate")
 library(reticulate)
 
@@ -39,6 +43,8 @@ covr::package_coverage(path = ".",
                        function_exclusions = NULL,
                        pre_clean = TRUE,
                        vignettes = TRUE)
+
+
 
 
 #tidysheet Tests Coverage: 100.00%
