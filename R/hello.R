@@ -7,5 +7,5 @@
 #' hello()
 #' @export
 hello <- function() {
-  print("Hello, world!")
+  print("Hello, world from tidysheet")
 }
