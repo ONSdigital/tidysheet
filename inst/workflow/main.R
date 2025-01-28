@@ -8,4 +8,3 @@ source(my_path)
 
 print('Goodbye from R')
 
-
