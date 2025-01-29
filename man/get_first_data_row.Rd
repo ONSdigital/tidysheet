@@ -4,13 +4,17 @@
 \alias{get_first_data_row}
 \title{get_first_data_row}
 \usage{
-get_first_data_row(dat)
+get_first_data_row(
+  dat,
+  tolerance_list = c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank =
+    0.9)
+)
 }
 \arguments{
 \item{dat.}{A dataframe imported using xlsx_cells. Each row refers to one cell}
 }
 \value{
-Integer. The number of the row that we estimate contains the first 
+Integer. The number of the row that we estimate contains the first
 row of numeric data.
 }
 \description{
@@ -20,20 +24,20 @@ Get the number of the row that contains the first line of data
 Get the number of the row that contains the first line of data
 
 This assumes that there are at least two rows of data where at least 40%
-of their cells contain numeric values, and that these rows are not separated 
-by rows containing 70% or more of character strings. 
+of their cells contain numeric values, and that these rows are not separated
+by rows containing 70% or more of character strings.
 
 The first row of data is identified using the following rules:
 - At least 40% of the cells in this row contain numbers
 - The following rows either:
    - contain at least 40% number cells
    - contain at least 90% blank cells AND there are no rows containing
-     70% or more cells containing character strings before the next 
+     70% or more cells containing character strings before the next
      number row or blank row
-- The row is the first to fulfill the above rules 
+- The row is the first to fulfill the above rules
 
-note: At least 40% of the columns in the raw data must contain numeric data 
-i.e. this function won't produce the desired output if there are 3 columns of 
+note: At least 40% of the columns in the raw data must contain numeric data
+i.e. this function won't produce the desired output if there are 3 columns of
 info on the left and only 2 columns of data.
 }
 \author{

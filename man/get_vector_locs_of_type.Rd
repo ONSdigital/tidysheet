@@ -4,7 +4,13 @@
 \alias{get_vector_locs_of_type}
 \title{get_vector_locs_of_type}
 \usage{
-get_vector_locs_of_type(dat, datatype, tolerance, direction = "col")
+get_vector_locs_of_type(
+  dat,
+  datatype,
+  tolerance,
+  direction = "col",
+  include_blanks = TRUE
+)
 }
 \arguments{
 \item{dat}{xlsx_cells datafarame.}
@@ -12,7 +18,7 @@ get_vector_locs_of_type(dat, datatype, tolerance, direction = "col")
 \item{datatype}{character. the data_type of interest. One of:
 'numeric', 'character', 'logical', 'date', 'blank', or 'error'}
 
-\item{tolerance}{integer. 0-1 inclusive. The proportion of cells in a column 
+\item{tolerance}{integer. 0-1 inclusive. The proportion of cells in a column
 that need to be of the given datatype for a column to be returned.}
 }
 \description{
@@ -24,7 +30,7 @@ Get the locations of columns or rows of a given datatype
 xlsx_cells data are given a row per cell. Column datatypes for the original
 columns are not, therefore, assigned on import.
 
-This function returns the vector of original column numbers for which 
+This function returns the vector of original column numbers for which
 a given datatype is present for a given proportion of rows.
 }
 \examples{
@@ -42,11 +48,11 @@ dat <- data.frame(
   "row" = rep(1:5, times = 4),
   "data_type" = c(
     rep("numeric", 5),
-    rep("character", 5), 
+    rep("character", 5),
     rep(c(rep("numeric", 3), rep("blank", 2)), times = 2)
     ),
   "character" = c(rep(NA, 5), LETTERS[1:5], rep(NA, 10)),
-  "numeric" = c(1:5, rep(NA, 5), 
+  "numeric" = c(1:5, rep(NA, 5),
                 rep(c(1:3, rep(NA, 2)), times = 2))
   )
 

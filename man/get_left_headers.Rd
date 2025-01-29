@@ -4,7 +4,13 @@
 \alias{get_left_headers}
 \title{get_left_headers}
 \usage{
-get_left_headers(dat, first_right_header_col, left_headers)
+get_left_headers(
+  dat,
+  first_right_header_col,
+  left_headers,
+  tolerance_list = c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank =
+    0.9)
+)
 }
 \arguments{
 \item{dat}{dataframe. Must be xlsx_cells format.}
@@ -22,7 +28,7 @@ Get the column names for the left block
 \details{
 Get the column names for the left block
 
-Sometimes columns in the left block are all named in the raw data, 
+Sometimes columns in the left block are all named in the raw data,
 sometimes none of them are named, and sometimes only some are, with others
 left blank.
 
@@ -30,15 +36,15 @@ We have the option to provide names for columns in the left header block in
 the data dictionary (left_headers), however this is risky as suppliers could
 change the number or order of those columns.
 
-A third option is to use placeholder names (e.g. 'column_1', 'column_2' etc) 
+A third option is to use placeholder names (e.g. 'column_1', 'column_2' etc)
 
 Rules:
 - If there is the correct number of names in the data (existing names) use
    these, even if names have been given in the data dictionary (left_headers).
 - If the number of names given in the dict is too many do not use any of them.
-- If there are names missing from the existing names, fill them with 
+- If there are names missing from the existing names, fill them with
    placeholder names, but use the ones that are given.
-- Use all of left_headers if no names already exist in the data AND the 
+- Use all of left_headers if no names already exist in the data AND the
    correct number of names has been supplied.
 }
 \author{
