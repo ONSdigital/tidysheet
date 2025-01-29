@@ -1,0 +1,56 @@
+#' @title reformat_three_header_right_block
+#' @description Deal with block of data with three rows of headers
+#' @author Emma Wood \email{emma.wood@ons.gov.uk}
+#' @author Mark London \email{mark.london@ext.ons.gov.uk}
+#' @details 
+#' Deal with block of data with three rows of headers
+#' 
+#' Layout of raw data that this deals with looks like:
+#' 
+#' |  group_col item 1   |         |         |  <- works if these cells are merged or not
+#' |nested_col_2 item A  |         | item B  |  <- works if these cells are merged or not
+#' |nested_col_1 item a1 | item a2 | item b1 |
+#' |---------------------|---------|---------|
+#' |           1         | 2       |    3    |
+#' 
+#' This would be converted to:
+#' 
+#' |   group_col    | nested_col_2 | nested_col_1 | numeric |
+#' |----------------|--------------|--------------|---------|
+#' |    "item 1"    |  "item A"    |   "item a1"  |   1     |
+#' |    "item 1"    |  "item A"    |   "item a2"  |   2     |
+#' |    "item 1"    |  "item B"    |   "item b1"  |   3     |
+#' 
+#' 
+#' @param main_table dataframe imported using xlsx_cells containing the table to be processed. 
+#' @param group_col string. The name to be given to the column holding info in 1st row of headers
+#' @param nested_column_1 string. The name to be given to the column holding info in 2nd row of headers
+#' @param nested_column_2  string. The name to be given to the column holding info in 3rd row of headers
+#' 
+#' Examples
+#' sample_data <- data.frame(
+#'    address = c('C1', 'D1', 'C2', 'D2', 'C3', 'D3', 'C4', 'D4'),
+#'    col = rep(c(3:4), times = 4),
+#'    row = rep(c(1:4), each = 2),
+#'    is_blank = c(FALSE, TRUE, FALSE, TRUE, rep(FALSE, 4)),
+#'    data_type = c(rep(c('character', 'blank'), 2) , rep('character', 2),
+#'                  rep('numeric', 2)),
+#'    character = c('Capital', NA, 'Total', NA, 'Payments', 'Receipts', NA, NA),
+#'    numeric = c(rep(NA, 6), 1, 2)
+#'  )
+#' # look at the data as it would be in Excel
+#' rectify(sample_data)
+#' reformat_three_header_right_block(main_table = sample_data, 
+#'                                   group_col = "district_or_capital", 
+#'                                   nested_column_1 = "measure", 
+#'                                   nested_column_2 = "measure_group")
+reformat_three_header_right_block <- function(main_table, group_col, nested_column_1, nested_column_2) {
+  
+  right_beheaded <- main_table %>%
+    behead("up-left", !!dplyr::sym(group_col)) %>%
+    behead("up-left", !!dplyr::sym(nested_column_2)) %>%
+    behead("up", !!dplyr::sym(nested_column_1))
+  
+  return(right_beheaded)
+  
+}

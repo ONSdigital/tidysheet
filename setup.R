@@ -64,3 +64,10 @@ covr::package_coverage(path = ".",
 #git remote add origin https://github.com/ONSdigital/tidysheet
 #git remote -v
 #git add .
+
+
+# Adding srcipts from original code:
+script_names <- c("setup_utils.r", "preprocessing_utils.r", "formatting.r", "formatting_multi_table.r")
+
+library(tidysheet)
+
