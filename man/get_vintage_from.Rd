@@ -7,37 +7,30 @@
 get_vintage_from(vintage_check_item, sheet_vintage = NA)
 }
 \arguments{
-\item{vintage_check_item}{a cell or filepath that could contain the vintage information}
+\item{vintage_check_item}{string that could contain the vintage information}
 
-\item{sheet_vintage}{default NA, but it set if found.}
-
-\item{vintage_patterns}{a list of allowable vintage strings}
+\item{sheet_vintage}{string. Default is NA.}
 }
 \value{
-vintage_result the matched result or 'NA' if none found.
+vector of strings. The matched result or 'NA' if none found.
 }
 \description{
 Gets a vintage as a string match
 }
 \details{
-Additional details...
+If sheet_vintage is NA, get_vintage_from checks items against a regex string
+to find a match for the vintage string possibilities (budget, forecast,
+provisional, final and estimated return).
 
-get_vintage_from checks items against a string to find a match 
-for the vintage string possibilities
+Forecast and estimated return are other words for budget, so for example where forecast is picked up, return
+'budget' for consistency.
 }
 \examples{
 example code sets the sheet vintage to 'forecast', finding it in the patterns
   sheet_vintage <- "NA"
-  vintage_check_item <- "2023/24 Forecast"
+  vintage_check_item <- "forecast final item"
   expected_result <- "forecast"
-  sheet_vintage <- get_vintage_from(vintage_check_item, vintage_patterns, sheet_vintage)
-
-Caes of multiple vintages:
-sheet_vintage <- NA
-vintage_check_item <- "budget and provisional data"
-expected_result <- "budget, provisional"
-actual_result <- suppressWarnings(get_vintage_from(vintage_check_item, sheet_vintage))
-
+  sheet_vintage <- get_vintage_from(vintage_check_item, sheet_vintage)
 
 }
 \author{

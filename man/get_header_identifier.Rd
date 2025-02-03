@@ -4,12 +4,12 @@
 \alias{get_header_identifier}
 \title{get_header_identifier}
 \usage{
-get_header_identifier(header_identifiers, file_part)
+get_header_identifier(header_identifier, file_part)
 }
 \arguments{
-\item{header_identifiers}{: A string vector}
-
 \item{file_part}{(string): An integer/number cannot be a float or 0}
+
+\item{header_identifiers}{: A string vector}
 }
 \value{
 header_identifier : A string selected from the header_identifier string vector
@@ -24,8 +24,8 @@ Function to identify the correct header_identifier for preprocessing by using th
 to subset the string vector (header_identifiers) and return the correct header_identifier respective to file_part.
 }
 \examples{
-header_identifiers <- c("total", "HRA Reserves") 
-file_part <- 1 
+header_identifiers <- c("total", "HRA Reserves")
+file_part <- 1
 result <- get_header_identifier(header_identifiers, file_part)
 print(result)
 

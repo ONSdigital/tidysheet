@@ -9,7 +9,9 @@ reformat_three_header_data(
   group_col,
   nested_column_1,
   nested_column_2,
-  left_headers
+  left_headers,
+  tolerance_list = c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank =
+    0.9)
 )
 }
 \arguments{
@@ -18,6 +20,9 @@ reformat_three_header_data(
 \item{nested_column_1}{string. New column name for the third header row.}
 
 \item{nested_column_2}{string. New column name for the second header row.}
+
+\item{tolerance_list}{an optional list of tolerances which must be in the format:
+tolerance_list <- c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank = 0.9)}
 
 \item{main_table}{A dataframe containing the main data table to be processed.}
 }
@@ -30,17 +35,17 @@ Reformat data with one header row on the left and three on the right
 \details{
 Reformat data with one header row on the left and three on the right
 
-Used for cases where Excel data have only one header row in the left block, 
+Used for cases where Excel data have only one header row in the left block,
 but THREE on the right. The left headers are on the same row as the second
-row of headers on the right. 
+row of headers on the right.
 
 The two blocks of headers are treated differently:
 
-The column names of block of data on the left (in the original table) are 
-carried over to the output. 
+The column names of block of data on the left (in the original table) are
+carried over to the output.
 
-The block of data on the right is changed from wide format to long, so the 
-original column names become entries in 2 new columns (group_col, 
+The block of data on the right is changed from wide format to long, so the
+original column names become entries in 2 new columns (group_col,
 nested_column_1, and nested_column_2)
 
 This is used for e.g. dluhc revenue expenditure final data prior to 2021-22.

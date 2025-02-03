@@ -6,17 +6,17 @@
 \usage{
 get_first_header_row(
   date_as_character,
-  header_identifiers,
-  second_identifiers,
+  header_identifier,
+  second_identifier,
   file_part
 )
 }
 \arguments{
 \item{date_as_character}{A data table of the excel file.}
 
-\item{header_identifiers}{A list of header identifiers to search for in the file part.}
+\item{header_identifier}{A list of header identifiers to search for in the file part.}
 
-\item{second_identifiers}{A list of second identifiers to search for in the file part.}
+\item{second_identifier}{A list of second identifiers to search for in the file part.}
 
 \item{file_part}{A file part to search for the identifiers, usually 1, or sometimes 2.}
 }

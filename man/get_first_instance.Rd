@@ -14,7 +14,7 @@ get_first_instance(dat, pattern, column = "row")
 \item{column}{"row" or "col". Default is row}
 }
 \value{
-numeric. The first row/col from the xlsx on which known_string occurs. 
+numeric. The first row/col from the xlsx on which known_string occurs.
         Defaults to 1 if dat is not an xlsx_cells df.
 }
 \description{
@@ -24,13 +24,13 @@ Identify the first row or column on which a string occurs
 Identify the first row or column on which a string occurs
 
 Takes an xlsx_cells dataframe and a string known to be
-in the row or column you wish to identify but not in any previous rows/cols. 
+in the row or column you wish to identify but not in any previous rows/cols.
 Returns the row/col number from the original excel sheet.
-This function is not case sensitive - it will for example identify 
+This function is not case sensitive - it will for example identify
 pattern = "Blue" as a match with "blue" in the dataframe.
 }
 \examples{
-dat <- data.frame("character" = c("title", "million", NA, 
+dat <- data.frame("character" = c("title", "million", NA,
                                  "Education services", "Highways services",
                                  NA),
                   "row" = c(1:3, 4, 4, 5),

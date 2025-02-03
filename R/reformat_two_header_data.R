@@ -2,35 +2,37 @@
 #' @description  Reformat data with one header row on the left and two on the right
 #' @author Emma Wood \email{emma.wood@ons.gov.uk}
 #' @author Mark London \email{mark.london@ext.ons.gov.uk}
-#' @details 
+#' @details
 #' Reformat data with one header row on the left and two on the right
-#' 
-#' Used for cases where Excel data have only one header row in the left block, 
+#'
+#' Used for cases where Excel data have only one header row in the left block,
 #' but two on the right. the left headers are on the same row as the second
-#' row of headers on the right. 
-#' 
+#' row of headers on the right.
+#'
 #' The two blocks of headers are treated differently:
-#' 
-#' The column names of block of data on the left (in the original table) are 
-#' carried over to the output. 
+#'
+#' The column names of block of data on the left (in the original table) are
+#' carried over to the output.
 #' If a column in the left block doesn't have a name it is called 'column_<x>'.
-#' 
-#' The block of data on the right is changed from wide format to long, so the 
-#' original column names become entries in 2 new columns (group_col, and 
+#'
+#' The block of data on the right is changed from wide format to long, so the
+#' original column names become entries in 2 new columns (group_col, and
 #' nested_column_1)
-#' 
-#' This is used for e.g. dluhc revenue expenditure final data for RO2 in 2021-22. 
-#' 
+#'
+#' This is used for e.g. dluhc revenue expenditure final data for RO2 in 2021-22.
+#'
 #' @import tidyxl
 #' @import dplyr
 #' @importFrom unpivotr behead
-#' 
+#'
 #' @param dat A dataframe containing the main data table to be processed.
 #' @param group_col string. New column name for the first header row.
 #' @param nested_column_1 string. New column name for the second header row.
-#' 
+#' @param tolerance_list an optional list of tolerances which must be in the format:
+#' tolerance_list <- c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank = 0.9)
+#'
 #' @return A data frame containing the processed and rearranged data after unpivoting.
-#' 
+#'
 #' @examples
 #' sample_data <- data.frame(
 #'    address = c('A1', 'B1', 'C1', 'D1', 'A2', 'B2', 'C2', 'D2', 'A3', 'B3', 'C3', 'D3'),
@@ -45,30 +47,31 @@
 #'  )
 #' reformat_two_header_data(sample_data, 'service', 'subservice')
 #' @export
-reformat_two_header_data <- function(dat, group_col, nested_column_1, left_headers) {
-  
-  # assume the first column of the right block is the first of consecutive 
-  # numeric columns (assuming no blank cols between them) - 
-  # where a numeric column is defined as one where more than 50% of it's cells 
+reformat_two_header_data <- function(dat, group_col, nested_column_1, left_headers,
+                                     tolerance_list = c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank = 0.9)) {
+
+  # assume the first column of the right block is the first of consecutive
+  # numeric columns (assuming no blank cols between them) -
+  # where a numeric column is defined as one where more than 50% of it's cells
   # hold numeric data
-  numeric_column_locs <- get_vector_locs_of_type(dat = dat, 
+  numeric_column_locs <- get_vector_locs_of_type(dat = dat,
                                                  datatype = "numeric",
-                                                 tolerance = 0.4)
-  
+                                                 tolerance = tolerance_list['tolerance_numeric'])
+
   if(length(numeric_column_locs) == 0) {
     stop("no consecutive numeric columns have been found with the given tolerance, so could not identify split between left and right header blocks. reformat_two_header_data will need to be adapted by a developer.")
   }
-  
+
   first_right_header_col <- get_first_of_consecutives(numeric_column_locs)
-  
+
   right_beheaded <- dat %>%
     behead("up-left", !!sym(group_col)) %>%
     behead("up", !!sym(nested_column_1))
-  
+
   cols_to_name <- get_left_headers(dat, first_right_header_col, left_headers)
-  
-  beheaded <- deal_with_left_columns(right_beheaded, cols_to_name) 
-  
+
+  beheaded <- deal_with_left_columns(right_beheaded, cols_to_name)
+
   return(beheaded)
-  
+
 }

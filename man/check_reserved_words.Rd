@@ -22,7 +22,7 @@ This function checks if any reserved words are used in the sheet_structure setti
 Reserved words can cause issues and should be avoided.
 These keys need to avoid the reserved words, however, the function is written
 to look at the items only, so new keys can be added.
-group_col, nested_column_1 , nested_column_2, group_row, nested_row_1, 
+group_col, nested_column_1 , nested_column_2, group_row, nested_row_1,
 nested_row_2, left_headers
 Returns true if not, else halts.
 }

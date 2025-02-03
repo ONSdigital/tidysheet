@@ -14,14 +14,14 @@ combine_header_rows(
 \item{dat}{Tidyxl format dataframe (Data imported with tidyxl::xlsx_cells,
 which have one row for each cell).}
 
-\item{combine_start_row_identifier}{(str). A word or pattern that first 
+\item{combine_start_row_identifier}{(str). A word or pattern that first
 appears in the first of the header rows that needs to be combined.}
 
-\item{combine_endt_row_identifier}{(str). A word or pattern that first 
+\item{combine_endt_row_identifier}{(str). A word or pattern that first
 appears in the last of the header rows that needs to be combined.}
 }
 \value{
-dat with rows up to the end_row_identifier row concatenated onto the 
+dat with rows up to the end_row_identifier row concatenated onto the
 start_row_identifier row for each column. Of the concatenated rows, only the
 first is kept, the others are removed from the data.
 }
@@ -31,7 +31,7 @@ Combine header rows that are meant to be one row.
 \details{
 Combine header rows that are meant to be one row.
 
-Use patterns passed from the data dictionary to find the first and last of 
+Use patterns passed from the data dictionary to find the first and last of
 the rows that need to be combined into a single value (per column), and
 concatenate those values.
 

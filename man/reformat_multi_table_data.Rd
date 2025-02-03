@@ -5,7 +5,7 @@
 \title{reformat_multi_table_data}
 \usage{
 reformat_multi_table_data(
-  source_data,
+  dat,
   table_split_points,
   table_heading,
   subtable_heading,
@@ -15,12 +15,12 @@ reformat_multi_table_data(
 )
 }
 \arguments{
-\item{source_data}{tidyxl::xlsx_cells table.}
+\item{dat}{tidyxl::xlsx_cells table. Must include info above the first header row}
 
-\item{table_split_points}{vector of regular expressions. The first pattern 
+\item{table_split_points}{vector of regular expressions. The first pattern
 will be used to make the initial split, the second, the second split etc}
 
-\item{table_heading}{string. Taken from the data dictionary. 
+\item{table_heading}{string. Taken from the data dictionary.
 Number of elements must equal the number of parts labelled 'Part ...' in  source data}
 
 \item{group_row}{string. New column name for the grouping variables.
@@ -42,10 +42,10 @@ Reformat data with multiple tables in one sheet
 
 Used for cases where data have multiple tables in one sheet, with tables
 stacked vertically. Each table only has one header row. Each table is split
-by row headers (e.g. sub-services are listed under a row containing the 
+by row headers (e.g. sub-services are listed under a row containing the
 service name in the sub-service column, and no data in the other columns)
 
-The data column names from the original table are carried over to the output. 
+The data column names from the original table are carried over to the output.
 
 This is used for e.g. 2022 Scottish Gov POBE data.
 }

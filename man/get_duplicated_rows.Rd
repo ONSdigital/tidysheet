@@ -12,7 +12,7 @@ get_duplicated_rows(dat, row_num)
 \item{row_num}{integer. The row you want to find duplicates of}
 }
 \value{
-integer vector. The row numbers of duplicated rows 
+integer vector. The row numbers of duplicated rows
          (but not the original row: row_num).
 }
 \description{
@@ -22,8 +22,8 @@ Get the row numbers of duplicated rows
 Get the row numbers of duplicated rows
 
 Data imported with tidyxl::xlsx_cells have one row for each cell. As such
-the usual ways of finding duplicated rows in the raw data (e.g `unique` or 
-`distinct`) do not work. 
+the usual ways of finding duplicated rows in the raw data (e.g `unique` or
+`distinct`) do not work.
 
 Given a row number, find any rows that are duplicates of that row.
 }
@@ -33,7 +33,7 @@ example_dat <- data.frame(
   col = rep(1:2, by = 4),
   character = rep(c("year", "quarter", rep(NA, 2)), 2),
   numeric = c(NA, NA, 1, 2, NA, NA, 3, 4)
-) 
+)
 
 get_duplicated_rows(example_dat, 1)
 }

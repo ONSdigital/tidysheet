@@ -4,7 +4,14 @@
 \alias{reformat_two_header_data}
 \title{reformat_two_header_data}
 \usage{
-reformat_two_header_data(dat, group_col, nested_column_1, left_headers)
+reformat_two_header_data(
+  dat,
+  group_col,
+  nested_column_1,
+  left_headers,
+  tolerance_list = c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank =
+    0.9)
+)
 }
 \arguments{
 \item{dat}{A dataframe containing the main data table to be processed.}
@@ -12,6 +19,9 @@ reformat_two_header_data(dat, group_col, nested_column_1, left_headers)
 \item{group_col}{string. New column name for the first header row.}
 
 \item{nested_column_1}{string. New column name for the second header row.}
+
+\item{tolerance_list}{an optional list of tolerances which must be in the format:
+tolerance_list <- c(tolerance_numeric = 0.4, tolerance_char = 0.7, tolerance_blank = 0.9)}
 }
 \value{
 A data frame containing the processed and rearranged data after unpivoting.
@@ -22,18 +32,18 @@ Reformat data with one header row on the left and two on the right
 \details{
 Reformat data with one header row on the left and two on the right
 
-Used for cases where Excel data have only one header row in the left block, 
+Used for cases where Excel data have only one header row in the left block,
 but two on the right. the left headers are on the same row as the second
-row of headers on the right. 
+row of headers on the right.
 
 The two blocks of headers are treated differently:
 
-The column names of block of data on the left (in the original table) are 
-carried over to the output. 
+The column names of block of data on the left (in the original table) are
+carried over to the output.
 If a column in the left block doesn't have a name it is called 'column_<x>'.
 
-The block of data on the right is changed from wide format to long, so the 
-original column names become entries in 2 new columns (group_col, and 
+The block of data on the right is changed from wide format to long, so the
+original column names become entries in 2 new columns (group_col, and
 nested_column_1)
 
 This is used for e.g. dluhc revenue expenditure final data for RO2 in 2021-22.

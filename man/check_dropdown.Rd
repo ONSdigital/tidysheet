@@ -7,19 +7,19 @@
 check_dropdown(dropdown_regex, info_above_table)
 }
 \arguments{
-\item{dropdown_regex}{string. A regex pattern that should match only the 
+\item{dropdown_regex}{string. A regex pattern that should match only the
 dropdown cell.}
 
 \item{info_above_table}{tidyxl::xlsx_cells dataframe that contains the dropdown#'}
 }
 \value{
 message or warning
-    
+
 info_above_table <- data.frame(
   row = c(1:3),
   col = rep(1,3),
   character = c("Title", "some other info", "England")
-) 
+)
 
 check_dropdown("Eng", info_above_table) # found
 check_dropdown("Wales", info_above_table) # not found
@@ -31,8 +31,8 @@ Send check message about string is present in the character column
 Send check message about  string is present in the character column
 
 Data imported with tidyxl::xlsx_cells have one row for each cell. As such
-the usual ways of finding duplicated rows in the raw data (e.g `unique` or 
-`distinct`) do not work. 
+the usual ways of finding duplicated rows in the raw data (e.g `unique` or
+`distinct`) do not work.
 
 Given a row number, find any rows that are duplicates of that row.
 }

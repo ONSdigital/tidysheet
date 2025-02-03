@@ -24,7 +24,7 @@ which have one row for each cell).}
 \value{
 source_data with modified values in the character column
 
-Pipeline in halted if extend_row_with and extend_row_order are not the expected variables or if 
+Pipeline in halted if extend_row_with and extend_row_order are not the expected variables or if
 the pattern from the data dict doesnt match any character in the dataframe
 }
 \description{
@@ -34,7 +34,7 @@ extend_row_value adds information from above or below a row into another row.
 extend_row_value adds information from above or below a row into another row.
 
 Uses pattern passed from the data dictionary to find values in the character column that match then using
-variables passed from the data dict to decide which rows to add that found values to. 
+variables passed from the data dict to decide which rows to add that found values to.
 
 This was written to address an issue in the LA Dropdown tab of the DLUHC capital payments receipts data, see example.
 }
@@ -44,7 +44,7 @@ This was written to address an issue in the LA Dropdown tab of the DLUHC capital
 data <- data.frame(
  id = 1:13,
  address = c("A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18","A19","A20","A21"),
- character = c("Acquisition of land & existing buildings", "...of which HPA", 
+ character = c("Acquisition of land & existing buildings", "...of which HPA",
                "Another character", "...of which expenditure", "More characters", "...of which grants","...of which HRA",
                "Even more characters", "...of which receipts", "Some text", "...of which loans", "...of which payment","total","payment")
 )
