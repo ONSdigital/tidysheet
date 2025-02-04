@@ -74,4 +74,13 @@ covr::package_coverage(path = ".",
 script_names <- c("setup_utils.r", "preprocessing_utils.r", "formatting.r", "formatting_multi_table.r")
 
 library(tidysheet)
+devtools::check()
 
+# Open a connection to a text file
+sink("check_output.txt")
+
+# Run devtools::check()
+devtools::check()
+
+# Close the connection
+sink()

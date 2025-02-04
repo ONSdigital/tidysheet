@@ -7,7 +7,10 @@
 install_needed_packages()
 }
 \description{
-Un-pivot data with one row of any number of columns
+TBD
+}
+\details{
+install some libraries - probably obsolete
 }
 \examples{
 start_debug_logfile()

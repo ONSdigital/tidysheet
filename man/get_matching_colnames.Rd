@@ -20,6 +20,11 @@ TBD
 \details{
 Get column names that contain a pattern
 }
+\examples{
+dat <- data.frame(fin_year_end = "2020", "year" = ("2021"), "other" = NA)
+get_matching_colnames(dat, "year")
+
+}
 \author{
 Emma Wood \email{emma.wood@ons.gov.uk}
 

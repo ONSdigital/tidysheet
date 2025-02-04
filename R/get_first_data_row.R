@@ -21,7 +21,35 @@
 #' note: At least 40% of the columns in the raw data must contain numeric data
 #' i.e. this function won't produce the desired output if there are 3 columns of
 #' info on the left and only 2 columns of data.
+#' Blank rows complicate the identification of where the first row of data
+#' is. If we didn't allow blank rows to be seen as data and the data structure
+#' was:
+#'   1 = header
+#'   2 = header
+#'   3 = data
+#'   4 = blank
+#'   5 = data
+#'   6 = data
+#' The first data row would be identified as 5, when it should be 3.
 #'
+#' #**
+#' However we cant just call all blank rows 'numeric', because e.g. if:
+#'  row:
+#'   1 = header row
+#'   2 = blank
+#'   3 = header that looks like a number (e.g. a code)
+#'   4 = header row
+#'   5 = data
+#'   6 = data
+#' We would want to return row 5, but if all blanks were seen as numbers we
+#' would get row 2.
+#'
+#' Blank rows are therefore only classed as numeric when they are
+#' book-ended by rows identified as numeric. The only times this will fail to
+#' correctly identify the first row of data are
+#' 1. If there are two rows in the header block that are identified as numeric
+#'    without any character rows between them, and
+#' 2. If the last row of headers looks numeric (e.g. codes)
 #' @param dat. A dataframe imported using xlsx_cells. Each row refers to one cell
 #'
 #' @return Integer. The number of the row that we estimate contains the first
@@ -42,35 +70,8 @@ get_first_data_row <- function(dat, tolerance_list = c(tolerance_numeric = 0.4, 
   # some blank rows may already have been deleted
   available_rows <- unique(dat$row)
   missing_blanks <- setdiff(min(available_rows):max(available_rows), available_rows)
+  # see ** above
 
-  #' Blank rows complicate the identification of where the first row of data
-  #' is. If we didn't allow blank rows to be seen as data and the data structure
-  #' was:
-  #'   1 = header
-  #'   2 = header
-  #'   3 = data
-  #'   4 = blank
-  #'   5 = data
-  #'   6 = data
-  #' The first data row would be identified as 5, when it should be 3.
-  #'
-  #' However we cant just call all blank rows 'numeric', because e.g. if:
-  #'  row:
-  #'   1 = header row
-  #'   2 = blank
-  #'   3 = header that looks like a number (e.g. a code)
-  #'   4 = header row
-  #'   5 = data
-  #'   6 = data
-  #' We would want to return row 5, but if all blanks were seen as numbers we
-  #' would get row 2.
-  #'
-  #' Blank rows are therefore only classed as numeric when they are
-  #' book-ended by rows identified as numeric. The only times this will fail to
-  #' correctly identify the first row of data are
-  #' 1. If there are two rows in the header block that are identified as numeric
-  #'    without any character rows between them, and
-  #' 2. If the last row of headers looks numeric (e.g. codes)
   all_blank_rows <- sort(c(blank_rows, missing_blanks))
 
   if (length(numeric_rows) == 0) {

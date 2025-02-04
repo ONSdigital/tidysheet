@@ -33,6 +33,10 @@ It then identifies the first row of the header based on the found identifiers an
 This function takes a date as a character, a list of header identifiers, a list of second identifiers, and a file part as input.
 It identifies the first row of the header based on the specified identifiers and returns its index.
 }
+\examples{
+
+ first_header_row <- get_first_header_row(date_as_character, header_identifier, second_identifier, file_part)
+}
 \author{
 Mark London \email{mark.london@ext.ons.gov.uk}
 }

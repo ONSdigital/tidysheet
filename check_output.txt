@@ -1,0 +1,1442 @@
+══ Documenting ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+══ Building ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Setting env vars:
+• CFLAGS    : -Wall -pedantic
+• CXXFLAGS  : -Wall -pedantic
+• CXX11FLAGS: -Wall -pedantic
+• CXX14FLAGS: -Wall -pedantic
+• CXX17FLAGS: -Wall -pedantic
+• CXX20FLAGS: -Wall -pedantic
+── R CMD build ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+         checking for file 'D:\coding_repos\tidysheet/DESCRIPTION' ...  ✔  checking for file 'D:\coding_repos\tidysheet/DESCRIPTION'
+      ─  preparing 'tidysheet': (925ms)
+   checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...   ✔  checking DESCRIPTION meta-information
+  Warning:     Warning: C:/Users/londom/AppData/Local/Temp/Rtmpmk0DWT/Rbuild5d405b7c408a/tidysheet/man/split_column_by_pattern.Rd:20: unknown macro '\r'
+   Warning: C:/Users/londom/AppData/Local/Temp/Rtmpmk0DWT/Rbuild5d405b7c408a/tidysheet/man/split_column_by_pattern.Rd:20: unknown macro '\n'
+   Warning: C:/Users/londom/AppData/Local/Temp/Rtmpmk0DWT/Rbuild5d405b7c408a/tidysheet/man/split_column_by_pattern.Rd:23: unknown macro '\r'
+   Warning: C:/Users/londom/AppData/Local/Temp/Rtmpmk0DWT/Rbuild5d405b7c408a/tidysheet/man/split_column_by_pattern.Rd:23: unknown macro '\n'
+      ─  installing the package to build vignettes
+         creating vignettes ...     creating vignettes ...   ✔  creating vignettes (9s)
+      ─  checking for LF line-endings in source and make files and shell scripts (790ms)
+      ─  checking for empty or unneeded directories
+  Removed empty directory      Removed empty directory 'tidysheet/tests/testthat/_snaps'
+     Omitted 'LazyData' from DESCRIPTION
+      ─  building 'tidysheet_1.0.tar.gz'
+     
+══ Checking ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Setting env vars:
+• _R_CHECK_CRAN_INCOMING_REMOTE_               : FALSE
+• _R_CHECK_CRAN_INCOMING_                      : FALSE
+• _R_CHECK_FORCE_SUGGESTS_                     : FALSE
+• _R_CHECK_PACKAGES_USED_IGNORE_UNUSED_IMPORTS_: FALSE
+• NOT_CRAN                                     : true
+── R CMD check ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    -  ─  using log directory 'C:/Users/londom/AppData/Local/Temp/RtmpYrSjBF/file65c844b06cd0/tidysheet.Rcheck'
+─  using R version 4.4.1 (2024-06-14 ucrt)
+─  using platform: x86_64-w64-mingw32
+─  R was compiled by
+       gcc.exe (GCC) 13.2.0
+       GNU Fortran (GCC) 13.2.0
+─  running under: Windows 11 x64 (build 22631)
+─  using session charset: UTF-8
+\|    /  ─  using options '--no-manual --as-cran'
+-  ✔  checking for file 'tidysheet/DESCRIPTION'
+─  checking extension type ... Package
+─  this is package 'tidysheet' version '1.0'
+─  package encoding: UTF-8
+✔  checking package namespace information
+   checking package dependencies ...\|/-\|     checking package dependencies ... /  ✔  checking package dependencies (1.2s)
+   checking if this is a source package ...-  ✔  checking if this is a source package
+✔  checking if there is a namespace
+\|/    -     checking for executable files ...\|/-\|/-\|/-     checking for executable files ... \  ✔  checking for executable files (2.8s)
+   checking for hidden files and directories ...|     checking for hidden files and directories ... /  N  checking for hidden files and directories
+   Found the following hidden files and directories:
+     .github
+-     These were most likely included in error. See section 'Package
+   structure' in the 'Writing R Extensions' manual.
+   checking for portable file names ...\     checking for portable file names ... |  ✔  checking for portable file names
+/  ✔  checking serialization versions
+   checking whether package 'tidysheet' can be installed ...-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/     checking whether package 'tidysheet' can be installed ... -  W  checking whether package 'tidysheet' can be installed (7.3s)
+   Found the following significant warnings:
+     Warning: C:/Users/londom/AppData/Local/Temp/RtmpYrSjBF/file65c844b06cd0/tidysheet.Rcheck/00_pkg_src/tidysheet/man/split_column_by_pattern.Rd:20: unknown macro '\r'
+     Warning: C:/Users/londom/AppData/Local/Temp/RtmpYrSjBF/file65c844b06cd0/tidysheet.Rcheck/00_pkg_src/tidysheet/man/split_column_by_pattern.Rd:20: unknown macro '\n'
+     Warning: C:/Users/londom/AppData/Local/Temp/RtmpYrSjBF/file65c844b06cd0/tidysheet.Rcheck/00_pkg_src/tidysheet/man/split_column_by_pattern.Rd:23: unknown macro '\r'
+     Warning: C:/Users/londom/AppData/Local/Temp/RtmpYrSjBF/file65c844b06cd0/tidysheet.Rcheck/00_pkg_src/tidysheet/man/split_column_by_pattern.Rd:23: unknown macro '\n'
+   See 'C:/Users/londom/AppData/Local/Temp/RtmpYrSjBF/file65c844b06cd0/tidysheet.Rcheck/00install.out' for details.
+   checking installed package size ...\|/     checking installed package size ... -  ✔  checking installed package size (452ms)
+\    |  ✔  checking package directory
+   checking for future file timestamps .../     checking for future file timestamps ... -  N  checking for future file timestamps
+   unable to verify current time
+\  ✔  checking 'build' directory
+   checking DESCRIPTION meta-information ...|/-     checking DESCRIPTION meta-information ... \  N  checking DESCRIPTION meta-information (475ms)
+   Non-standard licence specification:
+     What license is it under?
+   Standardisable: FALSE
+|    /  N  checking top-level files
+   Non-standard files/directories found at top level:
+-       'CONTRIBUTING.md' 'check_output.txt' 'setup.R'
+   checking for left-over files ...\     checking for left-over files ... |  ✔  checking for left-over files
+   checking index information .../-     checking index information ... \  ✔  checking index information
+   checking package subdirectories ...|/-     checking package subdirectories ... \  ✔  checking package subdirectories (593ms)
+   checking code files for non-ASCII characters ...|     checking code files for non-ASCII characters ... /  ✔  checking code files for non-ASCII characters
+   checking R files for syntax errors ...-     checking R files for syntax errors ... \  ✔  checking R files for syntax errors
+   checking whether the package can be loaded ...|/-     checking whether the package can be loaded ... \  ✔  checking whether the package can be loaded (568ms)
+   checking whether the package can be loaded with stated dependencies ...|/-     checking whether the package can be loaded with stated dependencies ... \  ✔  checking whether the package can be loaded with stated dependencies (441ms)
+   checking whether the package can be unloaded cleanly ...|/-     checking whether the package can be unloaded cleanly ... \  ✔  checking whether the package can be unloaded cleanly (553ms)
+   checking whether the namespace can be loaded with stated dependencies ...|/-     checking whether the namespace can be loaded with stated dependencies ... \  ✔  checking whether the namespace can be loaded with stated dependencies (456ms)
+   checking whether the namespace can be unloaded cleanly ...|/-\     checking whether the namespace can be unloaded cleanly ... |  ✔  checking whether the namespace can be unloaded cleanly (681ms)
+/-\|    /     checking dependencies in R code ...-\|/     checking dependencies in R code ... -  W  checking dependencies in R code (1.4s)
+   'library' or 'require' call not declared from: 'cleanr'
+   'library' or 'require' call to 'cleanr' in package code.
+     Please use :: or requireNamespace() instead.
+     See section 'Suggested packages' in the 'Writing R Extensions' manual.
+   Namespace in Imports field not imported from: 'jsonlite'
+     All declared Imports should be used.
+   checking S3 generic/method consistency ...\|/-     checking S3 generic/method consistency ... \  ✔  checking S3 generic/method consistency (780ms)
+   checking replacement functions ...|/-\     checking replacement functions ... |  ✔  checking replacement functions (666ms)
+   checking foreign function calls .../-\|     checking foreign function calls ... /  ✔  checking foreign function calls (797ms)
+   checking R code for possible problems ...-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/     checking R code for possible problems ... -  N  checking R code for possible problems (6.5s)
+   add_row_headers_as_column: no visible binding for global variable
+     'is_blank'
+   add_row_headers_as_column: no visible global function definition for
+     ':='
+   check_all_nchar: no visible binding for global variable 'char_count'
+   check_all_nchar: no visible binding for global variable
+     'num_chars_check'
+   combine_header_rows: no visible binding for global variable
+     'character_to_add'
+   concatenate_columns: no visible global function definition for ':='
+   convert_year_end_to_fy: no visible binding for global variable
+     'year_end'
+   convert_year_end_to_fy: no visible binding for global variable
+     'year_end_numeric'
+   convert_year_end_to_fy: no visible binding for global variable
+     'century'
+   convert_year_end_to_fy: no visible binding for global variable
+     'year_start_numeric'
+   extend_row_value: no visible binding for global variable 'address'
+   extend_row_value: no visible binding for global variable
+     'column_letter'
+   extend_row_value: no visible binding for global variable
+     'extend_row_with_list'
+   get_flanked_sequences: no visible binding for global variable 'tail'
+   get_flanked_sequences: no visible binding for global variable
+     'follows_previous'
+   get_flanked_sequences: no visible binding for global variable
+     'next_follows'
+   get_flanked_sequences: no visible binding for global variable 'type'
+   get_flanked_sequences: no visible binding for global variable
+     'flanked_target'
+   get_layout_type: no visible binding for global variable 'key'
+   get_layout_type: no visible binding for global variable 'from_year'
+   get_layout_type: no visible binding for global variable 'item'
+   get_left_headers: no visible binding for global variable 'data_type'
+   get_source_data: no visible binding for global variable 'tab_regex'
+   get_source_data: no visible binding for global variable 'supplier'
+   get_source_data: no visible binding for global variable 'dataset'
+   get_source_data: no visible binding for global variable
+     'input_filepath'
+get_vector_locs_of_type: no visible bindi\     get_vector_locs_of_type: no visible binding for global variable
+     'is_blank'
+   get_vector_locs_of_type: no visible binding for global variable
+     'data_type'
+   identify_absent_packages: no visible global function definition for
+     'installed.packages'
+   install_absent_packages: no visible global function definition for
+     'install.packages'
+   install_needed_packages: no visible global function definition for
+     'install.packages'
+   join_cols_data: no visible global function definition for 'tail'
+   process_year_column: no visible binding for global variable 'year'
+   reformat_multi_table_data: no visible global function definition for
+     'remove_cells'
+   reformat_multi_table_data: no visible binding for global variable
+     'heading_row'
+   reformat_multi_table_data: no visible binding for global variable
+     'data_type'
+   reformat_multi_table_data: no visible global function definition for
+     'behead_multi_table'
+   reformat_multi_table_data: no visible binding for global variable
+     'problematic_entry'
+   reformat_multi_table_data: no visible global function definition for
+     'clean_multi_table'
+   reformat_multi_table_data: no visible global function definition for
+     ':='
+   reformat_multi_table_data: no visible global function definition for
+     'get_repeats_with_different_values'
+   reformat_multi_table_data: no visible global function definition for
+     'differentiate_repeats'
+   reformat_multi_table_data: no visible global function definition for
+     'split_year_and_vintage'
+   reformat_multi_table_data: no visible binding for global variable
+     'temporary_notes'
+   reformat_no_row_headers_data: no visible global function definition for
+     ':='
+   reformat_single_header_data: no visible global function definition for
+     ':='
+   reformat_single_header_data: no visible binding for global variable
+     'original_header'
+   reformat_single_header_data: no visible binding for global variable
+     'sheet'
+   reformat_single_header_data: no visible binding for global variable
+     'notes'
+   remove_columns: no visible global function definition for
+   'i|       'identify_columns_to_remove'
+   remove_columns: no visible global function definition for
+     'get_col_letters_as_string'
+   remove_empty_lines: no visible binding for global variable 'no_data'
+   remove_empty_lines: no visible binding for global variable
+     'col_all_blank'
+   rename_duplicates: no visible global function definition for
+     'identify_rows_for_renaming'
+   rename_duplicates: no visible global function definition for
+     'rename_identified_duplicates'
+   rename_reserved_colnames: no visible global function definition for
+     ':='
+   set_global_variables: no visible binding for '<<-' assignment to
+     'input_filepath'
+   set_global_variables: no visible binding for global variable 'my_args'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'tab_regex'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'output_filepath'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'current_location'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'sheet_structure_json'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'layout_json'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'file_part'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'tab_regex_front_page'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'setup_utils_path'
+   set_global_variables: no visible binding for global variable
+     'current_location'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'preprocessing_utils_path'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'formatting_path'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'formatting_multi_table_path'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'directory'
+   set_global_variables: no visible binding for global variable
+     'input_filepath'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'supplier'
+set_glo/     set_global_variables: no visible binding for global variable
+     'directory'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'source_group'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'dataset'
+   set_global_variables: no visible binding for '<<-' assignment to
+     'sheets'
+   set_global_variables: no visible binding for global variable
+     'tab_regex'
+   set_global_variables: no visible binding for global variable
+     'output_filepath'
+   set_global_variables: no visible binding for global variable
+     'sheet_structure_json'
+   set_global_variables: no visible binding for global variable
+     'layout_json'
+   set_global_variables: no visible binding for global variable
+     'file_part'
+   source_helper_functions: no visible binding for global variable
+     'setup_utils_path'
+   source_helper_functions: no visible binding for global variable
+     'preprocessing_utils_path'
+   source_helper_functions: no visible binding for global variable
+     'formatting_path'
+   source_helper_functions: no visible binding for global variable
+     'formatting_multi_table_path'
+   split_column_by_pattern: no visible global function definition for ':='
+   split_original_header: no visible global function definition for
+     'na.omit'
+   split_original_header: no visible binding for global variable
+     'initial_split'
+   split_original_header: no visible global function definition for ':='
+   split_original_header: no visible binding for global variable
+     'header_remaining'
+   split_original_header: no visible binding for global variable
+     'use_split_point_1'
+   string_to_dict: no visible binding for global variable 'key'
+   string_to_dict: no visible binding for global variable 'item'
+   Undefined global functions or variables:
+     := address behead_multi_table century char_count character_to_add
+     clean_multi_table col_all_blank column_letter current_location
+     data_type dataset differentiate_repeats directory
+     extend_row_with_list file_part flanked_target follows_previous
+   formatting_multi_tab-       formatting_multi_table_path formatting_path from_year
+     get_col_letters_as_string get_repeats_with_different_values
+     header_remaining heading_row identify_columns_to_remove
+     identify_rows_for_renaming initial_split input_filepath
+     install.packages installed.packages is_blank item key layout_json
+     my_args na.omit next_follows no_data notes num_chars_check
+     original_header output_filepath preprocessing_utils_path
+     problematic_entry remove_cells rename_identified_duplicates
+     setup_utils_path sheet sheet_structure_json split_year_and_vintage
+     supplier tab_regex tail temporary_notes type use_split_point_1 year
+     year_end year_end_numeric year_start_numeric
+   Consider adding
+     importFrom("stats", "na.omit")
+     importFrom("utils", "install.packages", "installed.packages", "tail")
+   to your NAMESPACE file.
+   checking Rd files ...\|/-\     checking Rd files ... |  W  checking Rd files (863ms)
+   prepare_Rd: ./man/split_column_by_pattern.Rd:20: unknown macro '\r'
+   prepare_Rd: ./man/split_column_by_pattern.Rd:20: unknown macro '\n'
+   prepare_Rd: ./man/split_column_by_pattern.Rd:23: unknown macro '\r'
+   prepare_Rd: ./man/split_column_by_pattern.Rd:23: unknown macro '\n'
+   checkRd: (-1) string_to_dict.Rd:25: Lost braces; missing escapes or markup?
+       25 | "{key: item, key: item}". 
+          |  ^
+   checking Rd metadata .../     checking Rd metadata ... -  ✔  checking Rd metadata
+   checking Rd line widths ...\|     checking Rd line widths ... /  N  checking Rd line widths (340ms)
+   Rd file 'extend_row_value.Rd':
+     \examples lines wider than 100 characters:
+                       "Another character", "...of which expenditure", "More characters", "...of which grants","...of which HRA",
+                       "Even more characters", "...of which receipts", "Some text", "...of which loans", "...of which payment","total","payment ... [TRUNCATED]
+   
+   Rd file 'get_release_number_vintage.Rd':
+     \examples lines wider than 100 characters:
+                             "Data from this workbook have been used to compile 'LA 2022-23 Outturn, England - Second release' .",
+   
+   Rd file 'join_cols_data.Rd':
+     \examples lines wider than 100 characters:
+        my_out <- join_cols_data(dat = new_simple, columns_to_concat = my_columns, col_join_name = 'description'))
+   
+   Rd file 'reformat_three_header_data.Rd':
+     \examples lines wider than 100 characters:
+           address = c('A1', 'B1', 'C1', 'D1', 'A2', 'B2', 'C2', 'D2', 'A3', 'B3', 'C3', 'D3', 'A4', 'B4', 'C4', 'D4'),
+           is_blank = c(TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+           data_type = c('blank', 'blank', 'character', 'blank', 'blank', 'blank', 'numeric', 'numeric', 'character',
+           character = c(NA, NA, 'Education', NA, NA, NA, NA, NA, 'LA', 'Region', 'primary', 'secondary', 'Cornwall', 'SW', NA, NA)
+   
+   Rd file 'reformat_two_header_data.Rd':
+     \examples lines wider than 100 characters:
+           character = c(NA, NA, 'Education', NA, 'LA', 'Region', 'primary', 'secondary', 'Cornwall', 'SW', NA, NA)
+   
+   Rd file 'remove_line_breaks.Rd':
+     \examples lines wider than 100 characters:
+           "Service"  <- c("Education\nServices","Education Services", "Education\n\n Services","\nEducation\n Services\n"),
+   
+   These lines will be truncated in the PDF manual.
+   checking Rd cross-references ...-\     checking Rd cross-references ... |  ✔  checking Rd cross-references
+   checking for missing documentation entries .../-\     checking for missing documentation entries ... |  ✔  checking for missing documentation entries (563ms)
+   checking for code/documentation mismatches .../-\|/-\|     checking for code/documentation mismatches ... /  ✔  checking for code/documentation mismatches (1.6s)
+   checking Rd \usage sections ...-\|     checking Rd \usage sections ... /  W  checking Rd \usage sections (458ms)
+   Undocumented arguments in Rd file 'check_reserved_words.Rd'
+     'check_nesting_dict'
+   Documented arguments not in \usage in Rd file 'check_reserved_words.Rd':
+     'nesting_dict'
+   
+   Undocumented arguments in Rd file 'combine_header_rows.Rd'
+     'combine_end_row_identifier'
+   Documented arguments not in \usage in Rd file 'combine_header_rows.Rd':
+     'combine_endt_row_identifier'
+   
+   Documented arguments not in \usage in Rd file 'extract_all_years.Rd':
+     'year_type'
+   
+   Undocumented arguments in Rd file 'get_first_data_row.Rd'
+     'dat' 'tolerance_list'
+   Documented arguments not in \usage in Rd file 'get_first_data_row.Rd':
+     'dat.'
+   
+   Undocumented arguments in Rd file 'get_header_identifier.Rd'
+     'header_identifier'
+   Documented arguments not in \usage in Rd file 'get_header_identifier.Rd':
+     'header_identifiers'
+   
+   Undocumented arguments in Rd file 'get_layout_type.Rd'
+     'element'
+   
+   Undocumented arguments in Rd file 'get_left_headers.Rd'
+     'tolerance_list'
+   
+   Undocumented arguments in Rd file 'get_release_number_vintage.Rd'
+     'front_page_sheet'
+   Documented arguments not in \usage in Rd file 'get_release_number_vintage.Rd':
+     'character_matches:'
+   
+   Undocumented arguments in Rd file 'get_source_data.Rd'
+     'sheets' 'tab_regex_front_page'
+   
+   Undocumented arguments in Rd file 'get_vector_locs_of_type.Rd'
+     'direction' 'include_blanks'
+   
+   Undocumented arguments in Rd file 'identify_absent_packages.Rd'
+     'packages'
+   Documented arguments not in \usage in Rd file 'identify_absent_packages.Rd':
+     'packages.'
+   
+   Undocumented arguments in Rd file 'install_absent_packages.Rd'
+     'packages'
+   Documented arguments not in \usage in Rd file 'install_absent_packages.Rd':
+     'packages.'
+   
+   Undocumented arguments in Rd file 'join_cols_data.Rd'
+     'col_join_name'
+   
+   Undocumented arguments in Rd file 'process_year_column.Rd'
+     'year_pattern'
+   Documented arguments not in \usage in Rd file 'process_year_column.Rd':
+     'year_value_patterns'
+   
+Undocumented arguments in Rd file-     Undocumented arguments in Rd file 'reformat_multi_table_data.Rd'
+     'subtable_heading'
+   
+   Undocumented arguments in Rd file 'reformat_single_header_data.Rd'
+     'left_headers' 'tolerance_list'
+   Documented arguments not in \usage in Rd file 'reformat_single_header_data.Rd':
+     'vector'
+   
+   Undocumented arguments in Rd file 'reformat_three_header_data.Rd'
+     'dat' 'left_headers'
+   Documented arguments not in \usage in Rd file 'reformat_three_header_data.Rd':
+     'main_table'
+   
+   Undocumented arguments in Rd file 'reformat_two_header_data.Rd'
+     'left_headers'
+   
+   Undocumented arguments in Rd file 'remove_columns.Rd'
+     'dat' 'column_regex'
+   
+   Undocumented arguments in Rd file 'rename_reserved_colnames.Rd'
+     'reserved_names'
+   Documented arguments not in \usage in Rd file 'rename_reserved_colnames.Rd':
+     'reserved_colnames'
+   
+   Undocumented arguments in Rd file 'sheet_matcher.Rd'
+     'matching_sheets'
+   Documented arguments not in \usage in Rd file 'sheet_matcher.Rd':
+     'matching_sheets:'
+   
+   Undocumented arguments in Rd file 'split_column_by_pattern.Rd'
+     'new_col' 'pattern'
+   Documented arguments not in \usage in Rd file 'split_column_by_pattern.Rd':
+     'new-col'
+   
+   Undocumented arguments in Rd file 'split_original_header.Rd'
+     'original_header'
+   Documented arguments not in \usage in Rd file 'split_original_header.Rd':
+     'original_header.'
+   
+   Undocumented arguments in Rd file 'trim_separators.Rd'
+     'separators'
+   
+\     Functions with \usage entries need to have the appropriate \alias
+   entries, and all their arguments documented.
+   The \usage entries must correspond to syntactically valid R code.
+   See chapter 'Writing R documentation files' in the 'Writing R
+   Extensions' manual.
+|/-\    |     checking Rd contents .../-     checking Rd contents ... \  ✔  checking Rd contents (874ms)
+   checking for unstated dependencies in examples ...|/-\     checking for unstated dependencies in examples ... |  E  checking for unstated dependencies in examples (661ms)
+   Warning: parse error in file 'lines':
+   6: unexpected 'for'
+   116: 
+   117: Note for
+             ^
+─  will not attempt to run examples
+/    -     checking installed files from 'inst/doc' ...\|     checking installed files from 'inst/doc' ... /  ✔  checking installed files from 'inst/doc'
+   checking files in 'vignettes' ...-\     checking files in 'vignettes' ... |  ✔  checking files in 'vignettes'
+─  checking examples ... SKIPPED
+   checking for unstated dependencies in 'tests' .../-\|/-\|/-\|/-     checking for unstated dependencies in 'tests' ... \  W  checking for unstated dependencies in 'tests' (2.7s)
+   Warning: unable to access index for repository https://CRAN.R-project.org/src/contrib:
+     cannot open URL 'https://CRAN.R-project.org/src/contrib/PACKAGES'
+   Warning: unable to access index for repository https://bioconductor.org/packages/3.19/bioc/src/contrib:
+     cannot open URL 'https://bioconductor.org/packages/3.19/bioc/src/contrib/PACKAGES'
+   Warning: unable to access index for repository https://bioconductor.org/packages/3.19/data/annotation/src/contrib:
+     cannot open URL 'https://bioconductor.org/packages/3.19/data/annotation/src/contrib/PACKAGES'
+   Warning: unable to access index for repository https://bioconductor.org/packages/3.19/data/experiment/src/contrib:
+     cannot open URL 'https://bioconductor.org/packages/3.19/data/experiment/src/contrib/PACKAGES'
+   '::' or ':::' import not declared from: 'tibble'
+   checking tests ...|  ─  checking tests
+/     Running 'testthat.R'-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/  -    \  ─  Running 'testthat.R' (7.4s)
+E  Some test files failed
+|     Running the tests in 'tests/testthat.R' failed.
+/     Last 13 lines of output:
+      5.   └─base::paste0(table_split_points, collapse = "|")
+     ── Error ('test-remove_empty_lines.R:2:3'): remove_empty_lines not yet written ──
+     Error in `remove_empty_lines()`: argument "dat" is missing, with no default
+     Backtrace:
+         ▆
+      1. ├─testthat::expect_equal(remove_empty_lines(), 0) at test-remove_empty_lines.R:2:3
+      2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+      3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+      4. ├─tidysheet::remove_empty_lines()
+      5. │ └─dat %>% ...
+      6. └─dplyr::mutate(...)
+     
+     [ FAIL 14 | WARN 40 | SKIP 0 | PASS 285 ]
+     Error: Test failures
+     Execution halted
+-    \     checking for unstated dependencies in vignettes ...|/     checking for unstated dependencies in vignettes ... -  ✔  checking for unstated dependencies in vignettes (389ms)
+   checking package vignettes ...\     checking package vignettes ... |  ✔  checking package vignettes
+   checking re-building of vignette outputs .../-\|/-\|/-     checking re-building of vignette outputs ... \  ✔  checking re-building of vignette outputs (2s)
+✔  checking for non-standard things in the check directory
+✔  checking for detritus in the temp directory
+|     
+   See
+     'C:/Users/londom/AppData/Local/Temp/RtmpYrSjBF/file65c844b06cd0/tidysheet.Rcheck/00check.log'
+   for details.
+   
+/-\|/      
+── R CMD check results ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidysheet 1.0 ────
+Duration: 46.9s
+
+❯ checking for unstated dependencies in examples ... ERROR
+  Warning: parse error in file 'lines':
+  6: unexpected 'for'
+  116: 
+  117: Note for
+            ^
+
+❯ checking tests ...
+  See below...
+
+❯ checking whether package 'tidysheet' can be installed ... WARNING
+  See below...
+
+❯ checking dependencies in R code ... WARNING
+  'library' or 'require' call not declared from: 'cleanr'
+  'library' or 'require' call to 'cleanr' in package code.
+    Please use :: or requireNamespace() instead.
+    See section 'Suggested packages' in the 'Writing R Extensions' manual.
+  Namespace in Imports field not imported from: 'jsonlite'
+    All declared Imports should be used.
+
+❯ checking Rd files ... WARNING
+  prepare_Rd: ./man/split_column_by_pattern.Rd:20: unknown macro '\r'
+  prepare_Rd: ./man/split_column_by_pattern.Rd:20: unknown macro '\n'
+  prepare_Rd: ./man/split_column_by_pattern.Rd:23: unknown macro '\r'
+  prepare_Rd: ./man/split_column_by_pattern.Rd:23: unknown macro '\n'
+  checkRd: (-1) string_to_dict.Rd:25: Lost braces; missing escapes or markup?
+      25 | "{key: item, key: item}". 
+         |  ^
+
+❯ checking Rd \usage sections ... WARNING
+  Undocumented arguments in Rd file 'check_reserved_words.Rd'
+    'check_nesting_dict'
+  Documented arguments not in \usage in Rd file 'check_reserved_words.Rd':
+    'nesting_dict'
+  
+  Undocumented arguments in Rd file 'combine_header_rows.Rd'
+    'combine_end_row_identifier'
+  Documented arguments not in \usage in Rd file 'combine_header_rows.Rd':
+    'combine_endt_row_identifier'
+  
+  Documented arguments not in \usage in Rd file 'extract_all_years.Rd':
+    'year_type'
+  
+  Undocumented arguments in Rd file 'get_first_data_row.Rd'
+    'dat' 'tolerance_list'
+  Documented arguments not in \usage in Rd file 'get_first_data_row.Rd':
+    'dat.'
+  
+  Undocumented arguments in Rd file 'get_header_identifier.Rd'
+    'header_identifier'
+  Documented arguments not in \usage in Rd file 'get_header_identifier.Rd':
+    'header_identifiers'
+  
+  Undocumented arguments in Rd file 'get_layout_type.Rd'
+    'element'
+  
+  Undocumented arguments in Rd file 'get_left_headers.Rd'
+    'tolerance_list'
+  
+  Undocumented arguments in Rd file 'get_release_number_vintage.Rd'
+    'front_page_sheet'
+  Documented arguments not in \usage in Rd file 'get_release_number_vintage.Rd':
+    'character_matches:'
+  
+  Undocumented arguments in Rd file 'get_source_data.Rd'
+    'sheets' 'tab_regex_front_page'
+  
+  Undocumented arguments in Rd file 'get_vector_locs_of_type.Rd'
+    'direction' 'include_blanks'
+  
+  Undocumented arguments in Rd file 'identify_absent_packages.Rd'
+    'packages'
+  Documented arguments not in \usage in Rd file 'identify_absent_packages.Rd':
+    'packages.'
+  
+  Undocumented arguments in Rd file 'install_absent_packages.Rd'
+    'packages'
+  Documented arguments not in \usage in Rd file 'install_absent_packages.Rd':
+    'packages.'
+  
+  Undocumented arguments in Rd file 'join_cols_data.Rd'
+    'col_join_name'
+  
+  Undocumented arguments in Rd file 'process_year_column.Rd'
+    'year_pattern'
+  Documented arguments not in \usage in Rd file 'process_year_column.Rd':
+    'year_value_patterns'
+  
+  Undocumented arguments in Rd file 'reformat_multi_table_data.Rd'
+    'subtable_heading'
+  
+  Undocumented arguments in Rd file 'reformat_single_header_data.Rd'
+    'left_headers' 'tolerance_list'
+  Documented arguments not in \usage in Rd file 'reformat_single_header_data.Rd':
+    'vector'
+  
+  Undocumented arguments in Rd file 'reformat_three_header_data.Rd'
+    'dat' 'left_headers'
+  Documented arguments not in \usage in Rd file 'reformat_three_header_data.Rd':
+    'main_table'
+  
+  Undocumented arguments in Rd file 'reformat_two_header_data.Rd'
+    'left_headers'
+  
+  Undocumented arguments in Rd file 'remove_columns.Rd'
+    'dat' 'column_regex'
+  
+  Undocumented arguments in Rd file 'rename_reserved_colnames.Rd'
+    'reserved_names'
+  Documented arguments not in \usage in Rd file 'rename_reserved_colnames.Rd':
+    'reserved_colnames'
+  
+  Undocumented arguments in Rd file 'sheet_matcher.Rd'
+    'matching_sheets'
+  Documented arguments not in \usage in Rd file 'sheet_matcher.Rd':
+    'matching_sheets:'
+  
+  Undocumented arguments in Rd file 'split_column_by_pattern.Rd'
+    'new_col' 'pattern'
+  Documented arguments not in \usage in Rd file 'split_column_by_pattern.Rd':
+    'new-col'
+  
+  Undocumented arguments in Rd file 'split_original_header.Rd'
+    'original_header'
+  Documented arguments not in \usage in Rd file 'split_original_header.Rd':
+    'original_header.'
+  
+  Undocumented arguments in Rd file 'trim_separators.Rd'
+    'separators'
+  
+  Functions with \usage entries need to have the appropriate \alias
+  entries, and all their arguments documented.
+  The \usage entries must correspond to syntactically valid R code.
+  See chapter 'Writing R documentation files' in the 'Writing R
+  Extensions' manual.
+
+❯ checking for unstated dependencies in 'tests' ... WARNING
+  Warning: unable to access index for repository https://CRAN.R-project.org/src/contrib:
+    cannot open URL 'https://CRAN.R-project.org/src/contrib/PACKAGES'
+  Warning: unable to access index for repository https://bioconductor.org/packages/3.19/bioc/src/contrib:
+    cannot open URL 'https://bioconductor.org/packages/3.19/bioc/src/contrib/PACKAGES'
+  Warning: unable to access index for repository https://bioconductor.org/packages/3.19/data/annotation/src/contrib:
+    cannot open URL 'https://bioconductor.org/packages/3.19/data/annotation/src/contrib/PACKAGES'
+  Warning: unable to access index for repository https://bioconductor.org/packages/3.19/data/experiment/src/contrib:
+    cannot open URL 'https://bioconductor.org/packages/3.19/data/experiment/src/contrib/PACKAGES'
+  '::' or ':::' import not declared from: 'tibble'
+
+❯ checking for hidden files and directories ... NOTE
+  Found the following hidden files and directories:
+    .github
+  These were most likely included in error. See section 'Package
+  structure' in the 'Writing R Extensions' manual.
+
+❯ checking for future file timestamps ... NOTE
+  unable to verify current time
+
+❯ checking DESCRIPTION meta-information ... NOTE
+  Non-standard licence specification:
+    What license is it under?
+  Standardisable: FALSE
+
+❯ checking top-level files ... NOTE
+  Non-standard files/directories found at top level:
+    'CONTRIBUTING.md' 'check_output.txt' 'setup.R'
+
+❯ checking R code for possible problems ... NOTE
+  add_row_headers_as_column: no visible binding for global variable
+    'is_blank'
+  add_row_headers_as_column: no visible global function definition for
+    ':='
+  check_all_nchar: no visible binding for global variable 'char_count'
+  check_all_nchar: no visible binding for global variable
+    'num_chars_check'
+  combine_header_rows: no visible binding for global variable
+    'character_to_add'
+  concatenate_columns: no visible global function definition for ':='
+  convert_year_end_to_fy: no visible binding for global variable
+    'year_end'
+  convert_year_end_to_fy: no visible binding for global variable
+    'year_end_numeric'
+  convert_year_end_to_fy: no visible binding for global variable
+    'century'
+  convert_year_end_to_fy: no visible binding for global variable
+    'year_start_numeric'
+  extend_row_value: no visible binding for global variable 'address'
+  extend_row_value: no visible binding for global variable
+    'column_letter'
+  extend_row_value: no visible binding for global variable
+    'extend_row_with_list'
+  get_flanked_sequences: no visible binding for global variable 'tail'
+  get_flanked_sequences: no visible binding for global variable
+    'follows_previous'
+  get_flanked_sequences: no visible binding for global variable
+    'next_follows'
+  get_flanked_sequences: no visible binding for global variable 'type'
+  get_flanked_sequences: no visible binding for global variable
+    'flanked_target'
+  get_layout_type: no visible binding for global variable 'key'
+  get_layout_type: no visible binding for global variable 'from_year'
+  get_layout_type: no visible binding for global variable 'item'
+  get_left_headers: no visible binding for global variable 'data_type'
+  get_source_data: no visible binding for global variable 'tab_regex'
+  get_source_data: no visible binding for global variable 'supplier'
+  get_source_data: no visible binding for global variable 'dataset'
+  get_source_data: no visible binding for global variable
+    'input_filepath'
+  get_vector_locs_of_type: no visible binding for global variable
+    'is_blank'
+  get_vector_locs_of_type: no visible binding for global variable
+    'data_type'
+  identify_absent_packages: no visible global function definition for
+    'installed.packages'
+  install_absent_packages: no visible global function definition for
+    'install.packages'
+  install_needed_packages: no visible global function definition for
+    'install.packages'
+  join_cols_data: no visible global function definition for 'tail'
+  process_year_column: no visible binding for global variable 'year'
+  reformat_multi_table_data: no visible global function definition for
+    'remove_cells'
+  reformat_multi_table_data: no visible binding for global variable
+    'heading_row'
+  reformat_multi_table_data: no visible binding for global variable
+    'data_type'
+  reformat_multi_table_data: no visible global function definition for
+    'behead_multi_table'
+  reformat_multi_table_data: no visible binding for global variable
+    'problematic_entry'
+  reformat_multi_table_data: no visible global function definition for
+    'clean_multi_table'
+  reformat_multi_table_data: no visible global function definition for
+    ':='
+  reformat_multi_table_data: no visible global function definition for
+    'get_repeats_with_different_values'
+  reformat_multi_table_data: no visible global function definition for
+    'differentiate_repeats'
+  reformat_multi_table_data: no visible global function definition for
+    'split_year_and_vintage'
+  reformat_multi_table_data: no visible binding for global variable
+    'temporary_notes'
+  reformat_no_row_headers_data: no visible global function definition for
+    ':='
+  reformat_single_header_data: no visible global function definition for
+    ':='
+  reformat_single_header_data: no visible binding for global variable
+    'original_header'
+  reformat_single_header_data: no visible binding for global variable
+    'sheet'
+  reformat_single_header_data: no visible binding for global variable
+    'notes'
+  remove_columns: no visible global function definition for
+    'identify_columns_to_remove'
+  remove_columns: no visible global function definition for
+    'get_col_letters_as_string'
+  remove_empty_lines: no visible binding for global variable 'no_data'
+  remove_empty_lines: no visible binding for global variable
+    'col_all_blank'
+  rename_duplicates: no visible global function definition for
+    'identify_rows_for_renaming'
+  rename_duplicates: no visible global function definition for
+    'rename_identified_duplicates'
+  rename_reserved_colnames: no visible global function definition for
+    ':='
+  set_global_variables: no visible binding for '<<-' assignment to
+    'input_filepath'
+  set_global_variables: no visible binding for global variable 'my_args'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'tab_regex'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'output_filepath'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'current_location'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'sheet_structure_json'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'layout_json'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'file_part'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'tab_regex_front_page'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'setup_utils_path'
+  set_global_variables: no visible binding for global variable
+    'current_location'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'preprocessing_utils_path'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'formatting_path'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'formatting_multi_table_path'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'directory'
+  set_global_variables: no visible binding for global variable
+    'input_filepath'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'supplier'
+  set_global_variables: no visible binding for global variable
+    'directory'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'source_group'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'dataset'
+  set_global_variables: no visible binding for '<<-' assignment to
+    'sheets'
+  set_global_variables: no visible binding for global variable
+    'tab_regex'
+  set_global_variables: no visible binding for global variable
+    'output_filepath'
+  set_global_variables: no visible binding for global variable
+    'sheet_structure_json'
+  set_global_variables: no visible binding for global variable
+    'layout_json'
+  set_global_variables: no visible binding for global variable
+    'file_part'
+  source_helper_functions: no visible binding for global variable
+    'setup_utils_path'
+  source_helper_functions: no visible binding for global variable
+    'preprocessing_utils_path'
+  source_helper_functions: no visible binding for global variable
+    'formatting_path'
+  source_helper_functions: no visible binding for global variable
+    'formatting_multi_table_path'
+  split_column_by_pattern: no visible global function definition for ':='
+  split_original_header: no visible global function definition for
+    'na.omit'
+  split_original_header: no visible binding for global variable
+    'initial_split'
+  split_original_header: no visible global function definition for ':='
+  split_original_header: no visible binding for global variable
+    'header_remaining'
+  split_original_header: no visible binding for global variable
+    'use_split_point_1'
+  string_to_dict: no visible binding for global variable 'key'
+  string_to_dict: no visible binding for global variable 'item'
+  Undefined global functions or variables:
+    := address behead_multi_table century char_count character_to_add
+    clean_multi_table col_all_blank column_letter current_location
+    data_type dataset differentiate_repeats directory
+    extend_row_with_list file_part flanked_target follows_previous
+    formatting_multi_table_path formatting_path from_year
+    get_col_letters_as_string get_repeats_with_different_values
+    header_remaining heading_row identify_columns_to_remove
+    identify_rows_for_renaming initial_split input_filepath
+    install.packages installed.packages is_blank item key layout_json
+    my_args na.omit next_follows no_data notes num_chars_check
+    original_header output_filepath preprocessing_utils_path
+    problematic_entry remove_cells rename_identified_duplicates
+    setup_utils_path sheet sheet_structure_json split_year_and_vintage
+    supplier tab_regex tail temporary_notes type use_split_point_1 year
+    year_end year_end_numeric year_start_numeric
+  Consider adding
+    importFrom("stats", "na.omit")
+    importFrom("utils", "install.packages", "installed.packages", "tail")
+  to your NAMESPACE file.
+
+❯ checking Rd line widths ... NOTE
+  Rd file 'extend_row_value.Rd':
+    \examples lines wider than 100 characters:
+                      "Another character", "...of which expenditure", "More characters", "...of which grants","...of which HRA",
+                      "Even more characters", "...of which receipts", "Some text", "...of which loans", "...of which payment","total","payment ... [TRUNCATED]
+  
+  Rd file 'get_release_number_vintage.Rd':
+    \examples lines wider than 100 characters:
+                            "Data from this workbook have been used to compile 'LA 2022-23 Outturn, England - Second release' .",
+  
+  Rd file 'join_cols_data.Rd':
+    \examples lines wider than 100 characters:
+       my_out <- join_cols_data(dat = new_simple, columns_to_concat = my_columns, col_join_name = 'description'))
+  
+  Rd file 'reformat_three_header_data.Rd':
+    \examples lines wider than 100 characters:
+          address = c('A1', 'B1', 'C1', 'D1', 'A2', 'B2', 'C2', 'D2', 'A3', 'B3', 'C3', 'D3', 'A4', 'B4', 'C4', 'D4'),
+          is_blank = c(TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+          data_type = c('blank', 'blank', 'character', 'blank', 'blank', 'blank', 'numeric', 'numeric', 'character',
+          character = c(NA, NA, 'Education', NA, NA, NA, NA, NA, 'LA', 'Region', 'primary', 'secondary', 'Cornwall', 'SW', NA, NA)
+  
+  Rd file 'reformat_two_header_data.Rd':
+    \examples lines wider than 100 characters:
+          character = c(NA, NA, 'Education', NA, 'LA', 'Region', 'primary', 'secondary', 'Cornwall', 'SW', NA, NA)
+  
+  Rd file 'remove_line_breaks.Rd':
+    \examples lines wider than 100 characters:
+          "Service"  <- c("Education\nServices","Education Services", "Education\n\n Services","\nEducation\n Services\n"),
+  
+  These lines will be truncated in the PDF manual.
+
+── Test failures ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── testthat ────
+
+> # This file is part of the standard setup for testthat.
+> # It is recommended that you do not modify it.
+> #
+> # Where should you do additional test configuration?
+> # Learn more about the roles of various files in:
+> # * https://r-pkgs.org/testing-design.html#sec-tests-files-overview
+> # * https://testthat.r-lib.org/articles/special-files.html
+> 
+> library(testthat)
+> library(tidysheet)
+> 
+> test_check("tidysheet")
+Reserved word address used in dict, stoppingReserved word row used in dict, stopping
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+Failed to find the pattern 'NOTFOUND' in the source data.
+      Please check with a developer that (where relevant) header_identifier,
+      nested_column_1, combine_start_row_identifier, and combine_end_row_identifier
+      are correct for this source in dev_config and data_dict respectively.
+<simpleWarning in min(grep(pattern_cleaned, stringr::str_squish(tolower(dat$character)))): no non-missing arguments to min; returning Inf>
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.3
+using tolerance value of  0.6
+using tolerance value of  1
+using tolerance value of  0.9
+using tolerance value of  0.3
+using tolerance value of  0.6
+using tolerance value of  0.8
+[1] "Hello, world from tidysheet"
+not yet written
+not yet written
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+using tolerance value of  0.4
+using tolerance value of  0.4
+using tolerance value of  0.7
+using tolerance value of  0.9
+[ FAIL 14 | WARN 40 | SKIP 0 | PASS 285 ]
+
+══ Warnings ════════════════════════════════════════════════════════════════════
+── Warning ('test-add_row_headers_as_column.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("add_row_headers_as_column") at test-add_row_headers_as_column.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-combine_header_rows.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("combine_header_rows") at test-combine_header_rows.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-concatenate_columns.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("concatenate_columns") at test-concatenate_columns.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-convert_year_format.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("convert_year_format") at test-convert_year_format.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-create_table_list.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("create_table_list") at test-create_table_list.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-deal_with_left_columns.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("deal_with_left_columns") at test-deal_with_left_columns.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-extend_row_value.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("extend_row_value") at test-extend_row_value.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_dict_item.R:1:1'): (code run outside of `test_that()`) ───
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_dict_item returns expected output") at test-get_dict_item.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_first_data_row.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_first_data_row") at test-get_first_data_row.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_first_header_row.R:2:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_first_header_row") at test-get_first_header_row.R:2:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_first_of_consecutives.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_first_of_consecutives") at test-get_first_of_consecutives.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_flanked_sequences.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_flanked_sequences") at test-get_flanked_sequences.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_header_identifier.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_header_identifier returns expected output") at test-get_header_identifier.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_latest_release_number.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_latest_release_number") at test-get_latest_release_number.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_layout_type.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_layout_type returns correct layout_type") at test-get_layout_type.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_left_headers.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_left_headers") at test-get_left_headers.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_release_number_vintage.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_release_number_vintage") at test-get_release_number_vintage.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_vector_locs_of_type.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_vector_locs_of_type") at test-get_vector_locs_of_type.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-get_vintage_from.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("get_vintage_from") at test-get_vintage_from.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-join_cols_data.R:11:3'): join_cols_data concatenates columns correctly ──
+Using an external vector in selections was deprecated in tidyselect 1.1.0.
+i Please use `all_of()` or `any_of()` instead.
+  # Was:
+  data %>% select(col_join_name)
+
+  # Now:
+  data %>% select(all_of(col_join_name))
+
+See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
+Backtrace:
+     ▆
+  1. ├─tidysheet:::join_cols_data(dat, columns_to_concat, col_join_name = "description") at test-join_cols_data.R:11:3
+  2. │ └─dat %>% ...
+  3. ├─dplyr::relocate(...)
+  4. └─dplyr:::relocate.data.frame(...)
+  5.   └─dplyr:::eval_relocate(...)
+  6.     └─tidyselect::eval_select(...)
+  7.       └─tidyselect:::eval_select_impl(...)
+  8.         ├─tidyselect:::with_subscript_errors(...)
+  9.         │ └─base::withCallingHandlers(...)
+ 10.         └─tidyselect:::vars_select_eval(...)
+ 11.           └─tidyselect:::walk_data_tree(expr, data_mask, context_mask)
+ 12.             └─tidyselect:::eval_c(expr, data_mask, context_mask)
+ 13.               └─tidyselect:::reduce_sels(node, data_mask, context_mask, init = init)
+ 14.                 └─tidyselect:::walk_data_tree(new, data_mask, context_mask)
+ 15.                   └─tidyselect:::eval_sym(expr, data_mask, context_mask)
+── Warning ('test-join_cols_data.R:42:3'): join_cols_data handles missing values correctly ──
+Using an external vector in selections was deprecated in tidyselect 1.1.0.
+i Please use `all_of()` or `any_of()` instead.
+  # Was:
+  data %>% select(col_join_name)
+
+  # Now:
+  data %>% select(all_of(col_join_name))
+
+See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
+Backtrace:
+     ▆
+  1. ├─tidysheet:::join_cols_data(dat, columns_to_concat, col_join_name = "description") at test-join_cols_data.R:42:3
+  2. │ └─dat %>% ...
+  3. ├─dplyr::relocate(...)
+  4. └─dplyr:::relocate.data.frame(...)
+  5.   └─dplyr:::eval_relocate(...)
+  6.     └─tidyselect::eval_select(...)
+  7.       └─tidyselect:::eval_select_impl(...)
+  8.         ├─tidyselect:::with_subscript_errors(...)
+  9.         │ └─base::withCallingHandlers(...)
+ 10.         └─tidyselect:::vars_select_eval(...)
+ 11.           └─tidyselect:::walk_data_tree(expr, data_mask, context_mask)
+ 12.             └─tidyselect:::eval_c(expr, data_mask, context_mask)
+ 13.               └─tidyselect:::reduce_sels(node, data_mask, context_mask, init = init)
+ 14.                 └─tidyselect:::walk_data_tree(new, data_mask, context_mask)
+ 15.                   └─tidyselect:::eval_sym(expr, data_mask, context_mask)
+── Warning ('test-match_sheet_to_regex.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("match_sheet_to_regex") at test-match_sheet_to_regex.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-process_year_column.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("process_year_column") at test-process_year_column.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-reformat_no_row_headers_data.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("reformat_no_row_headers_data") at test-reformat_no_row_headers_data.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-reformat_row_headers_data.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("reformat_row_headers_data") at test-reformat_row_headers_data.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-reformat_single_header_data.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("reformat_single_header_data") at test-reformat_single_header_data.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-reformat_three_header_data.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("reformat_three_header_data") at test-reformat_three_header_data.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-reformat_three_header_right_block.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("reformat_three_header_right_block") at test-reformat_three_header_right_block.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-reformat_two_header_data.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("reformat_two_header_data") at test-reformat_two_header_data.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-remove_line_breaks.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("remove_line_breaks") at test-remove_line_breaks.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-rename_reserved_colnames.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("rename_reserved_colnames") at test-rename_reserved_colnames.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-sheet_matcher.R:1:1'): (code run outside of `test_that()`) ───
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("sheet_matcher returns the correct sheet") at test-sheet_matcher.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-sheet_matcher.R:7:3'): No matching sheets should return NULL ──
+`expect_is()` was deprecated in the 3rd edition.
+i Use `expect_type()`, `expect_s3_class()`, or `expect_s4_class()` instead
+Backtrace:
+    ▆
+ 1. └─testthat::expect_is(result, "NULL") at test-sheet_matcher.R:7:3
+ 2.   └─testthat:::edition_deprecate(3, "expect_is()", "Use `expect_type()`, `expect_s3_class()`, or `expect_s4_class()` instead") at testthat/R/expect-inheritance.R:174:3
+── Warning ('test-simple_table_behead.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("simple_table_behead") at test-simple_table_behead.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-split_by_consecutives.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("split_by_consecutives") at test-split_by_consecutives.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-split_column_by_pattern.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("split_column_by_pattern") at test-split_column_by_pattern.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-split_original_header.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("split_original_header") at test-split_original_header.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-split_table.R:1:1'): (code run outside of `test_that()`) ─────
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("split_table") at test-split_table.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-string_to_dict.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("string_to_dict") at test-string_to_dict.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+── Warning ('test-trim_separators.R:1:1'): (code run outside of `test_that()`) ──
+`context()` was deprecated in the 3rd edition.
+Backtrace:
+    ▆
+ 1. └─testthat::context("trim_separators") at test-trim_separators.R:1:1
+ 2.   └─testthat:::edition_deprecate(3, "context()") at testthat/R/context.R:27:3
+
+══ Failed tests ════════════════════════════════════════════════════════════════
+── Error ('test-build_regex.R:2:3'): build_regex not yet written ───────────────
+Error in `build_regex()`: argument "instructions" is missing, with no default
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(build_regex(), 0) at test-build_regex.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. └─tidysheet::build_regex()
+ 5.   └─base::strsplit(instructions, "_")
+── Error ('test-check_all_nchar.R:2:3'): check_all_nchar TBD ───────────────────
+Error in `check_all_nchar()`: argument "dat" is missing, with no default
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(check_all_nchar(), 4) at test-check_all_nchar.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. ├─tidysheet::check_all_nchar()
+ 5. │ └─... %>% distinct(num_chars_check)
+ 6. ├─dplyr::distinct(., num_chars_check)
+ 7. ├─dplyr::filter(., !is.na(num_chars_check))
+ 8. ├─dplyr::mutate(...)
+ 9. └─dplyr::mutate(., char_count = nchar(as.character(!!sym(col_name))))
+── Error ('test-check_na_error.R:2:3'): check_na_error TBD ─────────────────────
+Error in `if (is.na(values[i])) {
+    na_variables <- c(na_variables, names[i])
+}`: argument is of length zero
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(check_na_error(), 4) at test-check_na_error.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. └─tidysheet::check_na_error()
+── Error ('test-combine_headings.R:2:3'): combine_headings TBD ─────────────────
+Error in `combine_headings()`: argument "headers_to_combine" is missing, with no default
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(combine_headings(), 4) at test-combine_headings.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. └─tidysheet::combine_headings()
+── Error ('test-consecutive_years_to_financial.R:2:3'): consecutive_years_to_financial not yet written ──
+Error in `consecutive_years_to_financial(1992)`: Only one year found.
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(...) at test-consecutive_years_to_financial.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. └─tidysheet::consecutive_years_to_financial(1992)
+── Error ('test-convert_year_end_to_fy.R:2:3'): convert_year_end_to_fy TBD ─────
+Error in `convert_year_end_to_fy()`: argument "dat" is missing, with no default
+Backtrace:
+     ▆
+  1. ├─testthat::expect_equal(convert_year_end_to_fy(), 4) at test-convert_year_end_to_fy.R:2:3
+  2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+  3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+  4. ├─tidysheet::convert_year_end_to_fy()
+  5. │ └─... %>% ...
+  6. ├─dplyr::select(., -c(year_end, century, year_start_numeric, year_end_numeric))
+  7. ├─dplyr::mutate(...)
+  8. ├─dplyr::mutate(., year_start_numeric = year_end_numeric - 1)
+  9. ├─dplyr::mutate(., year_end_numeric = as.numeric(year_end))
+ 10. └─dplyr::mutate(...)
+── Error ('test-get_duplicated_rows.R:2:3'): get_duplicated_rows not yet written ──
+Error in `get_duplicated_rows()`: argument "dat" is missing, with no default
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(get_duplicated_rows(), 0) at test-get_duplicated_rows.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. └─tidysheet::get_duplicated_rows()
+── Failure ('test-get_vintage_from.R:9:3'): get_vintage_from initial string positive match ──
+`actual_result` (`actual`) not equal to `expected_result` (`expected`).
+
+`actual`:   "budget"  
+`expected`: "forecast"
+── Failure ('test-hello.R:2:3'): hello works ───────────────────────────────────
+hello() (`actual`) not equal to "Hello, world!" (`expected`).
+
+`actual`:   "Hello, world from tidysheet"
+`expected`: "Hello, world!"              
+── Failure ('test-identify_absent_packages.R:3:3'): identify_absent_packages ───
+1 (`actual`) not equal to 0 (`expected`).
+
+  `actual`: 1.0
+`expected`: 0.0
+── Failure ('test-install_absent_packages.R:3:3'): install_absent_packages ─────
+1 (`actual`) not equal to 0 (`expected`).
+
+  `actual`: 1.0
+`expected`: 0.0
+── Failure ('test-join_cols_data.R:50:3'): join_cols_data handles missing values correctly ──
+`result` (`actual`) not equal to `expected` (`expected`).
+
+actual vs expected
+                col1 col2
+  actual[1, ]     A    D 
+- actual[2, ]          E 
++ expected[2, ]   NA   E 
+- actual[3, ]     C      
++ expected[3, ]   C    NA
+
+`actual$col1`:   "A" "" "C"
+`expected$col1`: "A" NA "C"
+
+`actual$col2`:   "D" "E" ""
+`expected$col2`: "D" "E" NA
+── Error ('test-reformat_multi_table_data.R:2:3'): reformat_multi_table_data TBD ──
+Error in `reformat_multi_table_data()`: argument "table_split_points" is missing, with no default
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(reformat_multi_table_data(), 4) at test-reformat_multi_table_data.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. └─tidysheet::reformat_multi_table_data()
+ 5.   └─base::paste0(table_split_points, collapse = "|")
+── Error ('test-remove_empty_lines.R:2:3'): remove_empty_lines not yet written ──
+Error in `remove_empty_lines()`: argument "dat" is missing, with no default
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_equal(remove_empty_lines(), 0) at test-remove_empty_lines.R:2:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object") at testthat/R/expect-equality.R:62:3
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo)) at testthat/R/quasi-label.R:45:3
+ 4. ├─tidysheet::remove_empty_lines()
+ 5. │ └─dat %>% ...
+ 6. └─dplyr::mutate(...)
+
+[ FAIL 14 | WARN 40 | SKIP 0 | PASS 285 ]
+Error: Test failures
+Execution halted
+
+2 errors ✖ | 5 warnings ✖ | 6 notes ✖

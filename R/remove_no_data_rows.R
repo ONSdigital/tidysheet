@@ -10,7 +10,6 @@
 #' Error raised if input is not a dataframe.
 #' Warning is given if any rows are removed
 #'
-#' @importFrom dplyr mutate, filter, select, sym
 #'
 #' @param df Dataframe
 #' @param col_names character vector between length 1 and 3. The quoted names of

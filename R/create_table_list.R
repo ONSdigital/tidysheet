@@ -1,6 +1,6 @@
 #' @title create_table_list
 #' @description Create a list of tables by segmenting header rows based on column positions.
-#' @author Emma Wood \email{Emma.Wood@ons.gov.uk}
+#' @author Barbie Mwangi \email{Barbie.Mwangi@ons.gov.uk}
 #' @details
 #' Create a list of tables by segmenting header rows based on column positions.
 #'

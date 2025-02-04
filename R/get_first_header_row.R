@@ -10,7 +10,9 @@
 #' @param file_part A file part to search for the identifiers, usually 1, or sometimes 2.
 #'
 #' @return The index of the first header row.
-#' @example first_header_row <- get_first_header_row(date_as_character, header_identifier, second_identifier, file_part)
+#' @examples
+#'
+#'  first_header_row <- get_first_header_row(date_as_character, header_identifier, second_identifier, file_part)
 #' @description
 #' This function searches for the specified header identifiers and second identifiers (if provided) in the file part.
 #' It then identifies the first row of the header based on the found identifiers and returns its index.

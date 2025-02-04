@@ -37,5 +37,5 @@ table_count <- 1
 table_list <- create_table_list(header_rows_combined, table_start_cols, table_count)
 }
 \author{
-Emma Wood \email{Emma.Wood@ons.gov.uk}
+Barbie Mwangi \email{Barbie.Mwangi@ons.gov.uk}
 }

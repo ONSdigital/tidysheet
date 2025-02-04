@@ -9,7 +9,7 @@
 #' @param pattern string. Regular expression you want to match
 #' @returns vector of strings. names of the col names the pattern is found in
 #'
-#' @example
+#' @examples
 #' dat <- data.frame(fin_year_end = "2020", "year" = ("2021"), "other" = NA)
 #' get_matching_colnames(dat, "year")
 #'
