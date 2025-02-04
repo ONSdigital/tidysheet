@@ -16,6 +16,10 @@ install.packages("usethis")
 install.packages("testthat")
 usethis::use_testthat()
 usethis::use_test("hello.R")
+usethis::use_test("create_table_list.R")
+library(tidysheet)
+?tidysheet::create_table_list
+testthat::test_file("tests/testthat/test-create_table_list.R")
 install.packages("covr")
 library(covr)
 
