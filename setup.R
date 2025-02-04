@@ -84,3 +84,7 @@ devtools::check()
 
 # Close the connection
 sink()
+
+
+
+
