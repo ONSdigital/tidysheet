@@ -1,33 +1,141 @@
+#!groovy
+
+// Global scope required for multi-stage persistence
+def artifactoryStr = 'onsart-01'
+artServer = Artifactory.server "${artifactoryStr}"
+buildInfo = Artifactory.newBuildInfo()
+def agentPython3Version = 'python_3.10'
+def artifactVersion
+
+// Define a function to push packaged code to Artifactory
+def pushToPyPiArtifactoryRepo_temp(String projectName, String version, String sourceDistLocation = 'python/dist/*', String artifactoryHost = 'onsart-01.ons.statistics.gov.uk') {
+    withCredentials([usernamePassword(credentialsId: env.ARTIFACTORY_CREDS, usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]){
+        sh "curl -u ${ARTIFACTORY_USER}:\${ARTIFACTORY_PASSWORD} -T ${sourceDistLocation} 'https://${artifactoryHost}/artifactory/${env.ARTIFACTORY_PYPI_REPO}/${projectName}/'"
+    }
+}
+
+// This section defines the Jenkins pipeline
 pipeline {
-    agent none
+
+    agent any
+
+    libraries {
+        lib('jenkins-pipeline-shared@feature/dap-ci-scripts')
+    }
+
+    environment {
+        ARTIFACTORY_CREDS       = 's_jenkins_epds'
+        ARTIFACTORY_PYPI_REPO   = 'LR_EPDS_pypi'
+        PROJECT_NAME            = 'resdev'
+        BUILD_BRANCH            = 'main'  // Any commits to this branch will create a build in artifactory
+        BUILD_TAG               = '*-release'  // Any commits tagged with this pattern will create a build in artifactory
+        MIN_COVERAGE_PC         = '0'
+        GITLAB_CREDS            = 'rdsa_token'  // Credentials used for notifying GitLab of build status
+    }
+
+    options {
+        skipDefaultCheckout true
+    }
     stages {
-        //we might want to do something python like before we run R
-        //normally all the files would be in git so we wouldn't be in quotes hell
-        stage('Python prework') {
-            agent { label "build.python_3.12" }
+        stage('Checkout') {
+            agent { label 'download.jenkins.slave' }
             steps {
-                echo 'Python Container is running'
-                sh 'python3 -c \'print("""print("hello from R")""")\' >example.r'
-                sh 'cat example.r'
-                stash includes: '*.r', name: 'rcode'
+                onStage()
+                colourText('info', "Checking out code from source control.")
+
+                checkout scm
+
+                script {
+                    buildInfo.name = "${PROJECT_NAME}"
+                    buildInfo.number = "${BUILD_NUMBER}"
+                    buildInfo.env.collect()
+                }
+                colourText('info', "BuildInfo: ${buildInfo.name}-${buildInfo.number}")
+                stash name: 'Checkout', useDefaultExcludes: false
             }
         }
-        stage('R example') {
-            agent { label "build.r_4-4-1" }
+
+        stage('Preparing virtual environment') {
+            agent { label "test.${agentPython3Version}" }
             steps {
-                echo 'R Container is running'
-                unstash 'rcode'
-                //the R executable has an alias to make it easy to call
-                sh "R -f example.r"
+                onStage()
+                colourText('info', "Create venv and install dependencies")
+                unstash name: 'Checkout'
+
+                sh '''
+                PATH=$WORKSPACE/venv/bin:/usr/local/bin:/root/.local/bin:$PATH
+
+                python3 -m pip install -U pip
+                pip3 install virtualenv
+
+                if [ ! -d "venv" ]; then
+                    virtualenv venv
+                fi
+                . venv/bin/activate
+                export PIP_USER=false
+
+                pip3 install pypandoc
+
+                pip3 install -r requirements.txt
+
+                pip3 freeze
+
+                '''
+            stash name: 'venv', useDefaultExcludes: false
             }
         }
-        stage('R test') {
-            agent { label "test.r_4-4-1" }
+
+
+        stage('Unit Test and coverage') {
+            agent { label "test.${agentPython3Version}" }
             steps {
-                echo 'R Container is runnning'
-                unstash 'rcode'
-                sh "R -f example.r"
+                onStage()
+                colourText('info', "Running unit tests and code coverage.")
+                unstash name: 'Checkout'
+                unstash name: 'venv'
+
+                // Compatibility for PyArrow with Spark 2.4-legacy IPC format.
+                sh 'export ARROW_PRE_0_15_IPC_FORMAT=1'
+
+                // Running coverage first runs the tests
+                sh '''
+                . venv/bin/activate
+
+                python3 -m pytest --junitxml "junit-report.xml" "./tests"
+                '''
+
+                junit testResults: 'junit-report.xml'
+            }
+        }
+
+        stage('Build and publish Python Package') {
+            when {
+                anyOf{
+                    branch BUILD_BRANCH
+                    tag BUILD_TAG
+                }
+                beforeAgent true
+            }
+            agent { label "test.${agentPython3Version}" }
+            steps {
+                onStage()
+                colourText('info', "Building Python package.")
+                unstash name: 'Checkout'
+                unstash name: 'venv'
+
+                sh '''
+                . venv/bin/activate
+                export PIP_USER=false
+                pip3 install setuptools
+                pip3 install wheel
+                python3 setup.py build bdist_wheel
+                '''
+
+                script {
+                    pushToPyPiArtifactoryRepo_temp("${buildInfo.name}", "", "dist/*")
+                }
             }
         }
     }
+
 }
