@@ -7,5 +7,5 @@
 #' hello()
 #' @export
 hello <- function() {
-  print("Hello, world from tidysheet")
+  print("Hello from tidysheet. Tidysheet is in development. Functions will be added soon")
 }
