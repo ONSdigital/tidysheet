@@ -5,3 +5,4 @@
 ^doc$
 ^Meta$
 ^\.github/CODEOWNERS$
+^\.pre-commit-config\.yaml$
