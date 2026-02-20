@@ -3,7 +3,7 @@
 
 tidysheet takes messy Excel data and converts it to tidy data with a single 
 value per row, and gives users the ability to control the number and content of 
-description columns. It is flexible to changes in schema and the location of 
+descriptor columns. It is flexible to changes in schema and the location of 
 data, can handle multiple tables in a sheet, and can add metadata from 
 above tables to descriptor columns (e.g. year, units, and vintage).
 
@@ -11,18 +11,34 @@ This package has been designed for non-coders to be able to just specify
 settings to wrangle data, without the need for any coding. See the example below
 for what these settings look like, and how you can run it from R or Python.
 
+Full documentation on all settings will be added as a vignette in the near future.
+
+## Installation
+To run the code via python you can install the package locally by running the 
+following in R:
+```r
+# Install from local
+renv::restore()
+install.packages("D:/coding_repos/tidysheet_1.0.tar.gz", type = "source")
+```
+Alternatively, to run in R simply use `devtools::load_all()` at the start of
+your session.
+  
 ## Example
 This example dataset has two rows of headings and some non-unique row 
-names that refer to the row name above. It covers a small proportion of the 
-functionality and is largely to demonstrate the simplicity of editing settings.
+names that refer to the row name above. This example is to demonstrate the simplicity 
+of editing settings: It covers only a small proportion of the functionality of tidysheet.
   
 ### Input data
-  
+<img width="837" height="325" alt="image" src="https://github.com/user-attachments/assets/4a596a5c-152d-4c17-8064-0d07e1eaa0ba" />
+
 ### Output data
 Some irrelevant columns such as supplier, source, dataset, and units have been
 removed for demonstration purposes.
+<img width="1071" height="431" alt="image" src="https://github.com/user-attachments/assets/abd22a34-6381-4e4b-b20e-acd1d59fb977" />
   
 ### In R:
+To tidy the example input above and get the output shown, you would run the following in R:
 ```
 # users to edit this:
 settings <- "{
@@ -92,19 +108,6 @@ process = run_subprocess(
 # whatever way best fits with you Python logging:
 stdout.splitlines(process)
 ```
-
-## Installation
-
-To run the code via python you can install the package locally using:
-
-```r
-# Install from local
-renv::restore()
-install.packages("D:/coding_repos/tidysheet_1.0.tar.gz", type = "source")
-```
-Alternatively, to run in R simply use `devtools::load_all()` at the start of
-your session.
-
 ## Contributing
 These notes are in progress.
 
