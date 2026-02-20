@@ -1,0 +1,11 @@
+^renv$
+^renv\.lock$
+^.*\.Rproj$
+^\.Rproj\.user$
+^doc$
+^Meta$
+^CODEOWNERS$
+^LICENSE$
+^SECURITY.md
+^CODE_OF_CONDUCT.md
+^\.pre-commit-config\.yaml$
