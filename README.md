@@ -11,7 +11,7 @@ This package has been designed for non-coders to be able to just specify
 settings to wrangle data, without the need for any coding. See the example below
 for what these settings look like, and how you can run it from R or Python.
 
-Full documentation on all settings will be added as a vignette in the near future.
+Full documentation on all settings are given in the [Wiki](https://github.com/ONSdigital/tidysheet_public/wiki) (still in progress).
 
 ## Installation
 To run the code via python you can install the package locally by running the 
