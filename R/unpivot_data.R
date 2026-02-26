@@ -1189,12 +1189,19 @@ behead_left_block <- function(
     # left behead when there is only one left header. Bring these back in as they
     # may be needed for add_row_headers_as_column
     last_header <- first_header_row + header_row_count - 1
-    data_rows <- unique(left_beheaded$row)
+    # we have to filter on numeric because if there is a character column to the
+    # right of the data with a value in, the row of the character cell in the
+    # left header block will not be counted as a lost character row.
+    data_rows <- left_beheaded %>%
+      filter(!is.na(numeric)) %>%
+      distinct(row)
 
+    last_left_header_col <- length(cols_to_name) + min(left_beheaded$row)
 
     lost_character_rows <- cols_removed %>%
       filter(
-        data_type == "character" & ! row %in% data_rows & row > last_header
+        data_type == "character" & ! row %in% data_rows & row > last_header &
+            col < last_left_header_col
       ) %>%
       rename(!!sym(cols_to_name) := character)
 
