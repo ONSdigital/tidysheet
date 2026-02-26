@@ -3,8 +3,9 @@
 
 tidysheet takes messy Excel data and converts it to tidy data with a single 
 value per row, and gives users the ability to control the number and content of 
-descriptor columns. It is flexible to changes in schema and the location of 
-data, can handle multiple tables in a sheet, and can add metadata from 
+descriptor columns. It is resilient to minor changes in schema and the location of 
+data, and settings can be easily updated to account for larger changes. It can 
+handle multiple tables in a sheet, and can add metadata from 
 above tables to descriptor columns (e.g. year, units, and vintage).
 
 This package has been designed for non-coders to be able to just specify
