@@ -15,7 +15,7 @@ for what these settings look like, and how you can run it from R or Python.
 Full documentation on all settings are given in the [Wiki](https://github.com/ONSdigital/tidysheet_public/wiki) (still in progress).
 
 ## Installation
-To run the code via python you can install the package locally by running the 
+To run the code via local python you will first need to install the package locally by running the 
 following in R:
 ```r
 # Install from local
@@ -25,13 +25,13 @@ install.packages("D:/coding_repos/tidysheet_1.0.tar.gz", type = "source")
 Alternatively, to run in R simply use `devtools::load_all()` at the start of
 your session.
   
-## Example
+## Example settings and run instructions for R and Python
 This example dataset has two rows of headings and some non-unique row 
-names that refer to the row name above. This example is to demonstrate the simplicity 
+names that refer to the row name above ('... of which...'). This example is to demonstrate the simplicity 
 of editing settings: It covers only a small proportion of the functionality of tidysheet.
   
 ### Input data
-<img width="837" height="325" alt="image" src="https://github.com/user-attachments/assets/4a596a5c-152d-4c17-8064-0d07e1eaa0ba" />
+<img width="837" alt="image" src="https://github.com/user-attachments/assets/4a596a5c-152d-4c17-8064-0d07e1eaa0ba" />
 
 ### Output data
 Some irrelevant columns such as supplier, source, dataset, and units have been
@@ -52,10 +52,13 @@ settings <- "{
   single_vintage: final
   }"
 
-filepath <- file.path(test_path("testdata"), "examples.xlsx")
+in_filepath <- file.path(test_path("testdata"), "examples.xlsx")
+out_filepath <- NA
+sheet_regex_pattern <- "demo"
+file_part <- "1"
 
-# single line run to tidy any dataset regardless of which settings are used:
-tidy_sheet(c("--args", filepath, "demo", NA, settings, "1"), to_csv = FALSE)
+# single line run to tidy any dataset regardless of which settings are used.
+tidy_sheet(c("--args", in_filepath, sheet_regex_pattern, out_filepath, settings, file_part), to_csv = FALSE)
 ```
 
 ### In Python:
@@ -110,8 +113,6 @@ process = run_subprocess(
 stdout.splitlines(process)
 ```
 ## Contributing
-These notes are in progress.
-
 Please read and follow our Code of Conduct to ensure a welcoming environment for
 all contributors.
 
