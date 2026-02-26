@@ -19,13 +19,14 @@
 #' second name in columns_to_create etc.
 #' @param first_header_row integer. the number of the first row in which there
 #' are headers.
-#' @param tolerance numeric between 0 and 1. defaults to 0.4. Used when
-#' A row or column in the original data will be considered numeric if more than
-#' this proportion of rows have data type numeric. If numeric_tolerance is 0.4,
-#' the row or column will be assigned as 'numeric' if 40% or more of the
-#' cells in that row are numeric. Default value works for the vast
-#' majority of datasets. However, if, for example, the data have lots of header
-#' rows but very few numeric data rows, you may need to decrease the tolerance.
+#' @param tolerance numeric between 0 and 1. Defaults to 0.4. If tolerance is
+#' 0.4, the column will be considered 'numeric' if 40% or more of the cells
+#' in that row are numeric. 0.4 works for the vast majority of datasets.
+#' However, if, for example, the data has many header rows but very few numeric
+#' data rows, or has many suppressed values in the first couple of value columns
+#' you may need to decrease the tolerance. If the last descriptive column in the
+#' left block contains a lot of cells with numbers, you may need to set the
+#' tolerance to higher than 0.4.
 #' @param left_headers character vector or NA. Optional. The names to be given
 #' to the columns containing descriptor data (to the left of the data)
 #' @param header_to_split character string or NA. Optional. The name of the
