@@ -91,27 +91,68 @@ arg_values <- commandArgs(trailingOnly = TRUE)
 # Process data
 tidysheet::tidy_sheet(arg_values)
 ```
-
 And something along the lines of the following code would be in python 
-(note that this is a non-working example):
+(note that this requires the referenced files to exist in the given locations):
 ```
-RSCRIPT_PATH = "C:\\My_RStudio\\R-4.4.1\\bin\\Rscript.exe"
-settings = mydict.get("settings")
-settings_json = json.dumps(settings) 
-input_filepath = "D:\\readme_example.xlsx"
-output_filepath = "D:\\readme_example_output.csv"
-sheet_pattern = "demo"
-run_file = "D:\\tidy_sheet_run_file.r"
+import os
+import toml
+import json
+import subprocess
 
-process = run_subprocess(
-  RSCRIPT_PATH, run_file, "--args", 
-  input_filepath, sheet_pattern, output_filepath, settings_json, 1
+# Save the settings in a toml in this path
+config_path = os.path.join(
+    "D://", "tidysheet_in_python", "settings.toml"
 )
 
-# To get the logs from R you can uset he following, and process that text in 
-# whatever way best fits with you Python logging:
-stdout.splitlines(process)
+RSCRIPT_PATH = "C:\\My_RStudio\\R-4.4.1\\bin\\Rscript.exe"
+runner_path = os.path.join(
+    "D:\\", "tidysheet_in_python", "runner.r"
+)
+
+# hard coded just as an example
+supplier = "dluhc"
+source = "capital_expenditure_final"
+dataset = "COR_TAB4"
+sheet_pattern = "(?i)table_4a"
+
+input_filepath = os.path.join(
+  "D:\\", "test_data", "excel_source_data", supplier, source,
+  f"dapsen-{supplier}-{source}-{dataset}-2023_24.xlsx"
+)
+output_filepath = os.path.join(
+  "D:\\", "test_data", "output", supplier, source,
+  f"dapsen-{supplier}-{source}-{dataset}-2023_24.xlsx"
+)
+
+mydict = toml.load(config_path)
+settings = mydict.get("settings")
+settings_json = json.dumps(settings) 
+
+command = [
+    RSCRIPT_PATH, 
+    runner_path,
+    "--args", 
+    input_filepath, 
+    sheet_pattern, 
+    output_filepath, 
+    settings_json, 
+    "1",
+]
+
+process = subprocess.run(
+    command,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    text=True,
+    shell=True,
+    )
+
+# The output from R is stored in `process`. It can be reformatted to fit whatever logger style you are using.
+print(process)
 ```
+Before running the Python file, you will need to install tidysheet. This can be done by opening the tidysheet project in RStudio, and clicking the install button in the build panel:
+<img width="644" alt="image" src="https://github.com/user-attachments/assets/f1bf751c-7543-4ecd-ba3a-c5a07364f156" />
+
 ## Contributing
 Please read and follow our Code of Conduct to ensure a welcoming environment for
 all contributors.
