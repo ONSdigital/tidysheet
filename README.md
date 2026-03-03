@@ -80,7 +80,7 @@ For the example above, the following settings would be given in e.g. a toml file
   single_vintage = "final"
 ```
 An R run-file would need to be created and saved in e.g
-"D:\\tidy_sheet_run_file.r":
+"D:\\tidy_sheet_in_python\\runner.r":
 ```
 # messages and warnings in the order they occur
 options(warn = 1)
@@ -150,8 +150,9 @@ process = subprocess.run(
 # The output from R is stored in `process`. It can be reformatted to fit whatever logger style you are using.
 print(process)
 ```
-Before running the Python file, you will need to install tidysheet. This can be done by opening the tidysheet project in RStudio, and clicking the install button in the build panel:
-<img width="644" alt="image" src="https://github.com/user-attachments/assets/f1bf751c-7543-4ecd-ba3a-c5a07364f156" />
+Before running the Python file, you will need to install tidysheet. This can be done by opening the tidysheet project in RStudio, and clicking the install button in the build panel:  
+<img width="642" alt="image" src="https://github.com/user-attachments/assets/059d25c9-97a8-4d44-92c6-e8b94332a2dd" />
+
 
 ## Contributing
 Please read and follow our Code of Conduct to ensure a welcoming environment for
