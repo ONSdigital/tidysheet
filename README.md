@@ -109,20 +109,13 @@ runner_path = os.path.join(
     "D:\\", "tidysheet_in_python", "runner.r"
 )
 
-# hard coded just as an example
-supplier = "dluhc"
-source = "capital_expenditure_final"
-dataset = "COR_TAB4"
-sheet_pattern = "(?i)table_4a"
-
 input_filepath = os.path.join(
-  "D:\\", "test_data", "excel_source_data", supplier, source,
-  f"dapsen-{supplier}-{source}-{dataset}-2023_24.xlsx"
+  "D:\\", "coding_repos", "tidysheet", "tests", "testthat",
+  "testdata", "examples.xlsx"
 )
-output_filepath = os.path.join(
-  "D:\\", "test_data", "output", supplier, source,
-  f"dapsen-{supplier}-{source}-{dataset}-2023_24.xlsx"
-)
+output_filepath = os.path.join("D:\\", "tudysheet_example_output.csv")
+
+sheet_pattern = "Sheet1|demo"
 
 mydict = toml.load(config_path)
 settings = mydict.get("settings")
