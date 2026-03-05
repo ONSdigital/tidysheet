@@ -45,8 +45,8 @@
 #' function will need to be updated.
 #' @param tidy_data boolean. Defaults to FALSE. Use TRUE when data only have one
 #' column of numeric values.
-#' @param tidy_notes_name character string. Only used if columns_to_create is
-#' NA. Only required if there is a character column to the right of tidy data,
+#' @param tidy_notes_name character string. Only used if tidy_data is true.
+#' Only required if there is a character column to the right of tidy data,
 #' in which case it is used as a name for that column.
 #'
 #' @export
@@ -223,12 +223,16 @@ unpivot_data <- function(dat,
 #'     col = c(1, 2, 1, 2),
 #'     data_type = c(rep("character", 3), "numeric"),
 #'     character = c("description", "value", "A", NA),
-#'     numeric = c(NA, NA, NA, 100)
+#'     numeric = c(NA, NA, NA, 100),
+#'     is_blank = FALSE,
+#'     sheet = "Sheet1"
 #'     )
 #'  reformat_tidy_data(dat)
 #' }
 #' @export
-reformat_tidy_data <- function(dat, columns_to_create, tidy_notes_name) {
+reformat_tidy_data <- function(
+    dat, columns_to_create = NA, tidy_notes_name = NA
+    ) {
 
   message("Returning data to original layout.")
 

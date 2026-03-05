@@ -75,11 +75,11 @@ columns with pattern matches", {
 
   # e.g.
   #
-  # Fruit           | random column | value |
-  #=================|===============|=======|
-  #Apple            | some info     |  3    |
-  #...of which pips |...of which x  |  1    |
-  #...of which skin |               |  2    |
+  # Fruit            | random column | value |
+  #==================|===============|=======|
+  # Apple            | some info     |  3    |
+  # ...of which pips |...of which x  |  1    |
+  # ...of which skin |               |  2    |
   #==========================================
   dat <- data.frame(
     address = c("A2", "A3", "A4", "B2", "B3", "B4"),

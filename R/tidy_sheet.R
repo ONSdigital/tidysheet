@@ -137,7 +137,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
   release_number <- get_release_number(front_sheet$character)
 
   ### remove cells--------------------------------------------------------------
-  unwanted_cells_removed <- remove_unwanted_cells(source_data)
+  unwanted_cells_removed <- remove_unwanted_cells(source_data, cells_to_remove)
 
   # remove hidden character strings where the font is the same colour as the
   # background, these need to be removed so that un-pivotting works correctly.
