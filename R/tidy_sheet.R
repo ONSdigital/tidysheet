@@ -521,7 +521,8 @@ get_variable_names <- function() {
     "columns_to_combine_counts",
     "col_patterns_with_values_to_drop", "value_patterns_to_drop",
     "multifile_arg_separator", "tab_pattern_front_page",
-    "tidy_data", "tidy_notes_name"
+    "tidy_data", "tidy_notes_name",
+    "minimum_number_of_consecutive_columns"
   )
 
   return(arg_names)

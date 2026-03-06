@@ -709,7 +709,7 @@ clear_invalid_year_and_type <- function(dat, year_to_na) {
 
     if (any(none_not_blank_count > 0, multi_not_blank_count > 0)) {
       warning(
-        "Year is not valid for ", invalid_count, " rows: 'year' is set to ",
+        "Year is not valid for ", invalid_count, " entries: 'year' is set to ",
         "NA for these rows."
       )
     } else {

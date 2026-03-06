@@ -1,13 +1,11 @@
 #' @title Remove cells from input data that are not needed.
 #'
 #' @description Remove rows from an xlsx_cells imported dataframe
-#' using cell addresses to identify which rows to remove. The action is only
-#' carried out if the given year is within the stated year range.
+#' using cell addresses to identify which rows to remove.
 #'
 #' @param dat dataframe imported using tidyxl::xlsx_cells
 #' @param cells vector of character strings. The Excel addresses of
-#' cells to be removed from data e.g. 'A1'. Each of cells must have a
-#' corresponding min_year and max_year. In pub sec this variable is
+#' cells to be removed from data e.g. 'A1'. In pub sec this variable is
 #' specified by cells_to_remove
 #'
 #' @examples
@@ -789,7 +787,7 @@ remove_unwanted_cols <- function(dat) {
 #' @param dat dataframe imported using tidyxl::xlsx_cells.
 #' @param patterns vector of character strings that are regular expressions,
 #' each one matching the name of a column in the raw data to be removed. In
-#' pub sec this variable is specified by cols_to_remove_regex.
+#' pub sec this variable is specified by left_cols_to_remove_patterns.
 #'
 #' @returns dataframe. dat with rows relating to the matched columns removed.
 #' If a pattern matches character strings in more than one column it is not
@@ -821,7 +819,7 @@ remove_columns <- function(dat, patterns) {
   }
   message(
     "Removing rows relating to columns specified as requiring removal in the ",
-    "settings."
+    "settings e.g. left_cols_to_remove_patterns."
   )
 
   columns_to_remove <- identify_columns_to_remove(dat, patterns)
@@ -901,8 +899,9 @@ identify_columns_to_remove <- function(dat, patterns) {
     } else if (length(col_to_remove) == 0) {
       warning(
         "No columns matched the pattern '", patterns[i],
-        "' given for cols_to_remove_regex in the data dict. The column will",
-        " therefore not be removed. Please contact a developer."
+        "' given for cols_to_remove_regex in the data dict. The column may",
+        " therefore not have been removed. Please contact a developer if data ",
+        "do not look as expected."
       )
     }
   }

@@ -29,6 +29,7 @@
 #' tolerance to higher than 0.4.
 #' @param left_headers character vector or NA. Optional. The names to be given
 #' to the columns containing descriptor data (to the left of the data)
+#' @param minimum_number_of_consecutive_columns
 #' @param header_to_split character string or NA. Optional. The name of the
 #' column whose information is to be split.
 #' @param header_split_to vector of character strings or NA. The new names of
@@ -56,6 +57,7 @@ unpivot_data <- function(dat,
                          first_header_row,
                          tolerance = 0.4,
                          left_headers,
+                         minimum_number_of_consecutive_columns,
                          header_to_split, header_split_to, split_points,
                          column_to_right_of_data_name_pattern,
                          tidy_data,
@@ -120,7 +122,9 @@ unpivot_data <- function(dat,
   }
 
   first_right_header_col <- tryCatch(
-    get_first_of_consecutives(numeric_column_locs),
+    get_first_of_consecutives(
+      numeric_column_locs, minimum_number_of_consecutive_columns
+      ),
     warning=function(w) {
       warning(
         "No consecutive columns that are ", tolerance*100,
@@ -390,36 +394,44 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 
 }
 
-#' @title Get the first integer where the following number is consecutive
+#' @title Get the first integer followed by consecutive numbers
 #'
-#' @description Get the first number in a vector where the next number is
-#' the consecutive number.
+#' @description Get the first number in a sequence where the next x numbers are
+#' consecutive
 #'
 #' For example, if you pass it a vector of numbers that are column positions
 #' where the datatype is numeric, it will return the position of the first
 #' column where both it and the following column are numeric.
 #'
-#' @param x vector of integers
+#' @param sequence vector of integers
+#' @param x integer. The number of consecutive values required. Defaults to 1
+#' (i.e. only one consecutive is required). In pub sec this variable is
+#' specified by minimum_number_of_consecutive_value_columns.
 #' @returns integer. If there are consecutive values, this will be the first of
 #' the consecutive values. If there are no consecutive values a warning will
 #' be given and the first value returned.
 #'
 #' @examples
 #' \dontrun{
-#' x <- c(1, 1, 3, 5, 6, 8)
-#' get_first_of_consecutives(x)
+#' sequence <- c(1, 1, 1, 3, 5, 6, 8, 9, 9, 10, 12, 14, 15, 16, 17, 19)
+#' get_first_of_consecutives(sequence)
+#' get_first_of_consecutives(sequence, 2)
+#' get_first_of_consecutives(sequence, 3)
 #' }
 #' @export
-get_first_of_consecutives <- function(x) {
+get_first_of_consecutives <- function(sequence, x = 1) {
 
-  consecutives_together <- split_by_consecutives(x)
-  consecutive_sets <- lengths(consecutives_together) > 1
+  if (is.na(x)) { x <- 1 }
+
+  sequence <- unique(sequence)
+  consecutives_together <- split_by_consecutives(sequence)
+  consecutive_sets <- lengths(consecutives_together) > x
 
   if (any(consecutive_sets)) {
     first_set <- consecutives_together[consecutive_sets==TRUE][[1]]
   } else {
     # If there are no consecutive values, return the first occurrence
-    first_set <- x
+    first_set <- sequence[1]
     warning(
       "No consecutive values were found. This may have resulted in an error ",
       "in identifying the row or column on which data start."
