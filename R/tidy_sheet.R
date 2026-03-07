@@ -305,18 +305,25 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
 
     # Combine cells that have been artificially split by the supplier
     # e.g. in DLUHC council tax and NNDR
-    for_reformatting <- combine_rows_by_column(
+    headers_vertically_combined <- combine_rows_by_column(
       metadata_cell_removed, combine_start_row_identifier,
       combine_end_row_identifier
     )
 
+    header_row_count <- length(columns_to_create)
+
+    for_reformatting <- remove_columns(
+      headers_vertically_combined, columns_to_remove_patterns,
+      columns_to_remove_offset, table_first_header_row, header_row_count
+    )
+
     unpivotted <- unpivot_data (
       for_reformatting,
-      left_cols_to_remove_patterns,
       columns_to_create,
       table_first_header_row,
       tolerance,
       left_headers,
+      minimum_number_of_consecutive_columns,
       header_to_split, header_split_to, split_points,
       column_to_right_of_data_name_pattern,
       tidy_data,
@@ -492,7 +499,8 @@ get_variable_names <- function() {
     "metadata_cells_to_remove_patterns",
     "populated_rows_to_check_for_metadata_to_remove",
     "combine_start_row_identifier", "combine_end_row_identifier",
-    "left_cols_to_remove_patterns", "columns_to_create", "tolerance",
+    "columns_to_remove_patterns", "columns_to_remove_offset",
+    "columns_to_create", "tolerance",
     "left_headers", "header_to_split", "header_split_to", "split_points",
     "column_to_right_of_data_name_pattern",
     "fill_columns_column_names", "fill_columns_fill_dirs",
@@ -543,7 +551,7 @@ get_pattern_names <- function() {
     "header_identifier", "dropdown_pattern", "table_dropdown_pattern",
     "table_split_patterns", "subtable_title_patterns",
     "table_header_identifier","extend_row_pattern",
-    "metadata_cells_to_remove_patterns", "left_cols_to_remove_patterns",
+    "metadata_cells_to_remove_patterns", "columns_to_remove_patterns",
     "column_to_right_of_data_name_pattern",
     "col_with_totals_pattern", "col_with_row_headers_pattern",
     "replace_string_from_col_patterns", "col_pattern_with_blanks_to_replace",
@@ -552,7 +560,8 @@ get_pattern_names <- function() {
     "fy_end_pattern", "quarter_col_pattern", "month_col_pattern",
     "year_col_pattern", "columns_to_rename_patterns",
     "col_patterns_to_drop_NA_rows", "columns_to_combine_patterns",
-    "col_patterns_with_values_to_drop", "value_patterns_to_drop", "tab_pattern_front_page"
+    "col_patterns_with_values_to_drop", "value_patterns_to_drop",
+    "tab_pattern_front_page"
   )
   return(pattern_names)
 }

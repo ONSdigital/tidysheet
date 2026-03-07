@@ -7,11 +7,6 @@
 #' unpivotr.
 #'
 #' @param dat Dataframe created using tidyxl::xlsx_cells().
-#' @param left_columns_to_remove character string vector. Regular expressions to
-#' match the names of columns in the left block that should be removed. Use this
-#' variable if the left block columns you care about are all unnamed, and you
-#' want to specify their names using left_headers, but there is a named junk
-#' column you don't care about that causes placeholder names to be used instead.
 #' @param columns_to_create character vector. The names of columns that will
 #' be created during behead. The top header in dat will be pivoted to a
 #' column that is given the first name in columns_to_create. If there is a
@@ -28,8 +23,17 @@
 #' left block contains a lot of cells with numbers, you may need to set the
 #' tolerance to higher than 0.4.
 #' @param left_headers character vector or NA. Optional. The names to be given
-#' to the columns containing descriptor data (to the left of the data)
-#' @param minimum_number_of_consecutive_columns
+#' to the columns containing descriptor data (to the left of the data). If
+#' a column in the left block has previously been removed by
+#' columns_to_remove_patterns, it must not be included in left_headers.
+#' @param minimum_number_of_consecutive_columns integer. Defaults to 2. If more
+#' than 2 consecutive numeric columns are required to identify the start of the
+#' right block of numeric data, specify the number required. i.e. if only
+#' columns 3 and 4 contain numbers, this counts as 2 consecutive columns and
+#' minimum_number_of_consecutive_columns would not need to be specified. If,
+#' however, columns 3 and 4 contain numbers but are in the left block of
+#' descriptors, and columns 6, 7, and 8 contain numbers and are the first
+#' columns of the right block, minimum_number_of_consecutive_columns would be 3.
 #' @param header_to_split character string or NA. Optional. The name of the
 #' column whose information is to be split.
 #' @param header_split_to vector of character strings or NA. The new names of
@@ -52,7 +56,6 @@
 #'
 #' @export
 unpivot_data <- function(dat,
-                         left_columns_to_remove,
                          columns_to_create,
                          first_header_row,
                          tolerance = 0.4,
@@ -143,8 +146,7 @@ unpivot_data <- function(dat,
   message("First numeric column: ", first_right_header_col)
 
   left_block_cols_to_name <- get_left_col_names(
-    dat, first_right_header_col, left_columns_to_remove, left_headers,
-    first_data_row
+    dat, first_right_header_col, left_headers, first_data_row
     )
   message(
     "Left block column names: '",
@@ -166,8 +168,8 @@ unpivot_data <- function(dat,
     split_to_multiple_columns(header_to_split, header_split_to, split_points)
 
   left_beheaded <- behead_left_block(
-    no_duplicated_headers, left_block_cols_to_name, left_columns_to_remove,
-    first_header_row, header_row_count
+    no_duplicated_headers, left_block_cols_to_name, first_header_row,
+    header_row_count
   )
 
   left_and_right_joined <- join_left_and_right_unpivotted_data(
@@ -404,9 +406,13 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 #' column where both it and the following column are numeric.
 #'
 #' @param sequence vector of integers
-#' @param x integer. The number of consecutive values required. Defaults to 1
-#' (i.e. only one consecutive is required). In pub sec this variable is
-#' specified by minimum_number_of_consecutive_value_columns.
+#' @param x integer. The number of consecutive values required. Defaults to 2
+#' i.e. if only columns 3 and 4 contain numbers, this counts as 2 consecutive
+#' columns and x would not need to be specified. If, however columns 3 and 4
+#' contain numbers but are in the left block of descriptors, and columns 6, 7,
+#' and 8 contain numbers and are the first columns of the right block, we would
+#' specify x as 3. In pub sec this variable is specified by
+#' minimum_number_of_consecutive_value_columns.
 #' @returns integer. If there are consecutive values, this will be the first of
 #' the consecutive values. If there are no consecutive values a warning will
 #' be given and the first value returned.
@@ -419,9 +425,14 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 #' get_first_of_consecutives(sequence, 3)
 #' }
 #' @export
-get_first_of_consecutives <- function(sequence, x = 1) {
+get_first_of_consecutives <- function(sequence, x = 2) {
 
-  if (is.na(x)) { x <- 1 }
+  if (is.na(x)) { x <- 2 }
+  # when setting the minimum number of consecutive columns it is easier to count
+  # all consecutive columns including the first. But for the purposes of the
+  # code we only want to count the consecutives following the first, so need to
+  # subtract 1.
+  x <- x - 1
 
   sequence <- unique(sequence)
   consecutives_together <- split_by_consecutives(sequence)
@@ -492,10 +503,6 @@ split_by_consecutives <- function(x) {
 #'
 #' @param dat dataframe. Must be xlsx_cells format.
 #' @param first_right_header_col int. The number of the first column of data.
-#' @param left_columns_to_remove character vector. One regular expression for
-#' each column inthe left header block that should be removed before assigning
-#' left header names. If the pattern matches a single column, it will be
-#' removed.
 #' @param left_headers character vector. Can be NA (see rules above).
 #' @param first_data_row integer. The row number of the first line of data
 #' (below the headers).
@@ -515,8 +522,7 @@ split_by_consecutives <- function(x) {
 #' get_left_col_names(dat, 3, c("alt 1", "alt 2"), 2)
 #' }
 get_left_col_names <- function(
-    dat, first_right_header_col, left_columns_to_remove, left_headers,
-    first_data_row
+    dat, first_right_header_col, left_headers, first_data_row
 ) {
 
   message("Getting left header names.")
@@ -534,21 +540,14 @@ get_left_col_names <- function(
     filter((col < first_right_header_col)
            & (row < first_data_row)
            & data_type == "character") %>%
-    distinct(character, col, row, address) %>%
+    distinct(character, col, row) %>%
     right_join(col_locs_to_name, by = "col") %>%
     arrange(col)
-
-  # In Scot Gov POBE the existence of a named left header column means the
-  # unnamed and important left column gets a placeholder name. It is easier
-  # if that column has a known name, so this step allows us to get rid of the
-  # unwanted but named column.
-  remaining_names <- remove_columns(existing_names, left_columns_to_remove)
-
 
   # In nhs digital SALT 2021-22 there is a row with empty strings in the left
   # block headers, and another row with filled strings. Treat the empty ones
   # like NAs
-  non_blank_names <- remaining_names %>%
+  non_blank_names <- existing_names %>%
     mutate(character = ifelse(str_squish(character) == "",
                               NA,
                               character))
@@ -594,11 +593,7 @@ get_left_col_names <- function(
     some_names_exist <- FALSE
   }
 
-  # If the patterns for left_columns_to_remove is not found, the count of
-  # removed columns cannot just be the length of the left_columns_to_remove
-  # variable, so use the row counts of existing and remaining tables instead.
-  removed_columns_count <- nrow(existing_names) - nrow(remaining_names)
-  name_count <- length(left_headers) + removed_columns_count
+  name_count <- length(left_headers)
   header_count <- nrow(col_locs_to_name)
 
   # check the left_headers passed from the data dict
@@ -1155,9 +1150,6 @@ remove_underscore_lines <- function(dat, columns) {
 #' number of times you want to behead left. i.e. if there are three character
 #' columns to the left of the numeric data in Excel, cols_to_name will have 3
 #' elements.
-#' @param left_columns_to_remove Before beheading, remove data for columns that
-#' were not included when attaining the names of the columns in the left header
-#' block. This same variable is used when creating cols_to_name.
 #' @param first_header_row integer. Row numebr the first header is on.
 #' @param header_row_count integer. The number of header rows.
 #'
@@ -1174,11 +1166,10 @@ remove_underscore_lines <- function(dat, columns) {
 #'   numeric = c(rep(NA, 4), 100, 22),
 #'   character = c("Year", "primary", "secondary", "2021", NA, NA))
 #'
-#' behead_left_block(dat, 'Year', NA)
+#' behead_left_block(dat, 'Year', 1,  1)
 #' }
 behead_left_block <- function(
-    dat, cols_to_name, left_columns_to_remove, first_header_row,
-    header_row_count
+    dat, cols_to_name, first_header_row, header_row_count
     ) {
 
   column_count <- length(cols_to_name[!is.na(cols_to_name)])
@@ -1187,13 +1178,7 @@ behead_left_block <- function(
     stop("No names found for descriptor columns to the left of numeric data.")
   }
 
-  message("Getting information from the row descriptors (left block of data).")
-
-  # suppress warnings as they will have already been raised when columns are
-  # removed during get_left_col_names.
-  cols_removed <- suppressWarnings(remove_columns(dat, left_columns_to_remove))
-
-  left_beheaded <- cols_removed
+  left_beheaded <- dat
 
   for (i in 1:column_count) {
 

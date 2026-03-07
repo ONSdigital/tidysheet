@@ -787,7 +787,14 @@ remove_unwanted_cols <- function(dat) {
 #' @param dat dataframe imported using tidyxl::xlsx_cells.
 #' @param patterns vector of character strings that are regular expressions,
 #' each one matching the name of a column in the raw data to be removed. In
-#' pub sec this variable is specified by left_cols_to_remove_patterns.
+#' pub sec this variable is specified by columns_to_remove_patterns.
+#' @param offset vector of integers. Must be either NA or the same length as
+#' patterns. If the column to remove is not named but it's location is known in
+#' relation to a named column, specify the pattern for the named column and use
+#' offset to move x columns to the left (negative) or right (positive). In pub
+#' sec this variable is specified by columns_to_remove_offset.
+#' @param first_row integer. The first row in which column headings are found.
+#' @param header_count integer. The number of header rows.
 #'
 #' @returns dataframe. dat with rows relating to the matched columns removed.
 #' If a pattern matches character strings in more than one column it is not
@@ -808,21 +815,36 @@ remove_unwanted_cols <- function(dat) {
 #' # view as it would be in excel:
 #' rectify(dat)
 #'
-#' output <- remove_column(dat, "id")
+#' output <- remove_column(dat, "id", 0, 1, 1)
 #' rectify(output)
 #' }
 #' @export
-remove_columns <- function(dat, patterns) {
+remove_columns <- function(dat, patterns, offset, first_row, header_count) {
 
   if (all(is.na(patterns))) {
     return(dat)
   }
   message(
     "Removing rows relating to columns specified as requiring removal in the ",
-    "settings e.g. left_cols_to_remove_patterns."
+    "settings by columns_to_remove_patterns."
   )
 
-  columns_to_remove <- identify_columns_to_remove(dat, patterns)
+  # offset has to be a number but may not have been specified for every pattern:
+  if (all(is.na(offset))) {
+    offset <- rep(0, length(patterns))
+  } else if (any(is.na(offset))) {
+    offset <- replace(offset, is.na(offset), 0)
+  }
+  offset <- as.integer(offset)
+
+  if (length(patterns) != length(offset)) {
+    stop("A column to remove offset must be provided for every pattern")
+  }
+
+  target_rows <- c(first_row:(first_row + header_count - 1))
+  columns_to_remove <- identify_columns_to_remove(
+    dat, patterns, offset, target_rows
+    )
 
   columns_removed <- dat %>%
     filter(col %in% columns_to_remove == FALSE)
@@ -831,10 +853,9 @@ remove_columns <- function(dat, patterns) {
 
     column_letters_removed <- get_col_letters_as_string(dat, columns_to_remove)
     warning(
-      "The following left block column(s) have been removed ",
-      "because they match the left_column_to_remove pattern: '",
-      paste0(column_letters_removed, collapse = "', "),
-      "'. If these columns contain information you ",
+      "The following column(s) of the source data have been removed: ",
+      paste0(column_letters_removed, collapse = ", "),
+      ". If these columns contain information you ",
       "require, please contact a developer to update the settings."
     )
   }
@@ -845,7 +866,7 @@ remove_columns <- function(dat, patterns) {
 #' @title Identify header cells to remove from xlsx_cells data.
 #'
 #' @description Use regular expressions to identify which column of the data
-#' they appear in. This function could be improved by adding a mzx_row parameter
+#' they appear in. This function could be improved by adding a row parameter
 #' that states the rows to look in (which would be known from header row +
 #' number of header rows)
 #'
@@ -856,6 +877,12 @@ remove_columns <- function(dat, patterns) {
 #' @param dat dataframe imported using xlsx_cells.
 #' @param patterns vector of character strings that are regular expressions,
 #' each one matching the name of a column in the raw data.
+#' @param offset vector of integers. Must be either NA or the same length as
+#' patterns. If the column to remove is not named but it's location is known in
+#' relation to a named column, specify the pattern for the named column and use
+#' offset to move x columns to the left (negative) or right (positive).
+#' @param target_rows vector of integers. The numbers of the rows in which
+#' column headings are given
 #'
 #' @returns vector of character strings giving the column numbers identified.
 #' If no match is found in the data for a pattern a warning is given.
@@ -873,35 +900,35 @@ remove_columns <- function(dat, patterns) {
 #' # view as it would be in excel:
 #' rectify(dat)
 #'
-#' identify_columns_to_remove(dat, "id")
+#' identify_columns_to_remove(dat, "id", NA, 1)
 #' }
 #' @export
-identify_columns_to_remove <- function(dat, patterns) {
+identify_columns_to_remove <- function(dat, patterns, offset, target_rows) {
 
   all_cols_to_remove <- c()
 
   for (i in 1:length(patterns)) {
-    col_to_remove <- dat %>%
-      filter(stringr::str_detect(character, patterns[i])) %>%
+    col_identified <- dat %>%
+      filter(row %in% target_rows & str_detect(character, patterns[i])) %>%
       distinct(col) %>%
       pull(col)
 
-    if (length(col_to_remove) == 1) {
+    if (length(col_identified) == 1) {
+      col_to_remove <- col_identified + offset[i]
       all_cols_to_remove <- c(all_cols_to_remove, col_to_remove)
 
-    } else if (length(col_to_remove) > 1) {
-      warning(
+    } else if (length(col_identified) > 1) {
+      stop(
         "More than one column matched the pattern '", patterns[i],
-        "' given for cols_to_remove_regex in the data dict. This column will",
-        " therefore not be removed. Please contact a developer."
+        "' given for columns_to_remove_patterns in the settings. This setting ",
+        "will therefore be ignored. Please contact a developer."
       )
 
-    } else if (length(col_to_remove) == 0) {
+    } else if (length(col_identified) == 0) {
       warning(
         "No columns matched the pattern '", patterns[i],
-        "' given for cols_to_remove_regex in the data dict. The column may",
-        " therefore not have been removed. Please contact a developer if data ",
-        "do not look as expected."
+        "' given for columns_to_remove_patterns in the settings. ",
+        "Please contact a developer if data do not look as expected."
       )
     }
   }
