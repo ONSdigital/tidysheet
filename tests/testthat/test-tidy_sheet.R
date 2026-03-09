@@ -243,7 +243,7 @@ test_that("Example 5 is processed as expected", {
   col_patterns_with_values_to_drop: style_format,
   value_patterns_to_drop: (?i)per.*cent,
   exclude_from_reserved_word_check: col_patterns_with_values_to_drop,
-  left_cols_to_remove_patterns: (?i)comparable,
+  columns_to_remove_patterns: (?i)comparable,
   vintage_with_year_column: vintage_and_year,
   year_col_pattern: ^year$,
   columns_to_rename_patterns: (?i)^group,

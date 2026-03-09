@@ -52,7 +52,7 @@ test_that("clear_invalid_year_and_type removes all invalid year entries", {
   )
   expect_warning(
     result <- suppressMessages(clear_invalid_year_and_type(dat, TRUE)),
-    "Year is not valid for 1 rows: 'year' is set to NA for these rows."
+    "Year is not valid for 1 entries: 'year' is set to NA for these rows."
   )
   expect_equal(result, expected)
 })

@@ -193,7 +193,7 @@ test_that("irregular year information is not lost if original year column is cal
     result <- suppressMessages(
       process_year_column(dat, "year", NA, single_year, NA, NA)
     ),
-    "Year is not valid for 1 rows: 'year' is set to NA for these rows."
+    "Year is not valid for 1 entries: 'year' is set to NA for these rows."
   )
 
   expect_equal(result, tibble(expected))

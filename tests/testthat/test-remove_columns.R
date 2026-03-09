@@ -18,14 +18,14 @@ dat <- data.frame(
 test_that("remove_columns gives expected results with one to one matches", {
 
   expect_warning(suppressMessages(
-    result_one_col <- remove_columns(dat, "id")),
+    result_one_col <- remove_columns(dat, "id", NA, 1, 1)),
     "have been removed.*B"
   )
   expect_equal(result_one_col, filter(dat, col != 2))
 
 
   expect_warning(suppressMessages(
-    result_two_cols <- remove_columns(dat, c("name", "id"))),
+    result_two_cols <- remove_columns(dat, c("name", "id"), NA, 1, 1)),
     "have been removed.*A, B"
   )
 
@@ -36,16 +36,15 @@ test_that("remove_columns gives expected results with one to one matches", {
 
 test_that("identify_columns_to_remove does not remove a column if there is more than one match", {
 
-  expect_warning(
-    result <- suppressMessages(remove_columns(dat, "(?i)id")),
+  expect_error(
+    suppressMessages(remove_columns(dat, "(?i)id", NA, 1, 1)),
     "More than one.*(?i)id"
   )
-  expect_equal(result, dat)
 
-  result_mixed <- suppressWarnings(suppressMessages(
-    remove_columns(dat, c("(?i)id", "name"))
-    ))
-  expect_equal(result_mixed, filter(dat, col != 1))
+  expect_error(
+    suppressMessages(remove_columns(dat, c("(?i)id", "name"), NA, 1, 1)),
+    "More than one.*(?i)id"
+    )
 
 })
 
@@ -53,15 +52,16 @@ test_that("identify_columns_to_remove does not remove a column if there is more 
 test_that("remove_columns returns expected result and warnings when no columns are identified", {
 
   expect_warning(
-    result <- suppressMessages(remove_columns(dat, "no match")),
+    result <- suppressMessages(remove_columns(dat, "no match", NA, 1, 1)),
     "No columns matched the pattern 'no match'"
   )
   expect_equal(result, dat)
 
   result_mixed <- suppressWarnings(suppressMessages(
-    remove_columns(dat, c("no match", "id"))
+    remove_columns(dat, c("no match", "id"), NA, 1, 1)
     ))
   expect_equal(result_mixed, filter(dat, col != 2))
 
 })
 
+# TODO: Add tests where header_count is > 1

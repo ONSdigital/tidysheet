@@ -905,6 +905,8 @@ remove_columns <- function(dat, patterns, offset, first_row, header_count) {
 #' @export
 identify_columns_to_remove <- function(dat, patterns, offset, target_rows) {
 
+  if (all(is.na(offset))) {offset <- rep(0, length(patterns))}
+
   all_cols_to_remove <- c()
 
   for (i in 1:length(patterns)) {

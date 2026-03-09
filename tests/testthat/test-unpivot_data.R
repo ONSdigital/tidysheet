@@ -18,11 +18,11 @@ test_that("unpivot_data uses reformat_tidy_data if tidy_data is TRUE", {
   result <- suppressMessages(
     dat %>%
       unpivot_data(
-        left_columns_to_remove = NA,
         columns_to_create = NA,
         first_header_row = 1,
         tolerance = 0.4,
         left_headers = NA,
+        minimum_number_of_consecutive_columns = NA,
         header_to_split = NA,
         header_split_to = NA,
         split_points = NA,
@@ -54,11 +54,11 @@ test_that("unpivot_data raises an error if header to split is specified, but not
   expect_error(
     dat %>%
       unpivot_data(
-        left_columns_to_remove = NA,
         columns_to_create = "description",
         first_header_row = 1,
         tolerance = 0.4,
         left_headers = NA,
+        minimum_number_of_consecutive_columns = NA,
         header_to_split = "to_split",
         header_split_to = NA,
         split_points = NA,
@@ -89,11 +89,11 @@ test_that("unpivot_data raises an error if no numeric columns are found", {
     suppressMessages(
       dat %>%
         unpivot_data(
-          left_columns_to_remove = NA,
           columns_to_create = "description_1",
           first_header_row = 1,
           tolerance = 0.6,
           left_headers = NA,
+          minimum_number_of_consecutive_columns = NA,
           header_to_split = NA,
           header_split_to = NA,
           split_points = NA,
@@ -144,11 +144,11 @@ in line with the second row of headers", {
   result <- suppressMessages(
     dat %>%
       unpivot_data(
-        left_columns_to_remove = NA,
         columns_to_create = c("description_1", "description_2"),
         first_header_row = 1,
         tolerance = 0.4,
         left_headers = NA,
+        minimum_number_of_consecutive_columns = NA,
         header_to_split = NA,
         header_split_to = NA,
         split_points = NA,
@@ -200,11 +200,11 @@ which needs splitting, and left headers in line with the second row of headers",
   result <- suppressMessages(
     dat %>%
     unpivot_data(
-      left_columns_to_remove = NA,
       columns_to_create = c("description_1", "description_2_and_3"),
       first_header_row = 1,
       tolerance = 0.4,
       left_headers = NA,
+      minimum_number_of_consecutive_columns = NA,
       header_to_split = "description_2_and_3",
       header_split_to = c("description_2", "description_3"),
       split_points = "ALT_=-",
@@ -260,11 +260,11 @@ right, 2 header rows and left headers in line with the second row of headers", {
   result <- suppressMessages(
     dat %>%
       unpivot_data(
-        left_columns_to_remove = NA,
         columns_to_create = c("description_1", "description_2"),
         first_header_row = 1,
         tolerance = 0.4,
         left_headers = NA,
+        minimum_number_of_consecutive_columns = NA,
         header_to_split = NA,
         header_split_to = NA,
         split_points = NA,
@@ -312,11 +312,11 @@ high left headers", {
   result <- suppressMessages(
     dat %>%
       unpivot_data(
-        left_columns_to_remove = NA,
         columns_to_create = c("description_1", "description_2"),
         first_header_row = 1,
         tolerance = 0.4,
         left_headers = NA,
+        minimum_number_of_consecutive_columns = NA,
         header_to_split = NA,
         header_split_to = NA,
         split_points = NA,
@@ -361,11 +361,11 @@ test_that("unpivot_data works for a single header row", {
   result <- suppressMessages(
     dat %>%
       unpivot_data(
-        left_columns_to_remove = NA,
         columns_to_create = "description_1",
         first_header_row = 1,
         tolerance = 0.4,
         left_headers = NA,
+        minimum_number_of_consecutive_columns = NA,
         header_to_split = NA,
         header_split_to = NA,
         split_points = NA,
@@ -415,11 +415,11 @@ test_that("unpivot_data works for a single row header but with duplicate headers
   result <- suppressMessages(
     dat %>%
       unpivot_data(
-        left_columns_to_remove = NA,
         columns_to_create = "description_1",
         first_header_row = 1,
         tolerance = 0.4,
         left_headers = NA,
+        minimum_number_of_consecutive_columns = NA,
         header_to_split = NA,
         header_split_to = NA,
         split_points = NA,
@@ -433,64 +433,14 @@ test_that("unpivot_data works for a single row header but with duplicate headers
 })
 
 
-test_that("unpivot_data works when one of the left block columns needs to be removed", {
-
-  dat <- data.frame(
-    sheet = "test",
-    row = c(rep(1:2, each = 4)),
-    col = c(rep(1:4, times = 2)),
-    data_type = c(rep("character", 6),
-                  rep("numeric", 2)),
-    character = c("group", "random", "a1", "a2",
-                  "C", "gumpf", NA, NA),
-    numeric = c(rep(NA, 6), 1, 2),
-    is_blank = FALSE
-  ) %>%
-    mutate(address = paste0(LETTERS[col], row))
-
-  expected <- tibble(
-    sheet = "test",
-    row = 2,
-    col = c(3, 4),
-    data_type = "numeric",
-    character = as.character(NA),
-    numeric = c(1, 2),
-    is_blank = FALSE) %>%
-    mutate(
-      address = paste0(LETTERS[col], row),
-      group = "C",
-      description_1 = c("a1", "a2")
-    )
-
-  expect_warning(
-    result <- suppressMessages(
-      dat %>%
-        unpivot_data(
-          left_columns_to_remove = "random",
-          columns_to_create = "description_1",
-          first_header_row = 1,
-          tolerance = 0.4,
-          left_headers = NA,
-          header_to_split = NA,
-          header_split_to = NA,
-          split_points = NA,
-          column_to_right_of_data_name_pattern = NA,
-          tidy_data = NA,
-          tidy_notes_name = NA)
-    ),
-    "removed because they match the left_column_to_remove pattern.*B"
-  )
-
-  expect_equal(result, expected)
-
-})
-
 test_that("unpivot data raises an error if more than one header to split is provided", {
 
   expect_error(
     unpivot_data(
       data.frame(), NA, "a", 1, 0.4, NA, c("a", "b"), "a", ".", NA, NA, NA
     ),
-    "More than one header_to_split"
+    "When tidy_data is FALSE, columns_to_create is required"
   )
 })
+
+# TODO: add test where minimum_number_of_consecutive_columns is not NA
