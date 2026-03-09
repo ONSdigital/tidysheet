@@ -776,13 +776,12 @@ remove_unwanted_cols <- function(dat) {
 #' @description Remove all rows relating to a column in data imported using
 #' tidyxl::xlsx_cells if a pattern is matched by a character in that column.
 #'
-#' This function was written because there may be a column or columns that
-#' are not wanted because, for example, they may affect the way the data are
-#' unpivotted, and their contents are not required. For example the pub sec
-#' Scottish Government POBE capital 2024-25 download has a column of reference
-#' numbers in column D. This causes problems in reformat_multi_layout_data.
-#'
 #' More than one column can be removed by providing more than one pattern.
+#'
+#' If the name of the column to be removed is blank, or if it is unstable (i.e.
+#' writing a pattern to match it is hard/impossible), a pattern that matches a
+#' nearby column can be used along with offset. This requires that you are
+#' confident about the order of the columns.
 #'
 #' @param dat dataframe imported using tidyxl::xlsx_cells.
 #' @param patterns vector of character strings that are regular expressions,
@@ -866,9 +865,7 @@ remove_columns <- function(dat, patterns, offset, first_row, header_count) {
 #' @title Identify header cells to remove from xlsx_cells data.
 #'
 #' @description Use regular expressions to identify which column of the data
-#' they appear in. This function could be improved by adding a row parameter
-#' that states the rows to look in (which would be known from header row +
-#' number of header rows)
+#' they appear in. Only header rows are checked for matches.
 #'
 #' If a pattern is matched in more than one column none of those matches are
 #' returned as columns to remove. This does not affect the use of any other

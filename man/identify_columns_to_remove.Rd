@@ -26,9 +26,7 @@ If no match is found in the data for a pattern a warning is given.
 }
 \description{
 Use regular expressions to identify which column of the data
-they appear in. This function could be improved by adding a row parameter
-that states the rows to look in (which would be known from header row +
-number of header rows)
+they appear in. Only header rows are checked for matches.
 
 If a pattern is matched in more than one column none of those matches are
 returned as columns to remove. This does not affect the use of any other
