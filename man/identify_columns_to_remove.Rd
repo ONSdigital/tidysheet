@@ -4,13 +4,21 @@
 \alias{identify_columns_to_remove}
 \title{Identify header cells to remove from xlsx_cells data.}
 \usage{
-identify_columns_to_remove(dat, patterns)
+identify_columns_to_remove(dat, patterns, offset, target_rows)
 }
 \arguments{
 \item{dat}{dataframe imported using xlsx_cells.}
 
 \item{patterns}{vector of character strings that are regular expressions,
 each one matching the name of a column in the raw data.}
+
+\item{offset}{vector of integers. Must be either NA or the same length as
+patterns. If the column to remove is not named but it's location is known in
+relation to a named column, specify the pattern for the named column and use
+offset to move x columns to the left (negative) or right (positive).}
+
+\item{target_rows}{vector of integers. The numbers of the rows in which
+column headings are given}
 }
 \value{
 vector of character strings giving the column numbers identified.
@@ -18,7 +26,7 @@ If no match is found in the data for a pattern a warning is given.
 }
 \description{
 Use regular expressions to identify which column of the data
-they appear in. This function could be improved by adding a mzx_row parameter
+they appear in. This function could be improved by adding a row parameter
 that states the rows to look in (which would be known from header row +
 number of header rows)
 
@@ -39,6 +47,6 @@ dat <- data.frame(
 # view as it would be in excel:
 rectify(dat)
 
-identify_columns_to_remove(dat, "id")
+identify_columns_to_remove(dat, "id", NA, 1)
 }
 }

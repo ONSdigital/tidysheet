@@ -2,12 +2,20 @@
 % Please edit documentation in R/unpivot_data.R
 \name{get_first_of_consecutives}
 \alias{get_first_of_consecutives}
-\title{Get the first integer where the following number is consecutive}
+\title{Get the first integer followed by consecutive numbers}
 \usage{
-get_first_of_consecutives(x)
+get_first_of_consecutives(sequence, x = 2)
 }
 \arguments{
-\item{x}{vector of integers}
+\item{sequence}{vector of integers}
+
+\item{x}{integer. The number of consecutive values required. Defaults to 2
+i.e. if only columns 3 and 4 contain numbers, this counts as 2 consecutive
+columns and x would not need to be specified. If, however columns 3 and 4
+contain numbers but are in the left block of descriptors, and columns 6, 7,
+and 8 contain numbers and are the first columns of the right block, we would
+specify x as 3. In pub sec this variable is specified by
+minimum_number_of_consecutive_value_columns.}
 }
 \value{
 integer. If there are consecutive values, this will be the first of
@@ -15,8 +23,8 @@ the consecutive values. If there are no consecutive values a warning will
 be given and the first value returned.
 }
 \description{
-Get the first number in a vector where the next number is
-the consecutive number.
+Get the first number in a sequence where the next x numbers are
+consecutive
 
 For example, if you pass it a vector of numbers that are column positions
 where the datatype is numeric, it will return the position of the first
@@ -24,7 +32,9 @@ column where both it and the following column are numeric.
 }
 \examples{
 \dontrun{
-x <- c(1, 1, 3, 5, 6, 8)
-get_first_of_consecutives(x)
+sequence <- c(1, 1, 1, 3, 5, 6, 8, 9, 9, 10, 12, 14, 15, 16, 17, 19)
+get_first_of_consecutives(sequence)
+get_first_of_consecutives(sequence, 2)
+get_first_of_consecutives(sequence, 3)
 }
 }

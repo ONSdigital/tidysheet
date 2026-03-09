@@ -10,14 +10,12 @@ remove_unwanted_cells(dat, cells = NA)
 \item{dat}{dataframe imported using tidyxl::xlsx_cells}
 
 \item{cells}{vector of character strings. The Excel addresses of
-cells to be removed from data e.g. 'A1'. Each of cells must have a
-corresponding min_year and max_year. In pub sec this variable is
+cells to be removed from data e.g. 'A1'. In pub sec this variable is
 specified by cells_to_remove}
 }
 \description{
 Remove rows from an xlsx_cells imported dataframe
-using cell addresses to identify which rows to remove. The action is only
-carried out if the given year is within the stated year range.
+using cell addresses to identify which rows to remove.
 }
 \examples{
 \dontrun{

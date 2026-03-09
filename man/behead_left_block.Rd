@@ -4,13 +4,7 @@
 \alias{behead_left_block}
 \title{Behead xlsx_cells data to the left the required number of times.}
 \usage{
-behead_left_block(
-  dat,
-  cols_to_name,
-  left_columns_to_remove,
-  first_header_row,
-  header_row_count
-)
+behead_left_block(dat, cols_to_name, first_header_row, header_row_count)
 }
 \arguments{
 \item{dat}{dataframe imported using tidyxl::xlsx_cells.}
@@ -20,10 +14,6 @@ are given these as column names. The length of cols_to_name must equal the
 number of times you want to behead left. i.e. if there are three character
 columns to the left of the numeric data in Excel, cols_to_name will have 3
 elements.}
-
-\item{left_columns_to_remove}{Before beheading, remove data for columns that
-were not included when attaining the names of the columns in the left header
-block. This same variable is used when creating cols_to_name.}
 
 \item{first_header_row}{integer. Row numebr the first header is on.}
 
@@ -49,6 +39,6 @@ dat <- data.frame(
   numeric = c(rep(NA, 4), 100, 22),
   character = c("Year", "primary", "secondary", "2021", NA, NA))
 
-behead_left_block(dat, 'Year', NA)
+behead_left_block(dat, 'Year', 1,  1)
 }
 }

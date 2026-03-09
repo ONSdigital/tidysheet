@@ -30,12 +30,14 @@ data.
 \dontrun{
 data <- data.frame(
   row = 4:6,
+  col = 1,
   year = c(2020, NA, 2021),
   value = c(100, NA, NA),
-  description = c("A", "B", NA)
+  description = c("A", "B", NA),
+  address = c("A4", "A5", "A6")
 )
 patterns <- c("year", "value")
-clean_data <- remove_rows_with_blanks_by_regex(data, patterns)
+clean_data <- drop_rows_with_NA(data, patterns)
 print(clean_data)
 }
 }

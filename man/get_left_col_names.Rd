@@ -4,23 +4,12 @@
 \alias{get_left_col_names}
 \title{Get the column names for the left block.}
 \usage{
-get_left_col_names(
-  dat,
-  first_right_header_col,
-  left_columns_to_remove,
-  left_headers,
-  first_data_row
-)
+get_left_col_names(dat, first_right_header_col, left_headers, first_data_row)
 }
 \arguments{
 \item{dat}{dataframe. Must be xlsx_cells format.}
 
 \item{first_right_header_col}{int. The number of the first column of data.}
-
-\item{left_columns_to_remove}{character vector. One regular expression for
-each column inthe left header block that should be removed before assigning
-left header names. If the pattern matches a single column, it will be
-removed.}
 
 \item{left_headers}{character vector. Can be NA (see rules above).}
 

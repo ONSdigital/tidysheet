@@ -6,11 +6,11 @@
 \usage{
 unpivot_data(
   dat,
-  left_columns_to_remove,
   columns_to_create,
   first_header_row,
   tolerance = 0.4,
   left_headers,
+  minimum_number_of_consecutive_columns,
   header_to_split,
   header_split_to,
   split_points,
@@ -22,12 +22,6 @@ unpivot_data(
 \arguments{
 \item{dat}{Dataframe created using tidyxl::xlsx_cells().}
 
-\item{left_columns_to_remove}{character string vector. Regular expressions to
-match the names of columns in the left block that should be removed. Use this
-variable if the left block columns you care about are all unnamed, and you
-want to specify their names using left_headers, but there is a named junk
-column you don't care about that causes placeholder names to be used instead.}
-
 \item{columns_to_create}{character vector. The names of columns that will
 be created during behead. The top header in dat will be pivoted to a
 column that is given the first name in columns_to_create. If there is a
@@ -37,16 +31,28 @@ second name in columns_to_create etc.}
 \item{first_header_row}{integer. the number of the first row in which there
 are headers.}
 
-\item{tolerance}{numeric between 0 and 1. defaults to 0.4. Used when
-A row or column in the original data will be considered numeric if more than
-this proportion of rows have data type numeric. If numeric_tolerance is 0.4,
-the row or column will be assigned as 'numeric' if 40\% or more of the
-cells in that row are numeric. Default value works for the vast
-majority of datasets. However, if, for example, the data have lots of header
-rows but very few numeric data rows, you may need to decrease the tolerance.}
+\item{tolerance}{numeric between 0 and 1. Defaults to 0.4. If tolerance is
+0.4, the column will be considered 'numeric' if 40\% or more of the cells
+in that row are numeric. 0.4 works for the vast majority of datasets.
+However, if, for example, the data has many header rows but very few numeric
+data rows, or has many suppressed values in the first couple of value columns
+you may need to decrease the tolerance. If the last descriptive column in the
+left block contains a lot of cells with numbers, you may need to set the
+tolerance to higher than 0.4.}
 
 \item{left_headers}{character vector or NA. Optional. The names to be given
-to the columns containing descriptor data (to the left of the data)}
+to the columns containing descriptor data (to the left of the data). If
+a column in the left block has previously been removed by
+columns_to_remove_patterns, it must not be included in left_headers.}
+
+\item{minimum_number_of_consecutive_columns}{integer. Defaults to 2. If more
+than 2 consecutive numeric columns are required to identify the start of the
+right block of numeric data, specify the number required. i.e. if only
+columns 3 and 4 contain numbers, this counts as 2 consecutive columns and
+minimum_number_of_consecutive_columns would not need to be specified. If,
+however, columns 3 and 4 contain numbers but are in the left block of
+descriptors, and columns 6, 7, and 8 contain numbers and are the first
+columns of the right block, minimum_number_of_consecutive_columns would be 3.}
 
 \item{header_to_split}{character string or NA. Optional. The name of the
 column whose information is to be split.}
@@ -69,8 +75,8 @@ function will need to be updated.}
 \item{tidy_data}{boolean. Defaults to FALSE. Use TRUE when data only have one
 column of numeric values.}
 
-\item{tidy_notes_name}{character string. Only used if columns_to_create is
-NA. Only required if there is a character column to the right of tidy data,
+\item{tidy_notes_name}{character string. Only used if tidy_data is true.
+Only required if there is a character column to the right of tidy data,
 in which case it is used as a name for that column.}
 }
 \description{

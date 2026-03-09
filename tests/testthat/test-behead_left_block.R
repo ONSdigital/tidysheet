@@ -13,7 +13,7 @@ test_that("behead_left_block associates value cells with a single column of desc
     mutate(Year = c("Year", "Year", "2021", "2021"),
            set_is_blank_to_true = FALSE)
 
-  result <- suppressMessages(behead_left_block(dat, 'Year', NA, 1, 1))
+  result <- suppressMessages(behead_left_block(dat, 'Year', 1, 1))
 
   expect_equal(result, tibble(expected))
 })
@@ -36,31 +36,7 @@ test_that("behead_left_block associates value cells with multiple columns of des
            set_is_blank_to_true = FALSE)
 
   result <- suppressMessages(
-    behead_left_block(dat, c("Year", "Region"), NA, 1, 1)
-    )
-
-  expect_equal(result, tibble(expected))
-
-})
-
-
-test_that("behead_left_block removes columns specified by left_columns_to_remove", {
-
-  dat <- data.frame(
-    address = c("A1", "B1", "C1", "A2", "B2", "C2"),
-    row = c(1, 1, 1, 2, 2, 2),
-    col = c(1, 2, 3, 1, 2, 3),
-    data_type = c(rep("character", 5), "numeric"),
-    numeric = c(rep(NA, 5), 22),
-    character = c("Year", "Region", "secondary", "2021 Q1", "Wales", NA))
-
-  expected <- dat %>%
-    filter(col %in% 3) %>%
-    mutate(Year = c("Year", "2021 Q1"),
-           set_is_blank_to_true = FALSE)
-
-  result <- suppressMessages(
-    behead_left_block(dat, "Year", "(?i)region", 1, 1)
+    behead_left_block(dat, c("Year", "Region"), 1, 1)
     )
 
   expect_equal(result, tibble(expected))
@@ -89,7 +65,7 @@ test_that("behead_left_block does not drop rows with row names but no values and
            set_is_blank_to_true = FALSE)
 
   result <- suppressMessages(
-    behead_left_block(dat, c("Group", "subgroup"), NA, 7, 1)
+    behead_left_block(dat, c("Group", "subgroup"), 7, 1)
   )
 
   expect_equal(result, tibble(expected))
@@ -120,7 +96,7 @@ test_that("behead_left_block does not drop rows with row names but no values and
   )
 
   result <- suppressMessages(
-    behead_left_block(dat, "Group", NA, 7, 1)
+    behead_left_block(dat, "Group", 7, 1)
   )
 
   expect_equal(result, tibble(expected))

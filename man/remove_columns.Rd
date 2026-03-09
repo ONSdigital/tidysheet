@@ -4,14 +4,24 @@
 \alias{remove_columns}
 \title{Remove lines that were unwanted columns in the Excel data}
 \usage{
-remove_columns(dat, patterns)
+remove_columns(dat, patterns, offset, first_row, header_count)
 }
 \arguments{
 \item{dat}{dataframe imported using tidyxl::xlsx_cells.}
 
 \item{patterns}{vector of character strings that are regular expressions,
 each one matching the name of a column in the raw data to be removed. In
-pub sec this variable is specified by cols_to_remove_regex.}
+pub sec this variable is specified by columns_to_remove_patterns.}
+
+\item{offset}{vector of integers. Must be either NA or the same length as
+patterns. If the column to remove is not named but it's location is known in
+relation to a named column, specify the pattern for the named column and use
+offset to move x columns to the left (negative) or right (positive). In pub
+sec this variable is specified by columns_to_remove_offset.}
+
+\item{first_row}{integer. The first row in which column headings are found.}
+
+\item{header_count}{integer. The number of header rows.}
 }
 \value{
 dataframe. dat with rows relating to the matched columns removed.
@@ -45,7 +55,7 @@ dat <- data.frame(
 # view as it would be in excel:
 rectify(dat)
 
-output <- remove_column(dat, "id")
+output <- remove_column(dat, "id", 0, 1, 1)
 rectify(output)
 }
 }

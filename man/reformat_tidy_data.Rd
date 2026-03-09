@@ -4,7 +4,7 @@
 \alias{reformat_tidy_data}
 \title{Reformat tidy data}
 \usage{
-reformat_tidy_data(dat, columns_to_create, tidy_notes_name)
+reformat_tidy_data(dat, columns_to_create = NA, tidy_notes_name = NA)
 }
 \arguments{
 \item{dat}{xlsx_cells data}
@@ -36,7 +36,9 @@ dat <- data.frame(
     col = c(1, 2, 1, 2),
     data_type = c(rep("character", 3), "numeric"),
     character = c("description", "value", "A", NA),
-    numeric = c(NA, NA, NA, 100)
+    numeric = c(NA, NA, NA, 100),
+    is_blank = FALSE,
+    sheet = "Sheet1"
     )
  reformat_tidy_data(dat)
 }

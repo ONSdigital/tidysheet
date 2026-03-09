@@ -508,7 +508,8 @@ test_that("Example 9 is processed as expected", {
   expect_equal(result, expected)
 })
 
-settings <- "{header_identifier: ^A$, columns_to_create: description_1, minimum_number_of_consecutive_columns: 2, single_year_of_data: true"
-arg_values <- c("--args", filepath, "Sheet1", NA, settings, "1")
-result <- tidy_sheet(arg_values, to_csv = FALSE)
+# settings <- "{header_identifier: ^A$, columns_to_create: description_1,
+# columns_to_remove_patterns: code, single_year_of_data: true"
+# arg_values <- c("--args", filepath, "Sheet1", NA, settings, "1")
+# result <- tidy_sheet(arg_values, to_csv = FALSE)
 

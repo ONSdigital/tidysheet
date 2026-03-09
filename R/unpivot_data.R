@@ -1200,10 +1200,11 @@ behead_left_block <- function(
 
     last_left_header_col <- length(cols_to_name) + min(left_beheaded$row)
 
-    lost_character_rows <- cols_removed %>%
+    rows_in_dat_but_not_left_beheaded <- setdiff(dat$row, left_beheaded$row)
+
+    lost_character_rows <- dat %>%
       filter(
-        data_type == "character" & ! row %in% data_rows & row > last_header &
-            col < last_left_header_col
+        data_type == "character" & row %in% rows_in_dat_but_not_left_beheaded
       ) %>%
       rename(!!sym(cols_to_name) := character)
 
