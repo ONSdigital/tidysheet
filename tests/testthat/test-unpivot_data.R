@@ -443,4 +443,65 @@ test_that("unpivot data raises an error if more than one header to split is prov
   )
 })
 
-# TODO: add test where minimum_number_of_consecutive_columns is not NA
+
+test_that("unpivot data correctly unpivots when there are 2 consecutive numeric
+columns in the left block of descriptors", {
+
+  dat <- data.frame(
+    "row" = rep(1:4, each = 6),
+    "col" = rep(1:6, times = 4),
+    "address" = c("A1", "B1", "C1", "D1", "E1", "F1",
+                  "A2", "B2", "C2", "D2", "E2", "F2",
+                  "A3", "B3", "C3", "D3", "E3", "F3",
+                  "A4", "B4", "C4", "D4", "E4", "F4"),
+    "numeric" = c(NA, NA, NA, NA, NA, NA,
+                  NA, NA, NA, NA, NA, NA,
+                  1, 2024, NA, 1, 3, 5,
+                  2, 2024, NA, 2, 4, 6),
+    "character" = c(NA, NA, NA, "group A", "group B", NA,
+                    "id", "year", "name", "a", "a", "b",
+                    NA, NA, "1st row", NA, NA, NA,
+                    NA, NA, "2nd row", NA, NA, NA),
+    "data_type" = c(rep("blank", 3), rep("character", 2), "blank",
+                    rep(c("character"), 6),
+                    rep(c(rep("numeric", 2), "character", rep("numeric", 3)), 2)
+    ),
+    "is_blank" = c(rep(TRUE, 3), rep(FALSE, 2), TRUE,
+                   rep(FALSE, 18))
+  )
+
+  expected <- tibble(
+    row = rep(3:4, each = 3),
+    col = rep(4:6, times = 2),
+    address = c("D3", "E3", "F3", "D4", "E4", "F4"),
+    numeric = c(1, 3, 5, 2, 4, 6),
+    character = as.character(NA),
+    data_type = "numeric",
+    is_blank = FALSE,
+    id = rep(c("1", "2"), each = 3),
+    year = "2024",
+    name = rep(c("1st row", "2nd row"), each = 3),
+    description_1 = rep(c("group A", "group B", "group B"), times = 2),
+    description_2 = rep(c("a", "a", "b"), times = 2)
+  )
+
+  expect_no_error(
+    result <- suppressMessages(
+      dat %>%
+        unpivot_data(
+          columns_to_create = c("description_1", "description_2"),
+          first_header_row = 1,
+          tolerance = 0.4,
+          left_headers = NA,
+          minimum_number_of_consecutive_columns = 3,
+          header_to_split = NA,
+          header_split_to = NA,
+          split_points = NA,
+          column_to_right_of_data_name_pattern = NA,
+          tidy_data = NA,
+          tidy_notes_name = NA)
+    )
+  )
+
+  expect_equal(result, expected)
+})

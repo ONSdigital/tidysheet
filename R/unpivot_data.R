@@ -593,7 +593,7 @@ get_left_col_names <- function(
     some_names_exist <- FALSE
   }
 
-  name_count <- length(left_headers)
+  name_count <- length(left_headers[!is.na(left_headers)])
   header_count <- nrow(col_locs_to_name)
 
   # check the left_headers passed from the data dict
