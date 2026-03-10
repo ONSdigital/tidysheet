@@ -323,7 +323,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       table_first_header_row,
       tolerance,
       left_headers,
-      minimum_number_of_consecutive_columns,
+      minimum_number_of_consecutive_columns, right_block_offset,
       header_to_split, header_split_to, split_points,
       column_to_right_of_data_name_pattern,
       tidy_data,
@@ -530,7 +530,7 @@ get_variable_names <- function() {
     "col_patterns_with_values_to_drop", "value_patterns_to_drop",
     "multifile_arg_separator", "tab_pattern_front_page",
     "tidy_data", "tidy_notes_name",
-    "minimum_number_of_consecutive_columns"
+    "minimum_number_of_consecutive_columns", "right_block_offset"
   )
 
   return(arg_names)

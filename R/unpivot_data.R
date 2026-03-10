@@ -34,6 +34,11 @@
 #' however, columns 3 and 4 contain numbers but are in the left block of
 #' descriptors, and columns 6, 7, and 8 contain numbers and are the first
 #' columns of the right block, minimum_number_of_consecutive_columns would be 3.
+#' @param right_block_offset integer. The value to add to the identified column
+#' number. If the last of the descriptive columns appear(s) numeric use a
+#' positive offset. If the first of the numeric right block columns contains a
+#' very low proportion of numbers and for some reason you can't change the
+#' tolerance, you could use a negative offset value.
 #' @param header_to_split character string or NA. Optional. The name of the
 #' column whose information is to be split.
 #' @param header_split_to vector of character strings or NA. The new names of
@@ -61,6 +66,7 @@ unpivot_data <- function(dat,
                          tolerance = 0.4,
                          left_headers,
                          minimum_number_of_consecutive_columns,
+                         right_block_offset,
                          header_to_split, header_split_to, split_points,
                          column_to_right_of_data_name_pattern,
                          tidy_data,
@@ -124,24 +130,9 @@ unpivot_data <- function(dat,
     )
   }
 
-  first_right_header_col <- tryCatch(
-    get_first_of_consecutives(
-      numeric_column_locs, minimum_number_of_consecutive_columns
-      ),
-    warning=function(w) {
-      warning(
-        "No consecutive columns that are ", tolerance*100,
-        "% numeric have been found, so the split between left and right header ",
-        "blocks may not be correct. If the output is not what you expected, ",
-        "Please contact a developer so they can ",
-        "change the numeric_tolerance for this dataset. For developers: ",
-        "If there is only one column of numeric data, please check if the data ",
-        "conform to tidy_data requirements (see pub_sec Wiki sheet_structure ",
-        "pages for guidance). If so you will need to update sheet_structure to ",
-        "reflect this."
-      )
-      return(get_first_of_consecutives(numeric_column_locs))
-    }
+  first_right_header_col <-  get_first_of_consecutives(
+    numeric_column_locs, minimum_number_of_consecutive_columns,
+    right_block_offset
   )
   message("First numeric column: ", first_right_header_col)
 
@@ -413,6 +404,12 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 #' and 8 contain numbers and are the first columns of the right block, we would
 #' specify x as 3. In pub sec this variable is specified by
 #' minimum_number_of_consecutive_value_columns.
+#' @param offset integer. The value to add to the identified column number. If
+#' the last of the descriptive columns appear(s) numeric use a positive offset.
+#' If the first of the numeric right block columns contains a very low
+#' proportion of numbers and for some reason you can't change the tolerance, you
+#' could use a negative offset value.
+#'
 #' @returns integer. If there are consecutive values, this will be the first of
 #' the consecutive values. If there are no consecutive values a warning will
 #' be given and the first value returned.
@@ -425,9 +422,15 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 #' get_first_of_consecutives(sequence, 3)
 #' }
 #' @export
-get_first_of_consecutives <- function(sequence, x = 2) {
+get_first_of_consecutives <- function(sequence, x = 2, offset = 0) {
+
+  message(
+    "Getting the number of the first column in the right block of numeric data."
+  )
 
   if (is.na(x)) { x <- 2 }
+  if (is.na(offset)) { offset <- 0 }
+
   # when setting the minimum number of consecutive columns it is easier to count
   # all consecutive columns including the first. But for the purposes of the
   # code we only want to count the consecutives following the first, so need to
@@ -445,10 +448,21 @@ get_first_of_consecutives <- function(sequence, x = 2) {
     first_set <- sequence[1]
     warning(
       "No consecutive values were found. This may have resulted in an error ",
-      "in identifying the row or column on which data start."
+      "in identifying the row or column on which data start. The first column ",
+      "identified as numeric will be assumed to be the first of the columns ",
+      "the right block of numeric data."
     )
   }
-  return(first_set[1])
+
+  output <- first_set[1] + offset
+
+  if(output < 1) {
+    stop(
+      "The number cannot be less than 1. The right_block_offset setting may ",
+      "need to be updated.")
+  }
+
+  return(output)
 
 }
 
