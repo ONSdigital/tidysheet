@@ -29,9 +29,15 @@ test_that("get_first_of_consecutives gives expected output", {
 test_that("get_first_of_consecutives returns number with at least x consecutives", {
 
   dat <- c(1, 3:4, 6:7, 9:11, 13:16)
-  expect_equal(suppressMessages(get_first_of_consecutives(dat, x = 2)), 3)
-  expect_equal(suppressMessages(get_first_of_consecutives(dat, x = 3)), 9)
-  expect_equal(suppressMessages(get_first_of_consecutives(dat, x = 4)), 13)
+  expect_equal(
+    suppressMessages(get_first_of_consecutives(dat, min_consecutives = 2)),
+    3)
+  expect_equal(
+    suppressMessages(get_first_of_consecutives(dat, min_consecutives = 3)),
+    9)
+  expect_equal(
+    suppressMessages(get_first_of_consecutives(dat, min_consecutives = 4)),
+    13)
 
 })
 
@@ -44,10 +50,12 @@ test_that("get_first_of_consecutives has default offset value of 0", {
 })
 
 
-test_that("get_first_of_consecutives has default x value of 2", {
+test_that("get_first_of_consecutives has default min_consecutives value of 2", {
 
   dat <- c(1, 3:4, 6:9)
-  expect_equal(suppressMessages(get_first_of_consecutives(dat, x = NA)), 3)
+  expect_equal(
+    suppressMessages(get_first_of_consecutives(dat, min_consecutives = NA)),
+    3)
   expect_equal(suppressMessages(get_first_of_consecutives(dat)), 3)
 
 })

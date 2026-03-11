@@ -120,9 +120,10 @@ unpivot_data <- function(dat,
   if(length(numeric_column_locs) == 0) {
     stop(
       "No columns that are ", tolerance*100,
-      "% numeric have been found, so the split between left and right header ",
-      "blocks could not be identified. Please contact a developer so they can ",
-      "change the numeric_tolerance for this dataset. For developers: ",
+      "% numeric have been found, so the split between the left block of ",
+      "descriptor columns and the right block of numeric columns ",
+      "could not be identified. Please contact a developer so they can edit ",
+      "the settings (numeric_tolerance) for this dataset. For developers: ",
       "If there is only one column of numeric data, please check if the data ",
       "conform to tidy_data requirements (see pub_sec Wiki sheet_structure ",
       "pages for guidance). If so you will need to update sheet_structure to ",
@@ -130,10 +131,11 @@ unpivot_data <- function(dat,
     )
   }
 
-  first_right_header_col <-  get_first_of_consecutives(
-    numeric_column_locs, minimum_number_of_consecutive_columns,
-    right_block_offset
+  first_right_header_col <- get_first_data_col_number(
+    dat, numeric_column_locs,
+    minimum_number_of_consecutive_columns, right_block_offset
   )
+
   message("First numeric column: ", first_right_header_col)
 
   left_block_cols_to_name <- get_left_col_names(
@@ -387,6 +389,84 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 
 }
 
+
+#' @title get the number of the first column with numeric data
+#'
+#' @description Find the first of consecutive existing columns that have been
+#' identified as numeric. The number of consecutive columns required is set
+#' using minimum_number_of_consecutive_columns which defaults to 2. If a
+#' column has been removed because it is e.g. blank, it does not count. So if
+#' the data columns c=start at column 3 (C), column 4 (D) has been removed, and
+#' columns 5 - 7 (E-G) are numeric, the first data col number will be returned
+#' as 3 (not 5).
+#'
+#' @param dat dataframe imported using xlsx_cells
+#' @param locs integer. A vector holding the numbers of columns identified as
+#' holding numeric data.
+#' @param min_consecutives integer. The number of consecutive values required.
+#' Defaults to 2 i.e. if only columns 3 and 4 contain numbers, this counts as 2
+#' consecutive columns and min_consecutives would not need to be specified. If,
+#' however, columns 3 and 4 contain numbers but are in the left block of
+#' descriptors, and columns 6, 7, and 8 contain numbers and are the first
+#' columns of the right block, we would specify min_consecutives as 3. In pub
+#' sec this variable is specified by minimum_number_of_consecutive_value_columns.
+#' @param offset integer. The value to add to the identified column number. If
+#' the last of the descriptive columns appear(s) numeric use a positive offset.
+#' If the first of the numeric right block columns contains a very low
+#' proportion of numbers and for some reason you can't change the tolerance, you
+#' could use a negative offset value.
+#'
+#' @returns integer. The original column number of the first data column
+#'
+#' @examples
+#' \dontrun{
+#' dat <- data.frame(
+#'     row = c(1:3),
+#'     col = c(1, 3, 5),
+#'     value = c(NA, 10, 20)
+#'     )
+#' get_first_data_col_number(dat)
+#' }
+get_first_data_col_number <- function(
+    dat, locs, min_consecutives = 2, offset = 0
+    ) {
+
+  message(
+    "Getting the number of the first column in the right block of numeric data."
+  )
+
+  if (is.na(min_consecutives)) { min_consecutives <- 2}
+  if (is.na(offset)) { offset <- 0}
+
+    number_of_rows <- length(unique(dat$col))
+
+  # create a table to allow us to find consecutive numeric columns even if they
+  # are separated by blank or removed columns.
+  # e.g:
+  # A    B D
+  # Eng  1 2
+  #
+  # B and D should be identified as consecutive numeric columns even though
+  # column C (col 3) is missing
+  existing_columns <- data.frame(
+    index = 1:number_of_rows,
+    actual_colum_number = unique(dat$col)) %>%
+    mutate(index_updated = ifelse(actual_colum_number %in% locs, index, NA))
+
+  first_of_consecutives <-  get_first_of_consecutives(
+    existing_columns$index_updated, min_consecutives, offset
+  )
+
+  # refer back to the lookup table to find the original column number
+  col_number <- existing_columns %>%
+    filter(index_updated == first_of_consecutives) %>%
+    pull(actual_colum_number)
+
+  return(col_number)
+}
+
+
+
 #' @title Get the first integer followed by consecutive numbers
 #'
 #' @description Get the first number in a sequence where the next x numbers are
@@ -422,24 +502,22 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 #' get_first_of_consecutives(sequence, 3)
 #' }
 #' @export
-get_first_of_consecutives <- function(sequence, x = 2, offset = 0) {
+get_first_of_consecutives <- function(
+    sequence, min_consecutives = 2, offset = 0
+    ) {
 
-  message(
-    "Getting the number of the first column in the right block of numeric data."
-  )
-
-  if (is.na(x)) { x <- 2 }
+  if (is.na(min_consecutives)) { min_consecutives <- 2 }
   if (is.na(offset)) { offset <- 0 }
 
   # when setting the minimum number of consecutive columns it is easier to count
   # all consecutive columns including the first. But for the purposes of the
   # code we only want to count the consecutives following the first, so need to
   # subtract 1.
-  x <- x - 1
+  min_consecutives <- min_consecutives - 1
 
   sequence <- unique(sequence)
   consecutives_together <- split_by_consecutives(sequence)
-  consecutive_sets <- lengths(consecutives_together) > x
+  consecutive_sets <- lengths(consecutives_together) > min_consecutives
 
   if (any(consecutive_sets)) {
     first_set <- consecutives_together[consecutive_sets==TRUE][[1]]

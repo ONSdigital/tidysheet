@@ -11,6 +11,7 @@ unpivot_data(
   tolerance = 0.4,
   left_headers,
   minimum_number_of_consecutive_columns,
+  right_block_offset,
   header_to_split,
   header_split_to,
   split_points,
@@ -53,6 +54,12 @@ minimum_number_of_consecutive_columns would not need to be specified. If,
 however, columns 3 and 4 contain numbers but are in the left block of
 descriptors, and columns 6, 7, and 8 contain numbers and are the first
 columns of the right block, minimum_number_of_consecutive_columns would be 3.}
+
+\item{right_block_offset}{integer. The value to add to the identified column
+number. If the last of the descriptive columns appear(s) numeric use a
+positive offset. If the first of the numeric right block columns contains a
+very low proportion of numbers and for some reason you can't change the
+tolerance, you could use a negative offset value.}
 
 \item{header_to_split}{character string or NA. Optional. The name of the
 column whose information is to be split.}

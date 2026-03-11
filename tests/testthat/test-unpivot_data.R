@@ -158,7 +158,8 @@ in line with the second row of headers", {
         split_points = NA,
         column_to_right_of_data_name_pattern = NA,
         tidy_data = NA,
-        tidy_notes_name = NA)
+        tidy_notes_name = NA
+        )
   )
 
   expect_equal(result, expected)
@@ -515,3 +516,4 @@ columns in the left block of descriptors", {
 
   expect_equal(result, expected)
 })
+
