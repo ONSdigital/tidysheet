@@ -459,9 +459,29 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
   }
 
   if (to_csv) {
-    write.csv(all_tables, output_filepath, row.names = FALSE,
-              fileEncoding = "UTF-8")
-    message("File saved as ", output_filepath)
+    # Select data columns
+    data_column_names <- get_data_column_names()
+    metadata_column_names <- get_metadata_column_names()
+
+    data_selected <- select_data_columns(all_tables, data_column_names)
+    metadata_selected <- select_data_columns(all_tables, metadata_column_names)
+
+    # Only keep one row for metadata (first row)
+    metadata_selected <- metadata_selected[1, , drop = FALSE]
+
+    # Message which columns were dropped
+    dropped_data_cols <- setdiff(names(all_tables), data_column_names)
+    dropped_metadata_cols <- setdiff(names(all_tables), metadata_column_names)
+    message("Data columns dropped: ", paste(dropped_data_cols, collapse = ", "))
+    message("Metadata columns dropped: ", paste(dropped_metadata_cols, collapse = ", "))
+
+    # Write two CSVs with clear prefixes
+    data_outfile <- file.path(dirname(output_filepath), paste0("data-", basename(output_filepath)))
+    metadata_outfile <- file.path(dirname(output_filepath), paste0("metadata-", basename(output_filepath)))
+    write.csv(data_selected, data_outfile, row.names = FALSE, fileEncoding = "UTF-8")
+    write.csv(metadata_selected, metadata_outfile, row.names = FALSE, fileEncoding = "UTF-8")
+    message("Data file saved as ", data_outfile)
+    message("Metadata file saved as ", metadata_outfile)
   } else {
     return(all_tables)
   }
@@ -564,5 +584,79 @@ get_pattern_names <- function() {
     "tab_pattern_front_page"
   )
   return(pattern_names)
+}
+
+#' @title Get the column names for the source data table
+#'
+#' @description
+#' Returns a character vector of column names for the source data table
+#' as required by the new database schema. These columns represent the 
+#' standardized structure for storing preprocessed data extracted from
+#' messy Excel sheets, ensuring compatibility with downstream analytics
+#' and database ingestion. Update this list if the database schema changes.
+#'
+#' @details
+#' The returned columns include address, time, geography, description,
+#' value, units, and notes fields. These are designed to capture all 
+#' relevant aspects of the source data in a tidy, normalized format. 
+#' If you add or remove columns in the database, update this function
+#' accordingly.
+#'
+#' @return Character vector of column names for the source data table.
+#' @examples
+#' get_data_column_names()
+get_data_column_names <- function() {
+  c(
+    "address",
+    "vintage",
+    "year",
+    "fy_start",
+    "quarter",
+    "month",
+    "date_span",
+    "geography_name",
+    "geography_level",
+    "geography_code",
+    "description_1",
+    "description_2",
+    "description_3",
+    "description_4",
+    "description_5",
+    "description_6",
+    "description_7",
+    "value",
+    "units",
+    "notes"
+  )
+}
+
+
+#' @title Get the column names for the metadata table
+#'
+#' @description
+#' Returns a character vector of column names for the metadata table as
+#' required by the new database schema. These columns capture metadata 
+#' about the dataset as a whole, such as provenance, context, and source
+#' information, and are intended to be output as a single-row table per
+#' dataset.
+#'
+#' @details
+#' The metadata columns typically include sheet name, title, supplier, 
+#' source, and dataset. If the metadata requirements change, update this
+#' function to match the new schema. Consult with the database owner for
+#' any changes.
+#'
+#' @return Character vector of column names for the metadata table.
+#' @examples
+#' get_metadata_column_names()
+get_metadata_column_names <- function() {
+  c(
+    "sheet",
+    "title",
+    "supplier",
+    "source",
+    "dataset"
+    # Add more columns here if confirmed by James Buchan
+  )
 }
 
