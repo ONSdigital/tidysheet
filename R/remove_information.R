@@ -1,3 +1,45 @@
+
+#' @title Select specific columns from a dataframe
+#'
+#' @description
+#' Selects columns from a dataframe according to a supplied character vector
+#'  of column names. Columns not present in the dataframe are dropped with a
+#'  warning; if none of the requested columns are present, an error is 
+#'  raised. This function is useful for enforcing a strict schema on output
+#'  data, such as when exporting to a database or standardised CSV.
+#'
+#' @details
+#' This function is robust to missing columns and will always return only
+#'  the columns that exist in both the input dataframe and the requested
+#'  list. It is intended for use in data pipelines where the output schema
+#'  must match a predefined set of columns, and is especially useful for
+#'  open data and reproducible research workflows.
+#'
+#' @param dat A dataframe or tibble. The data to select columns from.
+#' @param column_names Character vector of column names to select. 
+#'  Should match the target schema.
+#'
+#' @return A dataframe or tibble containing only the selected columns
+#'  (in the order specified by column_names, if present).
+#'
+#' @examples
+#' dat <- tibble::tibble(a = 1:3, b = 4:6, c = 7:9)
+#' select_data_columns(dat, c("a", "c", "d"))
+#'  Returns columns a and c, warns about d
+#'
+select_data_columns <- function(dat, column_names) {
+  missing_cols <- setdiff(column_names, names(dat))
+  present_cols <- intersect(column_names, names(dat))
+  if (length(present_cols) == 0) {
+    stop("None of the specified columns are present in the data.")
+  }
+  if (length(missing_cols) > 0) {
+    warning(paste("The following columns were not found and will be dropped:", paste(missing_cols, collapse = ", ")))
+  }
+  dplyr::select(dat, dplyr::all_of(present_cols))
+}
+
+
 #' @title Remove cells from input data that are not needed.
 #'
 #' @description Remove rows from an xlsx_cells imported dataframe
