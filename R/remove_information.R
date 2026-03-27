@@ -36,7 +36,7 @@ select_data_columns <- function(dat, column_names) {
   if (length(missing_cols) > 0) {
     warning(paste("The following columns were not found and will be dropped:", paste(missing_cols, collapse = ", ")))
   }
-  dplyr::select(dat, dplyr::all_of(present_cols))
+  select(dat, all_of(present_cols))
 }
 
 
