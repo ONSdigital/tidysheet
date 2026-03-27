@@ -108,6 +108,37 @@ test_that("tidy_sheet returns split data and metadata when split_output is TRUE"
 })
 
 
+test_that("tidy_sheet returns combined dataframe by default when to_csv is FALSE", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  arg_values <- c("--args", filepath, "example 1", tempfile(), settings, "1")
+
+  result <- suppressWarnings(
+    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+  )
+
+  expect_s3_class(result, "data.frame")
+  expect_false(is.list(result) && all(c("data", "metadata") %in% names(result)))
+})
+
+
+test_that("tidy_sheet split_output does not write files when to_csv is FALSE", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  base_out <- tempfile()
+  arg_values <- c("--args", filepath, "example 1", base_out, settings, "1")
+
+  suppressWarnings(
+    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE, split_output = TRUE))
+  )
+
+  outdir <- dirname(base_out)
+  data_file <- file.path(outdir, paste0("data-", basename(base_out)))
+  metadata_file <- file.path(outdir, paste0("metadata-", basename(base_out)))
+
+  expect_false(file.exists(data_file))
+  expect_false(file.exists(metadata_file))
+})
+
+
 test_that("Example 1 is processed as expected", {
 
   settings <- "{

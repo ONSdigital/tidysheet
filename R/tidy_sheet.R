@@ -24,8 +24,13 @@
 #' output filepath, settings (as a json), file part (integer, nearly always 1).
 #' @param to_csv boolean. Default is TRUE. If FALSE the output is returned
 #' rather than being saved to csv.
+#' @param split_output boolean. Default is FALSE. If TRUE, output is split into
+#' data and metadata tables even when to_csv is FALSE.
 #'
-#' @returns saved csv file. File is saved to the specified output_filepath.
+#' @returns If to_csv is TRUE, two csv files are saved to the specified output
+#' filepath directory, prefixed with data- and metadata-. If to_csv is FALSE and
+#' split_output is FALSE, a single dataframe is returned. If to_csv is FALSE and
+#' split_output is TRUE, a list with elements data and metadata is returned.
 #'
 #' @examples
 #' \dontrun{
@@ -43,7 +48,7 @@
 #' tidy_sheet(arg_values, FALSE)
 #' }
 #' @export
-tidy_sheet <- function(arg_values, to_csv = TRUE) {
+tidy_sheet <- function(arg_values, to_csv = TRUE, split_output = FALSE) {
 
   arg_names <- c(
     "--args",
@@ -458,7 +463,9 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     all_tables <- bind_rows(all_tables, columns_renamed)
   }
 
-  if (to_csv) {
+  should_split <- to_csv || split_output
+
+  if (should_split) {
     # Select data columns
     data_column_names <- get_data_column_names()
     metadata_column_names <- get_metadata_column_names()
@@ -467,14 +474,18 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     metadata_selected <- select_data_columns(all_tables, metadata_column_names)
 
     # Only keep one row for metadata (first row)
-    metadata_selected <- metadata_selected[1, , drop = FALSE]
+    if (nrow(metadata_selected) > 0) {
+      metadata_selected <- metadata_selected[1, , drop = FALSE]
+    }
 
     # Message which columns were dropped
     dropped_data_cols <- setdiff(names(all_tables), data_column_names)
     dropped_metadata_cols <- setdiff(names(all_tables), metadata_column_names)
     message("Data columns dropped: ", paste(dropped_data_cols, collapse = ", "))
     message("Metadata columns dropped: ", paste(dropped_metadata_cols, collapse = ", "))
+  }
 
+  if (to_csv) {
     # Write two CSVs with clear prefixes
     data_outfile <- file.path(dirname(output_filepath), paste0("data-", basename(output_filepath)))
     metadata_outfile <- file.path(dirname(output_filepath), paste0("metadata-", basename(output_filepath)))
@@ -482,6 +493,8 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     write.csv(metadata_selected, metadata_outfile, row.names = FALSE, fileEncoding = "UTF-8")
     message("Data file saved as ", data_outfile)
     message("Metadata file saved as ", metadata_outfile)
+  } else if (should_split) {
+    return(list(data = data_selected, metadata = metadata_selected))
   } else {
     return(all_tables)
   }
