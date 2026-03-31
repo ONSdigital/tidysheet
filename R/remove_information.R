@@ -814,7 +814,7 @@ remove_unwanted_cols <- function(dat) {
 #' # view as it would be in excel:
 #' rectify(dat)
 #'
-#' output <- remove_column(dat, "id", 0, 1, 1)
+#' output <- remove_columns(dat, "id", 0, 1, 1)
 #' rectify(output)
 #' }
 #' @export
