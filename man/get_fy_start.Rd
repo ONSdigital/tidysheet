@@ -34,7 +34,7 @@ year start is to be calculated from the financial year end.}
 name of the column containing the financial year end. Default is NA}
 
 \item{calendar_to_fy_start}{boolean. TRUE if calendar year is to be converted
-to financial year start. Default is FALSE}
+to financial year start. Default is FALSE.}
 
 \item{q1_is_jan_to_mar}{boolean. TRUE if Jan to Mar is Q1. FALSE if Apr to
 Jun is Q1. Default is FALSE.}

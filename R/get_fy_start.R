@@ -17,7 +17,7 @@
 #' @param fy_end_pattern characters string. Regular expression that matches the
 #' name of the column containing the financial year end. Default is NA
 #' @param calendar_to_fy_start boolean. TRUE if calendar year is to be converted
-#' to financial year start. Default is FALSE
+#' to financial year start. Default is FALSE.
 #' @param q1_is_jan_to_mar boolean. TRUE if Jan to Mar is Q1. FALSE if Apr to
 #' Jun is Q1. Default is FALSE.
 #' @param quarter_pattern character string. Regular expression used to
@@ -499,7 +499,7 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #'
 #' @param dat dataframe containing a year column and either a month or quarter
 #' column
-#' @param calendar_year_to_fy_start boolean. default is TRUE. If TRUE, actions
+#' @param calendar_year_to_fy_start boolean. default is FALSE. If TRUE, actions
 #' are performed, if NA or FALSE the original data are returned.
 #' @param q1_is_jan_to_mar boolean. Default is TRUE and means that
 #' Q1 is for Jan to Mar. Use FALSE when Q1 is for Apr to Jun i.e. the first
@@ -568,7 +568,7 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #' }
 #' @export
 get_fy_start_from_calendar_year <- function(
-    dat, calendar_year_to_fy_start = TRUE, q1_is_jan_to_mar = TRUE,
+    dat, calendar_year_to_fy_start = FALSE, q1_is_jan_to_mar = TRUE,
     year_from_pattern = "(?i)year", month_col_pattern = NA,
     quarter_col_pattern = NA
 ) {

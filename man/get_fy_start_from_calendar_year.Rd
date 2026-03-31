@@ -6,7 +6,7 @@
 \usage{
 get_fy_start_from_calendar_year(
   dat,
-  calendar_year_to_fy_start = TRUE,
+  calendar_year_to_fy_start = FALSE,
   q1_is_jan_to_mar = TRUE,
   year_from_pattern = "(?i)year",
   month_col_pattern = NA,
