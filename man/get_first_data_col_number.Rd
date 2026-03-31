@@ -4,7 +4,7 @@
 \alias{get_first_data_col_number}
 \title{get the number of the first column with numeric data}
 \usage{
-get_first_data_col_number(dat, locs, x, offset)
+get_first_data_col_number(dat, locs, min_consecutives = 2, offset = 0)
 }
 \arguments{
 \item{dat}{dataframe imported using xlsx_cells}
@@ -12,13 +12,13 @@ get_first_data_col_number(dat, locs, x, offset)
 \item{locs}{integer. A vector holding the numbers of columns identified as
 holding numeric data.}
 
-\item{x}{integer. The number of consecutive values required. Defaults to 2
-i.e. if only columns 3 and 4 contain numbers, this counts as 2 consecutive
-columns and x would not need to be specified. If, however columns 3 and 4
-contain numbers but are in the left block of descriptors, and columns 6, 7,
-and 8 contain numbers and are the first columns of the right block, we would
-specify x as 3. In pub sec this variable is specified by
-minimum_number_of_consecutive_value_columns.}
+\item{min_consecutives}{integer. The number of consecutive values required.
+Defaults to 2 i.e. if only columns 3 and 4 contain numbers, this counts as 2
+consecutive columns and min_consecutives would not need to be specified. If,
+however, columns 3 and 4 contain numbers but are in the left block of
+descriptors, and columns 6, 7, and 8 contain numbers and are the first
+columns of the right block, we would specify min_consecutives as 3. In pub
+sec this variable is specified by minimum_number_of_consecutive_value_columns.}
 
 \item{offset}{integer. The value to add to the identified column number. If
 the last of the descriptive columns appear(s) numeric use a positive offset.
@@ -37,4 +37,14 @@ column has been removed because it is e.g. blank, it does not count. So if
 the data columns c=start at column 3 (C), column 4 (D) has been removed, and
 columns 5 - 7 (E-G) are numeric, the first data col number will be returned
 as 3 (not 5).
+}
+\examples{
+\dontrun{
+dat <- data.frame(
+    row = c(1:3),
+    col = c(1, 3, 5),
+    value = c(NA, 10, 20)
+    )
+get_first_data_col_number(dat)
+}
 }

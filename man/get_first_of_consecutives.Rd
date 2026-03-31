@@ -4,18 +4,18 @@
 \alias{get_first_of_consecutives}
 \title{Get the first integer followed by consecutive numbers}
 \usage{
-get_first_of_consecutives(sequence, x = 2, offset = 0)
+get_first_of_consecutives(sequence, min_consecutives = 2, offset = 0)
 }
 \arguments{
 \item{sequence}{vector of integers}
 
-\item{x}{integer. The number of consecutive values required. Defaults to 2
-i.e. if only columns 3 and 4 contain numbers, this counts as 2 consecutive
-columns and x would not need to be specified. If, however columns 3 and 4
-contain numbers but are in the left block of descriptors, and columns 6, 7,
-and 8 contain numbers and are the first columns of the right block, we would
-specify x as 3. In pub sec this variable is specified by
-minimum_number_of_consecutive_value_columns.}
+\item{min_consecutives}{integer. The number of consecutive values required.
+Defaults to 2 i.e. if only columns 3 and 4 contain numbers, this counts as 2
+consecutive columns and min_consecutives would not need to be specified. If,
+however, columns 3 and 4 contain numbers but are in the left block of
+descriptors, and columns 6, 7, and 8 contain numbers and are the first
+columns of the right block, we would specify min_consecutives as 3. In pub
+sec this variable is specified by minimum_number_of_consecutive_value_columns.}
 
 \item{offset}{integer. The value to add to the identified column number. If
 the last of the descriptive columns appear(s) numeric use a positive offset.

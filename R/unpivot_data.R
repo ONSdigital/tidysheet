@@ -477,13 +477,13 @@ get_first_data_col_number <- function(
 #' column where both it and the following column are numeric.
 #'
 #' @param sequence vector of integers
-#' @param x integer. The number of consecutive values required. Defaults to 2
-#' i.e. if only columns 3 and 4 contain numbers, this counts as 2 consecutive
-#' columns and x would not need to be specified. If, however columns 3 and 4
-#' contain numbers but are in the left block of descriptors, and columns 6, 7,
-#' and 8 contain numbers and are the first columns of the right block, we would
-#' specify x as 3. In pub sec this variable is specified by
-#' minimum_number_of_consecutive_value_columns.
+#' @param min_consecutives integer. The number of consecutive values required.
+#' Defaults to 2 i.e. if only columns 3 and 4 contain numbers, this counts as 2
+#' consecutive columns and min_consecutives would not need to be specified. If,
+#' however, columns 3 and 4 contain numbers but are in the left block of
+#' descriptors, and columns 6, 7, and 8 contain numbers and are the first
+#' columns of the right block, we would specify min_consecutives as 3. In pub
+#' sec this variable is specified by minimum_number_of_consecutive_value_columns.
 #' @param offset integer. The value to add to the identified column number. If
 #' the last of the descriptive columns appear(s) numeric use a positive offset.
 #' If the first of the numeric right block columns contains a very low
