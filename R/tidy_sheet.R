@@ -21,7 +21,8 @@
 #' @param arg_values character string vector. The values for the following
 #' (order is important):
 #' "--args", input filepath, regular expression matching the sheet name,
-#' output filepath, settings (as a json), file part (integer, nearly always 1).
+#' output filepath, settings (as a json.dumps string from Python - see example),
+#' file part (integer, nearly always 1).
 #' @param to_csv boolean. Default is TRUE. If FALSE the output is returned
 #' rather than being saved to csv.
 #'
@@ -36,10 +37,10 @@
 #' arg_values <- c(
 #'     "--args",
 #'     "D:/some_file-2023_24.xlsx", "(?i)sheet1", "D:/some_file-2023_24.csv",
-#'     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2,}",
+#'     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2}",
 #'     "1"
 #'     )
-#'
+#' serializeJSON(arg_values)
 #' tidy_sheet(arg_values, FALSE)
 #' }
 #' @export
