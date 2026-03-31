@@ -30,6 +30,6 @@ column e.g. quarter may be given alongside year.
 dat <- data.frame(
   x = c("2023Q4", "2024Q1", "2023Q1 to Q3", "2023Q1 Q3", "Q4", "2021", "no")
 )
-get_quarter(dat, "x", "quarter")
+add_quarter_column(dat, "x", "quarter")
 }
 }

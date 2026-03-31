@@ -594,15 +594,20 @@ add_metadata_columns <- function(dat, ...) {
 }
 
 
-#' @title Where year_type is 'financial' fill in missing fy_start info.
+#' @title Fill missing financial year start values.
 #'
-#' @description Where year_type is 'financial' and there are NAs for fy_start
-#' (or fy_start does not exist), use the first four digits of year for fy_start.
+#' @description Fill in missing fy_start values for rows where year_type is
+#' 'financial'.
+#'
+#' @details If a row has 'financial' as year_type and fy_start is missing (or
+#' the column does not exist), extract the first four digits from the year
+#' column and use this for fy_start. Rows with other year_type values are left
+#' unchanged. This function is intended for use with datasets that contain
+#' both calendar and financial years but could be used in other scenarios.
 #'
 #' @param dat dataframe containing columns called 'year' and 'year_type'.
 #'
-#' @returns dataframe. dat with fy_start filled in for years where year_type is
-#' 'financial'.
+#' @returns dataframe. dat with fy_start filled in for financial years.
 #'
 #' @examples
 #' \dontrun{
@@ -671,7 +676,7 @@ fill_missing_fy_start <- function(dat) {
 #' dat <- data.frame(
 #'   x = c("2023Q4", "2024Q1", "2023Q1 to Q3", "2023Q1 Q3", "Q4", "2021", "no")
 #' )
-#' get_quarter(dat, "x", "quarter")
+#' add_quarter_column(dat, "x", "quarter")
 #' }
 add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
 

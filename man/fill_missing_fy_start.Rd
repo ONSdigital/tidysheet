@@ -2,7 +2,7 @@
 % Please edit documentation in R/fill_missing_info.R
 \name{fill_missing_fy_start}
 \alias{fill_missing_fy_start}
-\title{Where year_type is 'financial' fill in missing fy_start info.}
+\title{Fill missing financial year start values.}
 \usage{
 fill_missing_fy_start(dat)
 }
@@ -10,12 +10,18 @@ fill_missing_fy_start(dat)
 \item{dat}{dataframe containing columns called 'year' and 'year_type'.}
 }
 \value{
-dataframe. dat with fy_start filled in for years where year_type is
-'financial'.
+dataframe. dat with fy_start filled in for financial years.
 }
 \description{
-Where year_type is 'financial' and there are NAs for fy_start
-(or fy_start does not exist), use the first four digits of year for fy_start.
+Fill in missing fy_start values for rows where year_type is
+'financial'.
+}
+\details{
+If a row has 'financial' as year_type and fy_start is missing (or
+the column does not exist), extract the first four digits from the year
+column and use this for fy_start. Rows with other year_type values are left
+unchanged. This function is intended for use with datasets that contain
+both calendar and financial years but could be used in other scenarios.
 }
 \examples{
 \dontrun{
