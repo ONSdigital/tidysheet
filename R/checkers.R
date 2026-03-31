@@ -42,6 +42,12 @@ check_reserved_words <- function(dict, exclude) {
     'col_outline_level', 'style_format', 'local_format_id'
   )
 
+  if (all(is.na(exclude))) {
+    exclude <- as.character()
+  } else if (any(is.na(exclude))) {
+    exclude <- exclude[!is.na(exclude)]
+  }
+
   to_exclude <- exclude[exclude %in% dict$key]
 
   if (length(to_exclude) > 0) {
@@ -50,7 +56,7 @@ check_reserved_words <- function(dict, exclude) {
     dict_filtered <- dict
   }
 
-  flattened_list <- unlist(dict_filtered[2][[1]])
+  flattened_list <- unlist(dict_filtered["item"][[1]])
 
   found_words <- intersect(flattened_list, reserved_words)
 
@@ -102,7 +108,7 @@ check_dropdown <- function(pattern, dat) {
 
     dropdown_cell_matches <- grepl(pattern, dat$character)
 
-    if (any(dropdown_cell_matches)) {
+    if (any(dropdown_cell_matches, na.rm = TRUE)) {
       message(
         "'", pattern, "'",
         " found in information above table, so it is assumed that the dropdown ",
