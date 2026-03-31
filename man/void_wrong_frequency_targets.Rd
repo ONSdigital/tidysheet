@@ -22,7 +22,7 @@ dat with 'rename_required' updated
 }
 \description{
 Update rename_required to be FALSE if the number of expected
-repeats does not matche the number of repeats found.
+repeats does not match the number of repeats found.
 
 Warn the user if there are either too few or too many repeats and flag these
 as not to be renamed (void them).
