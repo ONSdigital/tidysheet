@@ -103,8 +103,15 @@ check_reserved_words <- function(dict, exclude) {
 #' }
 #' @export
 check_dropdown <- function(pattern, dat) {
-  # Check if there are regex instructions
+
   if (!is.na(pattern)) {
+
+    if (nrow(dat) == 0 ) {
+      stop(
+        "Dropdown cannot be found. Dropdown must be above the first header to ",
+        "be checked, and header_identifier settings must be correct."
+        )
+    }
 
     dropdown_cell_matches <- grepl(pattern, dat$character)
 

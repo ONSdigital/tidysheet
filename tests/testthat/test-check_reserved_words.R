@@ -87,6 +87,26 @@ test_that("check_reserved_words does not raise an error if multiple reserved wor
 })
 
 
+test_that("check reserved words works when exclude contains NA alongside a reserved word", {
+
+  dict_to_error <- tibble(
+    "key" = c("header_identifier", "group_col"),
+    "item" = list("row", c("col", "safe"))
+  )
+
+  expect_error(check_reserved_words(dict_to_error, c(NA, "group_col")), "'row'")
+
+  dict_to_pass <- tibble(
+    "key" = c("header_identifier", "group_col"),
+    "item" = list("fine", c("col", "safe"))
+  )
+
+  expect_true(check_reserved_words(dict_to_pass, c(NA, "group_col")))
+
+
+  })
+
+
 test_that("check_reserved_words handles an empty dict", {
 
   dict <- list()
@@ -101,4 +121,5 @@ test_that("check_reserved_words handles an empty dict even when excluded is spec
   expect_true(check_reserved_words(dict, "header"))
 
 })
+
 
