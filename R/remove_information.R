@@ -21,6 +21,8 @@ remove_unwanted_cells <- function(dat, cells = NA) {
 
   if (all(is.na(cells))) {return(dat)}
 
+  message ("Removing cells specified by address.")
+
   filtered <- dat
   for (i in 1:length(cells)) {
 

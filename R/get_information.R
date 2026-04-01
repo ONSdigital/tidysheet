@@ -458,7 +458,6 @@ get_units <- function(sheet_units, table_units) {
 #'
 #' @param dat dataframe imported using tidyxl::xlsx_cells() containing the cells
 #' that are likely to include information about units.
-#' @param pattern character string. Regular expression used for matching units.
 #'
 #' @returns A string containing extracted unique unit labels separated by
 #' commas, or an empty string if no units are found.
@@ -471,12 +470,13 @@ get_units <- function(sheet_units, table_units) {
 #'         "All figures are in thousands of pounds (£ thousand)."
 #'         )
 #'     )
-#' pattern <- "((?i)thousand|(?i)000s)|(?i)million"
-#' units <- extract_units(info_at_top_of_sheet, pattern)
+#'
+#' units <- extract_units(info_at_top_of_sheet)
 #' }
 #' @export
-extract_units <- function(dat, pattern) {
+extract_units <- function(dat) {
 
+  pattern <- "((?i)thousand|(?i)000s)|(?i)million|(?i)(\\s|\\(|^)(count)(\\s|\\)|$)"
   units_extracted <- extract_matches(dat$character, pattern)
 
   # remove repeats within a single entry e.g. 'thousand (£ thousand)'

@@ -52,7 +52,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     "sheet_structure_json", "file_part"
   )
 
-  # Join the argument names to their values passed from subprocess.cal
+  # Join the argument names to their values passed from subprocess
   message("Assigning values from Python to variables:")
   for (i in seq_along(arg_names)) {
     assign(arg_names[i], arg_values[i])
@@ -137,29 +137,20 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
   front_sheet <- get_data(input_filepath, tab_pattern_front_page)
   release_number <- get_release_number(front_sheet$character)
 
-  ### remove cells--------------------------------------------------------------
-  unwanted_cells_removed <- remove_unwanted_cells(source_data, cells_to_remove)
-
-  # remove hidden character strings where the font is the same colour as the
-  # background, these need to be removed so that un-pivotting works correctly.
-  # e.g. In DLUHC in 2020-21 some white text is included in B6 that messes up
-  # the beheading.
-  hidden_chars_removed <- remove_hidden_character_strings(
-    unwanted_cells_removed, input_filepath, hidden_character_strings_to_remove
-  )
+  # remove cells--------------------------------------------------------------
+  cells_removed <- clean_xlsx_cells_data(
+    source_data, cells_to_remove,
+    input_filepath, hidden_character_strings_to_remove
+    )
 
   # separate the info above the table from the main table-----------------------
 
-  first_header_row <- get_header_row(
-    hidden_chars_removed, header_identifier, header_identifier_instance,
+  all_data <- split_data_from_sheet_info(
+    cells_removed, header_identifier, header_identifier_instance,
     header_row_offset
   )
-
-  main_table <- filter(hidden_chars_removed, row >= first_header_row)
-
-  info_at_top_of_sheet <- get_info_above_table(
-    hidden_chars_removed, first_header_row
-    )
+  main_table <- all_data[['main_table']]
+  info_at_top_of_sheet <- all_data[['info_at_top_of_sheet']]
 
   # assume the title is in the first populated character cell until we come
   # across a dataset where this is not the case
@@ -179,8 +170,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
   main_dropdown_value <- get_dropdown_value(info_at_top_of_sheet, dropdown_pattern)
 
   # applied as a column in the data towards the end of the script
-  units_patterns <- "((?i)thousand|(?i)000s)|(?i)million|(?i)(\\s|\\(|^)(count)(\\s|\\)|$)"
-  sheet_units <- extract_units(info_at_top_of_sheet, units_patterns)
+  sheet_units <- extract_units(info_at_top_of_sheet)
 
   ##############################################################################
   # everything from here relates to individual tables
@@ -565,5 +555,83 @@ get_pattern_names <- function() {
     "tab_pattern_front_page"
   )
   return(pattern_names)
+}
+
+
+#' @title Remove unwanted cells from xlsx_cells data
+#'
+#' @descrpition Remove cells using specified cell addresses and cells containing
+#' strings where the font is the same colour as the background.
+#'
+#' @details
+#' The cells removed by this function are usually specified as needing removal
+#' because not doing so results in errors during beheading (unpivotting).
+#'
+#' @param dat data that has been imported using xlsx_cells.
+#' @param cells_to_remove
+#' @param input_filepath
+#' @param hidden_strings bool. TRUE, FALSE or NA. Default is NA. FALSE leads to
+#' the same behaviour as NA. In pub sec this variable is specified by
+#' remove_hidden_strings_bool.
+#'
+clean_xlsx_cells_data <- function(
+    dat, cells_to_remove = NA, input_filepath, hidden_strings = NA
+) {
+
+  unwanted_cells_removed <- remove_unwanted_cells(dat, cells_to_remove)
+
+  cells_removed <- remove_hidden_character_strings(
+    unwanted_cells_removed, input_filepath, hidden_strings
+  )
+
+  return(cells_removed)
+
+}
+
+
+#' @title Split metadata at the top of the sheet from the rest of the data.
+#'
+#' @description
+#' Many Excel datasets have metadata at the top of each sheet giving, for
+#' example, the title, units, and notes. This function separates out the sheet
+#' metadata from the rest of the sheet.
+#'
+#' @details
+#' Where sheets contain multiple tables, each of the sub tables may have their
+#' own blocks of metadata. This function *does not* remove the metadata from
+#' subtables.
+#'
+#' @param dat dataframe imported using xlsx_cells.
+#' @param pattern character string. A regular expression to search for in the
+#' data to identify the first header row. In pub sec this variable is specified
+#' with header_identifier.
+#' @param instance An integer specifying which instance of the header identifier
+#' pattern to use. Defaults to 1 (the first instance). In pub sec this variable
+#' is specified with header_identifier_instance.
+#' @param offset_by An integer specifying the number of rows to offset
+#' the header row. Defaults to 0. In pub sec this variable is specified with
+#' header_row_offset. If the row the pattern is found on is the row after the
+#' first header row, offset_by will be 1. If the pattern is on the row before
+#' the first header row, offset_by will be -1.
+#'
+#' @returns named list of dataframes. Tables are called 'main_table' and
+#' 'info_at_top_of_sheet'.
+split_data_from_sheet_info <- function(dat, pattern, instance, offset_by) {
+
+  message(
+    "Splitting metadata at the top of the sheet from the rest of the data"
+    )
+
+  first_header_row <- get_header_row(dat, pattern, instance, offset_by)
+
+  main_table <- filter(dat, row >= first_header_row)
+
+  info_at_top_of_sheet <- get_info_above_table(dat, first_header_row)
+
+  table_list <- list(
+    "main_table" = main_table, "info_at_top_of_sheet" = info_at_top_of_sheet
+    )
+
+  return(table_list)
 }
 
