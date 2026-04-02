@@ -143,34 +143,26 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     input_filepath, hidden_character_strings_to_remove
     )
 
-  # separate the info above the table from the main table-----------------------
+  # separate the info above the table from the main table and get metadata------
 
-  all_data <- split_data_from_sheet_info(
+  full_sheet <- split_data_from_sheet_info(
     cells_removed, header_identifier, header_identifier_instance,
     header_row_offset
   )
-  main_table <- all_data[['main_table']]
-  info_at_top_of_sheet <- all_data[['info_at_top_of_sheet']]
+  main_table <- full_sheet[['data']]
+  info_at_top_of_sheet <- full_sheet[['metadata']]
 
-  # assume the title is in the first populated character cell until we come
-  # across a dataset where this is not the case
-  title <- source_data$character[!is.na(source_data$character)][1]
+  sheet_metadata <- get_metadata(
+    info_at_top_of_sheet, dropdown_pattern,
+    filename_year = year_from_filename,
+    use_year_from_filename = use_year_from_filename_over_year_above_table,
+    no_warning = suppress_year_above_table_warning
+  )
 
-  year_for_column <- get_year_for_use_in_data(
-    info_at_top_of_sheet$character, title, year_from_filename,
-    use_year_from_filename_over_year_above_table,
-    suppress_year_above_table_warning
-    )
-
-  # collect and check information above the table ---
-  # In some DLUHC datasets we have to use the LA_dropdown tab. In these sheets
-  # there is a dropdown at the top that controls what data are shown on the
-  # sheet, and therefore what data are imported.
-  check_dropdown(dropdown_pattern, info_at_top_of_sheet)
-  main_dropdown_value <- get_dropdown_value(info_at_top_of_sheet, dropdown_pattern)
-
-  # applied as a column in the data towards the end of the script
-  sheet_units <- extract_units(info_at_top_of_sheet)
+  # title is assumed to be in the first populated cell
+  title <- sheet_metadata[['title']]
+  main_dropdown_value <- sheet_metadata[['dropdown']]
+  year_for_column <- sheet_metadata[['year']]
 
   ##############################################################################
   # everything from here relates to individual tables
@@ -242,34 +234,35 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       single_table, subtable_title_column, subtable_title_patterns,
       subtitle_offset, subtitle_horizontal_index
     )
-    # split info from above the table and the table itself
-    table_first_header_row <- get_header_row(
+
+    all_table_data <- split_data_from_sheet_info(
       single_table, table_header_identifier,
       table_header_identifier_instance, table_header_row_offset
     )
-
-    main_table <- get_table_data(single_table, table_first_header_row)
-
-    info_above_table <- get_info_above_table(
-      single_table, table_first_header_row
-    )
+    main_table <- all_table_data[['data']]
+    info_above_table <- all_table_data[['metadata']]
 
     # get info from above the table
-    table_units <- extract_units(info_above_table, units_patterns)
+    table_metadata <- get_metadata(
+      info_at_top_of_sheet, table_dropdown_pattern,
+      single_vintage = single_vintage, release_number = release_number,
+      table_dat = info_above_table, sheet_title = sheet_title,
+      sheet_units = sheet_units
+      )
 
-    table_dropdown_value <- get_dropdown_value(
-      info_above_table, table_dropdown_pattern
-    )
-    table_metadata <- info_above_table$character
-    table_title <- table_metadata[!is.na(table_metadata)][1]
-
-    vintage <- get_vintage(
-      single_vintage, release_number, title, table_title,
-      info_at_top_of_sheet, info_above_table
-    )
+    table_units <- table_metadata[["units"]]
+    table_dropdown_value <- table_metadata[["dropdown"]]
+    table_title <- table_metadata[["title"]]
+    table_year <- table_metadata[["year"]]
+    vintage <- table_metadata[["vintage"]]
 
     # If table units is not blank use that, otherwise use sheet, otherwise NA.
     units <- get_units(sheet_units, table_units)
+
+    year <- get_year_for_use_in_data(
+      sheet_year, table_year, filename_year, use_year_from_filename,
+      use_sheet_year_over_table_year, no_warning
+    )
 
     # Where dates are given as headings, and this info appears in the date
     # column of xlsx_cells data we need to be able to access it in the character
@@ -473,6 +466,7 @@ get_variable_names <- function() {
     "hidden_character_strings_to_remove",
     "header_identifier", "header_identifier_instance", "header_row_offset",
     "use_year_from_filename_over_year_above_table",
+    "use_sheet_year_over_table_year",
     "suppress_year_above_table_warning",
     "dropdown_pattern", "dropdown_name", "table_dropdown_pattern",
     "table_dropdown_name",
@@ -614,8 +608,7 @@ clean_xlsx_cells_data <- function(
 #' first header row, offset_by will be 1. If the pattern is on the row before
 #' the first header row, offset_by will be -1.
 #'
-#' @returns named list of dataframes. Tables are called 'main_table' and
-#' 'info_at_top_of_sheet'.
+#' @returns named list of dataframes. Tables are called 'data' and 'metadata'.
 split_data_from_sheet_info <- function(dat, pattern, instance, offset_by) {
 
   message(
@@ -624,14 +617,82 @@ split_data_from_sheet_info <- function(dat, pattern, instance, offset_by) {
 
   first_header_row <- get_header_row(dat, pattern, instance, offset_by)
 
-  main_table <- filter(dat, row >= first_header_row)
+  data <- get_table_data(dat, first_header_row)
 
-  info_at_top_of_sheet <- get_info_above_table(dat, first_header_row)
+  metadata <- get_info_above_table(dat, first_header_row)
 
   table_list <- list(
-    "main_table" = main_table, "info_at_top_of_sheet" = info_at_top_of_sheet
+    "data" = data, "metadata" = metadata
     )
 
   return(table_list)
 }
 
+
+#' @title Extract metadata from a dataframe and from other supplied information.
+#'
+#' @description
+#'
+#' @details
+#' In some DLUHC datasets we have to use the LA_dropdown tab. In these sheets
+#' there is a dropdown at the top that controls what data are shown on the
+#' sheet, and therefore what data are imported.
+#'
+#' @param dat dataframe in xlsx_cells format, containing only metadata i.e.
+#' information above the table or tables.
+#' @param dropdown_pattern
+#' @param single_vintage
+#' @param
+#'
+get_metadata <- function(
+  sheet_dat, dropdown_pattern, single_vintage = NA, release_number = NA,
+  table_dat = NA, sheet_title = NA, sheet_units = NA, sheet_year = NA,
+  filename_year = NA, use_year_from_filename = NA, no_warning = NA
+) {
+
+  # Both the sheet and table metadata tables are required when getting vintage
+  # for tables. However, for all other types of metadata only one metadata table
+  # is used. We thus need to specify which is the focal metadata table (dat).
+  if (all(!is.data.frame(table_dat), is.data.frame(sheet_dat))) {
+    dat <- sheet_dat
+  } else if (is.data.frame(table_dat)) {
+    dat <- table_dat
+  } else {
+    stop("No data found.")
+  }
+
+  current_units <- extract_units(dat)
+  # If table units is not blank use that, otherwise use sheet, otherwise NA.
+  units <- get_units(sheet_units, current_units)
+
+  dropdown <- get_dropdown_value(dat, dropdown_pattern)
+
+  all_metadata <- dat$character
+  current_title <- all_metadata[!is.na(all_metadata)][1]
+
+  # If year is mentioned in the title ignore years mentioned in the rest of the
+  # metadata, as the year in the title is more likely to be the year of the data
+  year <- extract_all_years(current_title)
+  if (length(year) == 0) {
+    year <- extract_all_years(dat)
+  }
+
+  # We only get vintage for metadata above a table, not from the top
+  # of the sheet because it would give the same result and messages for both
+  if (is.data.frame(table_dat)){
+    vintage <- get_vintage(
+      single_vintage, release_number, sheet_title, sheet_dat, current_title,
+      table_dat
+    )
+  } else {
+    vintage <- NA
+  }
+
+  metadata_list <- list(
+    "units" = units, "dropdown" = dropdown, "title" = current_title,
+    "year" = year, "vintage" = vintage
+  )
+
+  return(metadata_list)
+
+}

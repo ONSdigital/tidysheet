@@ -24,10 +24,10 @@
 #' In pub sec this variable is specified by single_vintage.
 #' @param release_number integer between 1 and 9 or NA.
 #' @param sheet_title character string. The title at the top of the sheet.
-#' @param table_title character string. The title above the table.
 #' @param sheet_info dataframe imported using tidyxl::xlsx_cells()- this should
 #' be a subset of the dataset that just includes information given above the
 #' data in the sheet.
+#' @param table_title character string. The title above the table.
 #' @param table_info dataframe imported using tidyxl::xlsx_cells() Same as
 #' sheet_info but for an individual subtable.
 #'
@@ -53,8 +53,8 @@
 #' }
 #' @export
 get_vintage <- function(
-    single_vintage, release_number, sheet_title, table_title,
-    sheet_info, table_info
+    single_vintage, release_number, sheet_title, sheet_info, table_title = NA,
+    table_info = NA
     ) {
 
   message("Determining vintage from metadata and settings.")
