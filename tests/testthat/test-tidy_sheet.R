@@ -1,5 +1,143 @@
 filepath <- file.path(test_path("testdata"), "examples.xlsx")
 
+# Edge case: output files and metadata row count
+test_that("tidy_sheet writes two files with correct prefixes and metadata is single row", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  arg_values <- c("--args", filepath, "example 1", tempfile(), settings, "1")
+  # Use a temp file for output
+  suppressWarnings(suppressMessages(tidy_sheet(arg_values, to_csv = TRUE)))
+  outdir <- dirname(arg_values[4])
+  data_file <- file.path(outdir, paste0("data-", basename(arg_values[4])))
+  metadata_file <- file.path(outdir, paste0("metadata-", basename(arg_values[4])))
+  expect_true(file.exists(data_file))
+  expect_true(file.exists(metadata_file))
+  metadata <- read.csv(metadata_file, stringsAsFactors = FALSE)
+  expect_equal(nrow(metadata), 1)
+})
+
+# Edge case: dropped columns are messaged
+test_that("tidy_sheet messages dropped columns", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  arg_values <- c("--args", filepath, "example 1", tempfile(), settings, "1")
+  expect_message(
+    suppressWarnings(tidy_sheet(arg_values, to_csv = TRUE)),
+    regexp = "Data columns dropped:"
+  )
+  expect_message(
+    suppressWarnings(tidy_sheet(arg_values, to_csv = TRUE)),
+    regexp = "Metadata columns dropped:"
+  )
+})
+
+# Edge case: extra columns in input are dropped
+test_that("tidy_sheet drops extra columns not in data/metadata spec", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  arg_values <- c("--args", filepath, "example 1", tempfile(), settings, "1")
+  suppressWarnings(suppressMessages(tidy_sheet(arg_values, to_csv = TRUE)))
+  outdir <- dirname(arg_values[4])
+  data_file <- file.path(outdir, paste0("data-", basename(arg_values[4])))
+  data <- read.csv(data_file, stringsAsFactors = FALSE)
+  allowed_cols <- get_data_column_names()
+  expect_true(all(names(data) %in% allowed_cols))
+})
+
+
+test_that("tidy_sheet emits dropped-column messages in a single run", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  arg_values <- c("--args", filepath, "example 1", tempfile(), settings, "1")
+
+  messages <- testthat::capture_messages(
+    suppressWarnings(tidy_sheet(arg_values, to_csv = TRUE))
+  )
+
+  expect_true(any(grepl("Data columns dropped:", messages, fixed = TRUE)))
+  expect_true(any(grepl("Metadata columns dropped:", messages, fixed = TRUE)))
+})
+
+
+test_that("tidy_sheet overwrites existing output files", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  base_out <- tempfile()
+  arg_values <- c("--args", filepath, "example 1", base_out, settings, "1")
+
+  outdir <- dirname(base_out)
+  data_file <- file.path(outdir, paste0("data-", basename(base_out)))
+  metadata_file <- file.path(outdir, paste0("metadata-", basename(base_out)))
+
+  writeLines("old-data", data_file)
+  writeLines("old-metadata", metadata_file)
+
+  suppressWarnings(suppressMessages(tidy_sheet(arg_values, to_csv = TRUE)))
+
+  expect_false(identical(readLines(data_file, warn = FALSE), "old-data"))
+  expect_false(identical(readLines(metadata_file, warn = FALSE), "old-metadata"))
+})
+
+
+test_that("tidy_sheet writes output files when output path contains spaces", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  outdir <- tempfile(pattern = "tidy sheet out ")
+  dir.create(outdir, recursive = TRUE)
+  base_out <- file.path(outdir, "result file.csv")
+  arg_values <- c("--args", filepath, "example 1", base_out, settings, "1")
+
+  suppressWarnings(suppressMessages(tidy_sheet(arg_values, to_csv = TRUE)))
+
+  data_file <- file.path(outdir, paste0("data-", basename(base_out)))
+  metadata_file <- file.path(outdir, paste0("metadata-", basename(base_out)))
+  expect_true(file.exists(data_file))
+  expect_true(file.exists(metadata_file))
+})
+
+
+test_that("tidy_sheet returns split data and metadata when split_output is TRUE", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  arg_values <- c("--args", filepath, "example 1", tempfile(), settings, "1")
+
+  result <- suppressWarnings(
+    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE, split_output = TRUE))
+  )
+
+  expect_type(result, "list")
+  expect_true(all(c("data", "metadata") %in% names(result)))
+  expect_s3_class(result$data, "data.frame")
+  expect_s3_class(result$metadata, "data.frame")
+  expect_equal(nrow(result$metadata), 1)
+  expect_true(all(names(result$data) %in% get_data_column_names()))
+  expect_true(all(names(result$metadata) %in% get_metadata_column_names()))
+})
+
+
+test_that("tidy_sheet returns combined dataframe by default when to_csv is FALSE", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  arg_values <- c("--args", filepath, "example 1", tempfile(), settings, "1")
+
+  result <- suppressWarnings(
+    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+  )
+
+  expect_s3_class(result, "data.frame")
+  expect_false(is.list(result) && all(c("data", "metadata") %in% names(result)))
+})
+
+
+test_that("tidy_sheet split_output does not write files when to_csv is FALSE", {
+  settings <- "{header_identifier: (?i)measure, columns_to_create: full_description, single_year_of_data: true}"
+  base_out <- tempfile()
+  arg_values <- c("--args", filepath, "example 1", base_out, settings, "1")
+
+  suppressWarnings(
+    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE, split_output = TRUE))
+  )
+
+  outdir <- dirname(base_out)
+  data_file <- file.path(outdir, paste0("data-", basename(base_out)))
+  metadata_file <- file.path(outdir, paste0("metadata-", basename(base_out)))
+
+  expect_false(file.exists(data_file))
+  expect_false(file.exists(metadata_file))
+})
+
 
 test_that("Example 1 is processed as expected", {
 
@@ -289,7 +427,7 @@ test_that("Example 6 is processed as expected", {
   header_identifier: (?i)count,
   table_split_dirs: row,
   tables_to_split: 1,
-  table_split_patterns: (?i)table\\s2
+  table_split_patterns: (?i)table\\s2,
   tables_to_process: 2,
   table_header_identifier: (?i)group,
   table_title_column: table_title,

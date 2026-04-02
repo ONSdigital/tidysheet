@@ -688,14 +688,21 @@ clear_invalid_year_and_type <- function(dat, year_to_na) {
   # We therefore flag both no_years and no_years_inc_blank so that we can
   # control when a warning is given.
   invalid_flagged  <- dat %>%
-    mutate(matches = str_extract_all(year, patterns[as.character(year_type)])) %>%
+    mutate(
+      year_pattern = case_when(
+        !is.na(year_type) & as.character(year_type) %in% names(patterns) ~
+          patterns[as.character(year_type)],
+        .default = "(?!)"
+      ),
+      matches = str_extract_all(year, year_pattern)
+    ) %>%
     rowwise() %>%
     mutate(multi = length(matches) > 1,
            multi_not_blank = length(matches) > 1 & is_blank == FALSE,
            no_years = is.na(year_type),
            no_years_not_blank = is.na(year_type) & is_blank == FALSE) %>%
     ungroup() %>%
-    select(-matches)
+    select(-matches, -year_pattern)
 
   year_NA_count <- sum(is.na(dat$year))
   none_count <- sum(invalid_flagged$no_years)
