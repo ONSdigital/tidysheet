@@ -430,28 +430,21 @@ get_year_for_use_in_data <- function(
 #' @title Refine year taken from sheet or table metadata
 #'
 #' @description
-#' A short description...
 #'
 #' @param year vector of character strings, each of which is a year in either
 #' calendar or financial year format.
 #' @param preferred characters string. Financial or calendar.
 #'
-refine_metadata_year <- function(year, preferred) {
+refine_metadata_year <- function(years, preferred) {
 
-  if (all(is.na(year))) {
-    return(year)
+  if (all(is.na(years))) {
+    return(years)
   }
 
   message("Refining year(s) found in information above tables.")
 
-  if (length(year) == 2) {
-    years_compressed <- consecutive_years_to_financial(year)
-  } else {
-    years_compressed <- year
-  }
-
   preferred_year <- get_year(
-    years_compressed, prefer = preferred, type = "single"
+    years, prefer = preferred, type = "single"
   )
 
   if (length(preferred_year) == 0) {
@@ -571,77 +564,6 @@ choose_from_multiple_years <- function(years) {
   year_info <- list("year" = years[1], "warn" = warn)
 
   return(year_info)
-}
-
-
-#' @title Convert consecutive years to a financial year
-#'
-#' @description Given two years that are consecutive, combine them to form a
-#' single financial year in the format YYYY-YY
-#'
-#' @param year character string or numeric vector of length 2.
-#'
-#' @returns character string of length 1 in the format YYYY-YY. If the length
-#' of the year vector is not 2 an error is raised. If the years found are not
-#' consecutive or not in the format YYYY a warning is given and the input
-#' year is returned.
-#'
-#' @examples
-#' \dontrun{
-#' year <- consecutive_years_to_financial(c("2021", "2022"))
-#' year <- consecutive_years_to_financial(c("2020", "2022"))
-#' year <- consecutive_years_to_financial(c("2020-21", "2021-22"))
-#' }
-#' @export
-consecutive_years_to_financial <- function (year) {
-
-  if (length(year) < 2) {
-    stop(
-      "Only one year found when trying to convert consecutive years ",
-      "to financial. Check that the year column contains the expected values. ",
-      "If not, contact a developer."
-    )
-  }
-
-  if (length(year) > 2) {
-    stop(
-      "More than two years found when trying to turn multiple years into ",
-      "a financial year. Conversion to financial year aborted. Check that ",
-      "the year column contains the expected values. If not, contact a ",
-      "developer."
-    )
-  }
-
-  message("Converting consecutive years to financial year.")
-
-  if (all(nchar(year)==4)) {
-    year <- as.numeric(year)
-
-    if (year[2] - year[1] == 1) {
-      year1 <- as.character(year[1])
-      year2 <- as.character(year[2])
-
-      year <- paste0(year1, "-", stringr::str_sub(year2, -2))
-      message(
-        "Consecutive years: ", year1, " and ", year2, " found. They have ",
-        "been compressed to ", year, ". If this is incorrect, please ",
-        "contact a developer."
-      )
-
-    } else {
-
-      year <- as.character(year)
-      message(
-        "Multiple non-consecutive years found."
-      )
-    }
-  } else {
-    message(
-      "Years found are not calendar years (YYYY), but there is more than one. "
-    )
-  }
-
-  return(year)
 }
 
 
