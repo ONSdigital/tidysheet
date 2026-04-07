@@ -430,10 +430,33 @@ get_year_for_use_in_data <- function(
 #' @title Refine year taken from sheet or table metadata
 #'
 #' @description
+#' Get the year(s) that match(es) the preferred year type, standardise
+#' them, and sort by chronological order.
+#'
+#' @details
+#' Used by get_year_for_use_in_data.
+#'
+#' The preferred year type is the type of year given in the filename. If a year
+#' is given in the file name, and the year type of the year provided does not
+#' match it, then NA is returned
+#'
+#' Note: If there is no year in the filename, the financial year is preferred,
+#' but the calendar year is still returned if not financial year is available
+#' (this is handled in get_year).
 #'
 #' @param year vector of character strings, each of which is a year in either
 #' calendar or financial year format.
 #' @param preferred characters string. Financial or calendar.
+#'
+#' @returns character string vector of years or NA (see details). Years are
+#' returned in chronological order.
+#'
+#' @examples
+#' \donotrun{
+#' refine_metadata_year(c("2022-23", "2021-22", "2022"), "financial")
+#' refine_metadata_year(c("2022-23", "2021-22", "2022"), NA)
+#' refine_metadata_year(c("2022-23", "2021-22", "2022"), "calendar")
+#' }
 #'
 refine_metadata_year <- function(years, preferred) {
 
@@ -447,7 +470,7 @@ refine_metadata_year <- function(years, preferred) {
     years, prefer = preferred, type = "single"
   )
 
-  if (length(preferred_year) == 0) {
+  if (any(length(preferred_year) == 0, is.na(preferred_year))) {
     warning(
       "The year from above the data is not of the same type (", preferred,
       ") as determined by the year in the file name, it will therefore not be ",
@@ -627,19 +650,18 @@ get_year <- function (
     ) {
 
   if (is.na(prefer)) {
+    # If prefer is not provided, it is later assumed that financial is preferred,
+    # and we change type to 'either' so that calendar year is still returned if
+    # financial year is not present. type 'both' is not changed to either,
+    # because if 'both' has been specified, both should be returned if they are
+    # available.
     prefer <- "financial"
+    type <- ifelse(type == "single", "either", type)
   }
 
-  if (! prefer %in% c("financial", "calendar")) {
+  if (! type %in% c("single", "either", "both")) {
     stop(
-      "prefer must be one of 'financial', or 'calendar'. It is: '",
-      prefer, "'."
-    )
-  }
-
-  if (! type %in% c("single", "both")) {
-    stop(
-      "type must be one of 'single', or 'both'. It is: '",
+      "type must be one of 'single', 'either', or 'both'. It is: '",
       type, "'."
     )
   }
@@ -671,13 +693,17 @@ get_year <- function (
       calendar_preferred = ifelse(is.na(calendar), financial, calendar)
       )
 
+  any_financial_years <- any(!is.na(all$financial))
+
   selected <- all %>%
     mutate(
       !!sym(new_col) := case_when(
         prefer == "financial" & type == "single" ~ financial,
         prefer == "calendar" & type == "single" ~ calendar,
         prefer == "financial" & type == "both" ~ financial_preferred,
-        prefer == "calendar" & type == "both" ~ calendar_preferred
+        prefer == "calendar" & type == "both" ~ calendar_preferred,
+        type == "either" & any_financial_years ~ financial,
+        type == "either" & any_financial_years == FALSE ~ calendar,
       )
     ) %>%
     select(-c(calendar, financial, financial_preferred, calendar_preferred))
@@ -753,6 +779,9 @@ check_for_multiple_years <- function(
     ) {
 
   patterns <- make_year_patterns()
+  # type can also be either in get_year, but for this function it means the same
+  # as single
+  type <- ifelse(type == "either", "single", type)
 
   counts <- dat %>%
     mutate(calendar = str_extract_all(!!sym(from), patterns["calendar"]),
