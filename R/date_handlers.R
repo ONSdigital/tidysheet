@@ -515,22 +515,53 @@ choose_between_sheet_and_table_years <- function(
 }
 
 
+#' @title Select the first year if multiple unique years are given
+#'
+#' @description
+#' Select the first year if multiple years are given and flag that a warning
+#' is required. If only one year is provided, set the warning flag to FALSE.
+#'
+#' @details
+#' This is used by the get_year_for_use_in_data function, which returns both a
+#' year and a flag for if a warning of multiple options is needed. A flag is
+#' created rather than just raising a warning because the user only needs to
+#' be given the warning if the variable is actually used. For example, if year
+#' is already a column in the data the returned variable will not be used and
+#' it does not matter if multiple years are mentioned in the metadata.
+#'
+#' Whilst the output of this is currently very simple, this function could be
+#' expanded in the future to include a setting that the user can control to say
+#' whether to return e.g. the last element instead of the first. At the moment
+#' doing so would be overcomplicating it as the issue has not yet arisen.
+#'
+#' @param years character vector.
+#'
+#' @returns named list with a character vector of length 1 for 'year' and a
+#' corresponding boolean vector for 'warn'.
+#'
+#' @examples
+#' \donotrun{
+#' choose_from_multiple_years(c("2021-22", "2022-23"))
+#' choose_from_multiple_years("2021-22")
+#' choose_from_multiple_years(NA)
+#' }
 choose_from_multiple_years <- function(years) {
 
+  years <- years[!is.na(years)]
 
   if (length(years) == 0) {
-    return (years)
+    return (NA)
   }
 
-  if (length(years) == 1) {
+  if (length(unique(years)) == 1) {
 
-    year <- years
+    year <- unique(years)
     warn <- FALSE
 
-  } else if (length(years) > 1) {
+  } else if (length(unique(years)) > 1) {
     message(
       "There is more than one year. The first will be used: ",
-      years[1]
+      unique(years)[1]
     )
     warn <- TRUE
   } else {
