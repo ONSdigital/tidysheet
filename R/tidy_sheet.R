@@ -155,14 +155,15 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
   sheet_metadata <- get_metadata(
     info_at_top_of_sheet, dropdown_pattern,
     filename_year = year_from_filename,
-    use_year_from_filename = use_year_from_filename_over_year_above_table,
+    use_year_from_filename = use_year_from_filename_over_year_above_data,
     no_warning = suppress_year_above_table_warning
   )
 
   # title is assumed to be in the first populated cell
   title <- sheet_metadata[['title']]
+  sheet_units <- sheet_metadata[['units']]
   main_dropdown_value <- sheet_metadata[['dropdown']]
-  year_for_column <- sheet_metadata[['year']]
+  sheet_year <- sheet_metadata[['year']]
 
   ##############################################################################
   # everything from here relates to individual tables
@@ -235,6 +236,11 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       subtitle_offset, subtitle_horizontal_index
     )
 
+    table_first_header_row <- get_header_row(
+      single_table, table_header_identifier,
+      table_header_identifier_instance, table_header_row_offset
+    )
+
     all_table_data <- split_data_from_sheet_info(
       single_table, table_header_identifier,
       table_header_identifier_instance, table_header_row_offset
@@ -246,22 +252,20 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     table_metadata <- get_metadata(
       info_at_top_of_sheet, table_dropdown_pattern,
       single_vintage = single_vintage, release_number = release_number,
-      table_dat = info_above_table, sheet_title = sheet_title,
+      table_dat = info_above_table, sheet_title = title,
       sheet_units = sheet_units
       )
 
-    table_units <- table_metadata[["units"]]
+    units <- table_metadata[["units"]]
     table_dropdown_value <- table_metadata[["dropdown"]]
     table_title <- table_metadata[["title"]]
     table_year <- table_metadata[["year"]]
     vintage <- table_metadata[["vintage"]]
 
-    # If table units is not blank use that, otherwise use sheet, otherwise NA.
-    units <- get_units(sheet_units, table_units)
-
-    year <- get_year_for_use_in_data(
-      sheet_year, table_year, filename_year, use_year_from_filename,
-      use_sheet_year_over_table_year, no_warning
+    year_for_column <- get_year_for_use_in_data(
+      sheet_year, table_year, year_from_filename,
+      use_year_from_filename_over_year_above_data,
+      use_sheet_year_over_table_year, suppress_year_above_table_warning
     )
 
     # Where dates are given as headings, and this info appears in the date
@@ -465,7 +469,7 @@ get_variable_names <- function() {
     "cells_to_remove",
     "hidden_character_strings_to_remove",
     "header_identifier", "header_identifier_instance", "header_row_offset",
-    "use_year_from_filename_over_year_above_table",
+    "use_year_from_filename_over_year_above_data",
     "use_sheet_year_over_table_year",
     "suppress_year_above_table_warning",
     "dropdown_pattern", "dropdown_name", "table_dropdown_pattern",
@@ -662,8 +666,6 @@ get_metadata <- function(
   }
 
   current_units <- extract_units(dat)
-  # If table units is not blank use that, otherwise use sheet, otherwise NA.
-  units <- get_units(sheet_units, current_units)
 
   dropdown <- get_dropdown_value(dat, dropdown_pattern)
 
@@ -684,8 +686,11 @@ get_metadata <- function(
       single_vintage, release_number, sheet_title, sheet_dat, current_title,
       table_dat
     )
+    # If table units is not blank use that, otherwise use sheet, otherwise NA.
+    units <- get_units(sheet_units, current_units)
   } else {
     vintage <- NA
+    units <- current_units
   }
 
   metadata_list <- list(

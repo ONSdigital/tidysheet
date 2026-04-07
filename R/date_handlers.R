@@ -295,35 +295,22 @@ make_calendar_q1_month_and_quarter_patterns <- function(
 get_year_for_use_in_data <- function(
     sheet_year, table_year, filename_year=NA, use_filename_year = FALSE,
     prefer_sheet_year = FALSE, suppress_warning = FALSE
-    ){
+){
 
   message(
     "Getting year for use in the data if year is not already in the data as ",
     "a column."
-    )
-
-  if (any(is.na(filename_year), length(filename_year) == 0)) {
-    warning("No year found in the file name. Please contact a developer.")
-  }
+  )
 
   use_filename_year <- replace_na(use_filename_year, FALSE)
   prefer_sheet_year <- replace_na(prefer_sheet_year, FALSE)
   suppress_warning <- replace_na(suppress_warning, FALSE)
 
-  if (any(is.na(filename_year), length(filename_year) == 0)) {
-    filename_year_standardised <- NA
-    filename_year_type <- NA
-  } else {
-    filename_year_standardised <- standardise_year(filename_year)
-    filename_year_type <- get_year_type(filename_year)
-  }
+  filename_year_standardised <- standardise_year(filename_year)
+  filename_year_type <- get_year_type(filename_year)
 
-  if (all(is.na(sheet_year), is.na(table_year))) {
-    message(
-      "No years found in the character string information above the data. ",
-      "Returning year from filename."
-      )
-    return(list("year" = filename_year_standardised, "warn" = FALSE))
+  if (is.na(filename_year_standardised)) {
+    warning("No year found in the file name. Please contact a developer.")
   }
 
   sheet_standardised <- refine_metadata_year(sheet_year, filename_year_type)
@@ -331,17 +318,38 @@ get_year_for_use_in_data <- function(
 
   year_above_data <- choose_between_sheet_and_table_years(
     sheet_standardised, table_standardised, prefer_sheet_year
-    )
+  )
 
-  if (is.na(year_above_data)) {
-    all_years_match <- FALSE
-    any_years_match <- FALSE
-    no_filename_year <- TRUE
-  } else {
-    all_years_match <- all(sheet_standardised == year_above_data)
-    any_years_match <- any(sheet_standardised == year_above_data)
-    no_filename_year <- FALSE
+  if (all(is.na(year_above_data), is.na(filename_year_standardised))) {
+    message(
+      "No years found in the character string information above the data ",
+      "or in the filename."
+    )
+    return(list("year" = NA, "warn" = FALSE))
+
+  } else if (all(is.na(filename_year_standardised))) {
+    message(
+      "No years found in the filename. Returning year from above the data"
+    )
+    year_info <- choose_from_multiple_years(year_above_data)
+
+    if (suppress_warning) { year_info[["warn"]] <- FALSE }
+    return(year_info)
+
+  } else if (all(is.na(year_above_data))) {
+    message(
+      "No years found in the character string information above the data. ",
+      "Returning year from filename."
+    )
+    return(list("year" = filename_year_standardised, "warn" = FALSE))
   }
+
+  all_years_match <- all(
+    year_above_data == filename_year_standardised, na.rm = TRUE
+  )
+  any_years_match <- any(
+    year_above_data == filename_year_standardised, na.rm = TRUE
+  )
 
   if (all_years_match) {
     message(
@@ -351,17 +359,17 @@ get_year_for_use_in_data <- function(
     year <- filename_year_standardised
     year_warning_if_used_in_column <- FALSE
 
-  } else if (any_years_match & use_filename_year) {
+  } else if (all(any_years_match, use_filename_year)) {
 
     message(
       "Not all years found above the data match the year in the filename, ",
       "but the year in the filename was amongst the years found, so is ",
       "assumed to be correct."
-      )
+    )
     year <- filename_year_standardised
-    year_warning_if_used_in_column <- FALSE
+    year_warning_if_used_in_column <- TRUE
 
-  } else if (any_years_match & !use_filename_year) {
+  } else if (all(any_years_match, !use_filename_year)) {
 
     message(
       "Not all years found above the data match the year in the filename. ",
@@ -373,7 +381,7 @@ get_year_for_use_in_data <- function(
     )
     possibilities <- year_above_data[
       year_above_data != filename_year_standardised
-      ]
+    ]
     year <- possibilities[1]
     year_warning_if_used_in_column <- TRUE
 
@@ -398,30 +406,17 @@ get_year_for_use_in_data <- function(
     year <- year_above_data
     year_warning_if_used_in_column <- TRUE
 
-  } else if (no_filename_year & length(year_above_data) > 1) {
-    message(
-      "More than one year found in the information above the data. ",
-      "Returning the first: '", sheet_title_standardised_year[1], "'. If no warning ",
-      "about this is given when year column is created, or if the year column ",
-      "in the data is correct no further action needs to be taken."
-    )
-    year <- year_above_data[1]
-    year_warning_if_used_in_column <- TRUE
-
-  } else if (no_filename_year & length(year_above_data) == 0) {
-    message("No years found")
-    year_warning_if_used_in_column <- TRUE
-
-  } else {
+  } else if (length(year_above_data) > 1) {
     message(
       "More than one year found in the information above the data. None of ",
-      "these match the year in the file name. Returning the first: '",
-      year_above_data[1], "'. If no warning about this is given ",
-      "when year column is created, or if the year column in the data is ",
-      "correct no further action needs to be taken."
+      "these match the year in the file name."
     )
-    year <- year_above_data[1]
-    year_warning_if_used_in_column <- TRUE
+    year_info <- choose_from_multiple_years(year_above_data)
+    year <- year_info[["year"]]
+    year_warning_if_used_in_column <- year_info[["warn"]]
+
+  } else {
+    stop("No conditions have been met, please contact a developer for a fix.")
   }
 
   if (suppress_warning) {
@@ -443,14 +438,14 @@ get_year_for_use_in_data <- function(
 #'
 refine_metadata_year <- function(year, preferred) {
 
-  if (is.na(year)) {
+  if (all(is.na(year))) {
     return(year)
   }
 
-  message("Refining year(s) foudn in information above tables.")
+  message("Refining year(s) found in information above tables.")
 
   if (length(year) == 2) {
-    years_compressed <- consecutive_years_to_financial(sheet_title_year)
+    years_compressed <- consecutive_years_to_financial(year)
   } else {
     years_compressed <- year
   }
@@ -459,7 +454,15 @@ refine_metadata_year <- function(year, preferred) {
     years_compressed, prefer = preferred, type = "single"
   )
 
-  if (length(preferred_year) > 1) {
+  if (length(preferred_year) == 0) {
+    warning(
+      "The year from above the data is not of the same type (", preferred,
+      ") as determined by the year in the file name, it will therefore not be ",
+      "considered for use in the year column."
+    )
+    return(NA)
+
+  } else if (length(preferred_year) > 1) {
     message(
       "More than one year found: '",
       paste0(preferred_year, collapse = "', "), "'."
@@ -476,7 +479,7 @@ choose_between_sheet_and_table_years <- function(
     sheet_year, table_year, prefer_sheet_year = FALSE
 ){
 
-  if (is.na(prefer_sheet_year)) { sheet_year <- FALSE }
+  if (is.na(prefer_sheet_year)) { prefer_sheet_year <- FALSE }
 
   all_years_over_data_match <- all(sheet_year == table_year, na.rm = FALSE)
   all_years_over_data_match <- replace_na(all_years_over_data_match, FALSE)
@@ -489,13 +492,13 @@ choose_between_sheet_and_table_years <- function(
   } else if (any(all_years_over_data_match, table_is_na)) {
     year <- sheet_year
   } else if (sheet_is_na) {
-    year <- sheet_year
+    year <- table_year
   } else if (prefer_sheet_year) {
     message(
       "Year at the top of the sheet (", paste(sheet_year, collapse = ","),
       ") does not match year above the table (",
       paste(table_year, collapse = ","), "). Choosing sheet year (can be ",
-      "changed in settings)."
+      "changed using the prefer_sheet_year setting)."
       )
     year <- sheet_year
   } else {
@@ -503,13 +506,42 @@ choose_between_sheet_and_table_years <- function(
       "Year at the top of the sheet (", paste(sheet_year, collapse = ","),
       ") does not match year above the table (",
       paste(table_year, collapse = ","), "). Choosing table year (can be ",
-      "changed in settings)."
+      "changed using the prefer_sheet_year setting)."
     )
     year <- table_year
   }
 
   return (year)
 }
+
+
+choose_from_multiple_years <- function(years) {
+
+
+  if (length(years) == 0) {
+    return (years)
+  }
+
+  if (length(years) == 1) {
+
+    year <- years
+    warn <- FALSE
+
+  } else if (length(years) > 1) {
+    message(
+      "There is more than one year. The first will be used: ",
+      years[1]
+    )
+    warn <- TRUE
+  } else {
+    warn <- FALSE
+  }
+
+  year_info <- list("year" = years[1], "warn" = warn)
+
+  return(year_info)
+}
+
 
 #' @title Convert consecutive years to a financial year
 #'
@@ -606,7 +638,9 @@ consecutive_years_to_financial <- function (year) {
 #' @param prefer character string. Either 'financial' (default), or 'calendar'.
 #' If type is 'both' and both a calendar year and a financial year are found in
 #' a single entry, this determines which is chosen. If type is 'single', prefer
-#' determines whether year represents calendar year or financial year.
+#' determines whether year represents calendar year or financial year. If only
+#' years of a different type to prefer are provided, and type is single, no
+#' years are returned.
 #' @param type character string. Either 'both' (default), or 'single'. If
 #' 'single', the new year column will contain only calendar years or only
 #' financial years (depending on prefer). If 'both', the year column can
@@ -873,6 +907,10 @@ extract_all_years <- function(dat, type = "both") {
 #' }
 #' @export
 get_year_type <- function(dat, column = NA) {
+
+  if (length(dat) == 0) {
+    return(NA)
+  }
 
   if (is.vector(dat)) {
     dataframe <- data.frame(temp_column = dat)

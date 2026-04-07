@@ -107,3 +107,12 @@ test_that("get_year_from_column prefers calendar year but gives financial if cal
   expect_equal(result, expected)
 
 })
+
+
+test_that("get_year does not return any years if none of the preferred type
+are available and type is single.", {
+
+  result <- get_year("2026", NA, prefer = "financial", type = "single")
+  expect_equal(result, as.character())
+
+})

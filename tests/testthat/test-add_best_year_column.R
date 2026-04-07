@@ -85,7 +85,7 @@ test_that("add_best_year_column gives a warning if single year is used and warn 
     suppressMessages(
       result <- add_best_year_column(dat, possible_cols, single_year)
     ),
-    "Year has been taken from either .* but they do not match each other."
+    "Year has been taken from either .* but there was more than one unique option"
   )
   expected <- mutate(dat, year = "2021-22")
   expect_equal(result, expected)

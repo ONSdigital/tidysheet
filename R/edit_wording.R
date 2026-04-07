@@ -149,7 +149,7 @@ standardise_mentioned_years <- function(dat, columns = NA, year) {
   }
 
   message(
-    "Standardising the wording of years given in the follwoing columns: '",
+    "Standardising the wording of years given in the following columns: '",
     paste0(columns, collapse = "', '"), "'."
   )
 

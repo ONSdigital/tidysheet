@@ -521,10 +521,10 @@ add_best_year_column <- function(dat, possible_cols, single_year) {
     if (single_year[["warn"]]) {
       warning(
         "Year has been taken from either the file name or the information ",
-        "above the data, but they do not match each other. If the year column ",
-        "is incorrect please contact a developer to edit the setting for ",
-        "use_year_from_filename_over_year_above_table. See earlier messages ",
-        "for more detail."
+        "above the data, but there was more than one unique option. If the ",
+        "year column is incorrect please contact a developer to edit e.g. the ",
+        "setting for use_year_from_filename_over_year_above_data. See earlier ",
+        "messages and warnings for more detail."
         )
     }
     output <- mutate(dat, year = single_year[["year"]])
@@ -573,6 +573,12 @@ standardise_year <- function(dat, column = NA) {
   message("Standardising format of year.")
 
   if (is.vector(dat)) {
+
+    if (any(is.na(dat), length(dat) == 0)) {
+      message("No year found for standardisation")
+      return(NA)
+    }
+
     dat <- data.frame(year = dat)
     column <- "year"
     return_to_vector <- TRUE
