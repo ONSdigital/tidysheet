@@ -4,13 +4,11 @@
 \alias{extract_units}
 \title{Extract information about units}
 \usage{
-extract_units(dat, pattern)
+extract_units(dat)
 }
 \arguments{
 \item{dat}{dataframe imported using tidyxl::xlsx_cells() containing the cells
 that are likely to include information about units.}
-
-\item{pattern}{character string. Regular expression used for matching units.}
 }
 \value{
 A string containing extracted unique unit labels separated by
@@ -29,7 +27,7 @@ info_at_top_of_sheet <- data.frame(
         "All figures are in thousands of pounds (£ thousand)."
         )
     )
-pattern <- "((?i)thousand|(?i)000s)|(?i)million"
-units <- extract_units(info_at_top_of_sheet, pattern)
+
+units <- extract_units(info_at_top_of_sheet)
 }
 }

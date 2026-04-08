@@ -8,9 +8,9 @@ get_vintage(
   single_vintage,
   release_number,
   sheet_title,
-  table_title,
   sheet_info,
-  table_info
+  table_title = NA,
+  table_info = NA
 )
 }
 \arguments{
@@ -21,11 +21,11 @@ In pub sec this variable is specified by single_vintage.}
 
 \item{sheet_title}{character string. The title at the top of the sheet.}
 
-\item{table_title}{character string. The title above the table.}
-
 \item{sheet_info}{dataframe imported using tidyxl::xlsx_cells()- this should
 be a subset of the dataset that just includes information given above the
 data in the sheet.}
+
+\item{table_title}{character string. The title above the table.}
 
 \item{table_info}{dataframe imported using tidyxl::xlsx_cells() Same as
 sheet_info but for an individual subtable.}

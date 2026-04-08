@@ -19,7 +19,9 @@ will be stored in. Default is 'year'}
 \item{prefer}{character string. Either 'financial' (default), or 'calendar'.
 If type is 'both' and both a calendar year and a financial year are found in
 a single entry, this determines which is chosen. If type is 'single', prefer
-determines whether year represents calendar year or financial year.}
+determines whether year represents calendar year or financial year. If only
+years of a different type to prefer are provided, and type is single, no
+years are returned.}
 
 \item{type}{character string. Either 'both' (default), or 'single'. If
 'single', the new year column will contain only calendar years or only

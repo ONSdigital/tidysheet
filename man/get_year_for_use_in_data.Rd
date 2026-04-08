@@ -5,30 +5,38 @@
 \title{Get and compare year from above the data to a set year}
 \usage{
 get_year_for_use_in_data(
-  dat,
-  title,
+  sheet_year,
+  table_year,
   filename_year = NA,
   use_filename_year = FALSE,
+  prefer_sheet_year = FALSE,
   suppress_warning = FALSE
 )
 }
 \arguments{
-\item{dat}{character string vector of the information found above the data.}
-
-\item{title}{character string. Only used when dat is empty.}
-
 \item{filename_year}{character string vector.}
 
-\item{use_filename_year}{boolean. Default is FALSE. If TRUE and no year that
-is found in the information above the table matches the filename year, the
-filename year will be returned. If FALSE and there is a mismatch, the year
-found above the table will be returned. In pub sec this variable is supplied
+\item{use_filename_year}{boolean. Default is FALSE. If FALSE and there is a
+mismatch, the year found above the table will be returned.If TRUE and no year
+that is found in the information above the table matches the filename year,
+the filename year will be returned.  In pub sec this variable is specified
 by use_year_from_filename_over_year_above_data.}
+
+\item{prefer_sheet_year}{boolean. Default is FALSE. Only used when there is a
+mismatch between the year(s) given at the top of the sheet and the years
+found above a table. If either are NA, this variable is not used. If FALSE,
+the year from above the table is used. If TRUE, the year from the top of the
+sheet is used. In pub sec this variable is specified by
+use_sheet_year_over_table_year.}
 
 \item{suppress_warning}{boolean. Default is FALSE. If TRUE, warnings about
 mismatching years between the filename and the information above the data
-will be turned off. In pu sec this variable is specified by
-suppress_year_above_table_warning.}
+will be turned off. In pub sec this variable is specified by
+suppress_year_above_table_warning. It is required because there are some
+cases where we expect a mismatch and giving a warning would be confusing to
+users.}
+
+\item{title}{character string.}
 }
 \value{
 list of 'year' and 'warn': 'year' is a character string, 'warn' is
@@ -55,12 +63,11 @@ If none are found, the file name year is used as default.
 \examples{
 \dontrun{
 filename <- "D:/data-2024_25.xlsx"
-dat <- c("Title 2026", "2025/26 data", "Note 2023-24 data available at...")
 get_year_for_use_in_data(
-    dat, "Title 2026", "2024_25", use_filename_year = FALSE
+    "2024-25", "2025-26", use_filename_year = FALSE
     )
 get_year_for_use_in_data(
-    dat, "Title 2026", "2024_25", use_filename_year = TRUE
+    "Title 2026", "2024_25", use_filename_year = TRUE
     )
 }
 }

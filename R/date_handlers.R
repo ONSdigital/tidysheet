@@ -255,8 +255,11 @@ make_calendar_q1_month_and_quarter_patterns <- function(
 #' use_filename_year is FALSE, the first is used and a warning is given.
 #' If none are found, the file name year is used as default.
 #'
-#' @param title character string.
-#' @param filename_year character string vector.
+#' @param sheet_year character string vector. Years found at the top of the
+#' sheet above the first header row.
+#' @param table_year character string vector. Years found above an individual
+#' table before the table's first header row.
+#' @param filename_year character string.
 #' @param use_filename_year boolean. Default is FALSE. If FALSE and there is a
 #' mismatch, the year found above the table will be returned.If TRUE and no year
 #' that is found in the information above the table matches the filename year,
@@ -302,6 +305,21 @@ get_year_for_use_in_data <- function(
     "a column."
   )
 
+  if (length(unique(filename_year)) > 1) {
+    warning(
+      "More than one year found in the filename: '",
+      paste0(filename_year, collapse = "', '"), "'. Year selection is based ",
+      "on the assumption that the year in the filename is likely to apply ",
+      "to all data if there is no year column in the source data. As such, ",
+      "the years from the file name will be ignored for this data."
+      )
+    filename_year <- NA
+    multiple_filename_years <- TRUE
+  } else {
+    filename_year <- unique(filename_year)
+    multiple_filename_years <- FALSE
+  }
+
   use_filename_year <- replace_na(use_filename_year, FALSE)
   prefer_sheet_year <- replace_na(prefer_sheet_year, FALSE)
   suppress_warning <- replace_na(suppress_warning, FALSE)
@@ -309,14 +327,16 @@ get_year_for_use_in_data <- function(
   filename_year_standardised <- standardise_year(filename_year)
   filename_year_type <- get_year_type(filename_year)
 
-  if (is.na(filename_year_standardised)) {
+  if (
+    all(is.na(filename_year_standardised), multiple_filename_years == FALSE)
+    ) {
     warning("No year found in the file name. Please contact a developer.")
   }
 
   sheet_standardised <- refine_metadata_year(sheet_year, filename_year_type)
   table_standardised <- refine_metadata_year(table_year, filename_year_type)
 
-  year_above_data <- choose_between_sheet_and_table_years(
+  year_above_data <- select_year_from_sheet_or_table(
     sheet_standardised, table_standardised, prefer_sheet_year
   )
 
@@ -491,7 +511,43 @@ refine_metadata_year <- function(years, preferred) {
 }
 
 
-choose_between_sheet_and_table_years <- function(
+#' @title Select the year from either the sheet or table metadata
+#'
+#' @description
+#' Select between two provided year vectors. One will be taken from the metadata
+#' at the top of the sheet, the other from the metadata directly above the table.
+#'
+#' If they are the same, just return one. If one is NA, return the other. If
+#' they are different return the one stated by the prefer_sheet_year setting.
+#'
+#' @details
+#' Used by get_year_for_use_in_data. Usually only one of sheet_year and
+#' table_year will exist, unless there are multiple tables in a sheet, and each
+#' has the year the data relates to in the table title. In such as case, this
+#' function will by default return the table title year rather that the year at
+#' the top of the sheet. In pub sec, if there is no year column in the source
+#' data, the year from get_year_for_use_in_data will be put in the output year
+#' column.
+#'
+#' If the year given in the information at the top of the sheet relates to all
+#' tables, but some other year is mentioned above an individual table, the
+#' prefer_sheet_year setting allows users to specify that the year at the top
+#' of the sheet should be used instead.
+#'
+#' @param sheet_year character vector of years taken from the top of the sheet.
+#' @param table_year character vector of years taken from above the table.
+#' @param prefer_sheet_year boolean default is FALSE. If TRUE, and there is a
+#' year given in the information above the sheet, instead of returning the year
+#' from above the table, the year from the top of the sheet will be used.
+#'
+#' @returns single character vector of years.
+#'
+#' @examples
+#' \dontrun{
+#' select_year_from_sheet_or_table(c("2022-23", "2026-27"), "2024-25")
+#' }
+#'
+select_year_from_sheet_or_table <- function(
     sheet_year, table_year, prefer_sheet_year = FALSE
 ){
 
@@ -556,7 +612,7 @@ choose_between_sheet_and_table_years <- function(
 #' corresponding boolean vector for 'warn'.
 #'
 #' @examples
-#' \donotrun{
+#' \dontrun{
 #' choose_from_multiple_years(c("2021-22", "2022-23"))
 #' choose_from_multiple_years("2021-22")
 #' choose_from_multiple_years(NA)

@@ -126,3 +126,33 @@ mismatch if suppress_warning is set to TRUE", {
 
 })
 
+
+test_that("get_year_for_use_in_data raises handles repeated filename years", {
+
+  expected <- list("year" = "2024-25", "warn" = FALSE)
+
+  result <- suppressMessages(
+    get_year_for_use_in_data(NA, NA, c("2024_25", "2024_25"))
+  )
+
+  expect_equal(result, expected)
+
+})
+
+
+test_that("get_year_for_use_in_data raises a warning if more than one unique
+filename year is provided", {
+
+  expected <- list("year" = "2025-26", "warn" = FALSE)
+
+  expect_warning(
+    result <- suppressMessages(
+      get_year_for_use_in_data("2025-26", NA, c("2024_25", "2025-26"))
+    ),
+    "More than one year found in the filename"
+  )
+
+  expect_equal(result, expected)
+
+})
+
