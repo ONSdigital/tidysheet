@@ -1,3 +1,73 @@
+#' @title Extract metadata from a dataframe and from other supplied information.
+#'
+#' @description
+#'
+#' @details
+#' In some DLUHC datasets we have to use the LA_dropdown tab. In these sheets
+#' there is a dropdown at the top that controls what data are shown on the
+#' sheet, and therefore what data are imported.
+#'
+#' @param dat dataframe in xlsx_cells format, containing only metadata i.e.
+#' information above the table or tables.
+#' @param dropdown_pattern
+#' @param single_vintage
+#' @param
+#'
+get_metadata <- function(
+    sheet_dat, dropdown_pattern, single_vintage = NA, release_number = NA,
+    table_dat = NA, sheet_title = NA, sheet_units = NA, sheet_year = NA,
+    filename_year = NA, use_year_from_filename = NA, no_warning = NA
+) {
+
+  # Both the sheet and table metadata tables are required when getting vintage
+  # for tables. However, for all other types of metadata only one metadata table
+  # is used. We thus need to specify which is the focal metadata table (dat).
+  if (all(!is.data.frame(table_dat), is.data.frame(sheet_dat))) {
+    dat <- sheet_dat
+  } else if (is.data.frame(table_dat)) {
+    dat <- table_dat
+  } else {
+    stop("No data found.")
+  }
+
+  current_units <- extract_units(dat)
+
+  dropdown <- get_dropdown_value(dat, dropdown_pattern)
+
+  all_metadata <- dat$character
+  current_title <- all_metadata[!is.na(all_metadata)][1]
+
+  # If year is mentioned in the title ignore years mentioned in the rest of the
+  # metadata, as the year in the title is more likely to be the year of the data
+  year <- extract_all_years(current_title)
+  if (length(year) == 0) {
+    year <- extract_all_years(dat)
+  }
+
+  # We only get vintage for metadata above a table, not from the top
+  # of the sheet because it would give the same result and messages for both
+  if (is.data.frame(table_dat)){
+    vintage <- get_vintage(
+      single_vintage, release_number, sheet_title, sheet_dat, current_title,
+      table_dat
+    )
+    # If table units is not blank use that, otherwise use sheet, otherwise NA.
+    units <- get_units(sheet_units, current_units)
+  } else {
+    vintage <- NA
+    units <- current_units
+  }
+
+  metadata_list <- list(
+    "units" = units, "dropdown" = dropdown, "title" = current_title,
+    "year" = year, "vintage" = vintage
+  )
+
+  return(metadata_list)
+
+}
+
+
 #' @title Get the row index of a header based on specified identifiers
 #'
 #' @description
