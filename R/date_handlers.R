@@ -894,6 +894,7 @@ check_for_multiple_years <- function(
 #' @export
 extract_all_years <- function(dat, type = "both") {
 
+  message("Getting all year matches.")
   dat <- unlist(dat)
 
   patterns <- make_year_patterns()
@@ -911,9 +912,14 @@ extract_all_years <- function(dat, type = "both") {
 
   if (length(years) == 0) {
     unique_years <- NA
+    message("No year matches found")
   } else {
     unique_years <- unique(years[!is.na(years)])
+    message(
+      "Year matches found: '", paste0(unique_years, collapse = "', '"), "'."
+    )
   }
+
 
   return(unique_years)
 }

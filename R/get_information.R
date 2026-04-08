@@ -1,23 +1,79 @@
 #' @title Extract metadata from a dataframe and from other supplied information.
 #'
-#' @description
+#' @description Get units, title, dropdown cell contents, year, and vintage
+#' values from metadata held above the data.
 #'
 #' @details
-#' In some DLUHC datasets we have to use the LA_dropdown tab. In these sheets
-#' there is a dropdown at the top that controls what data are shown on the
-#' sheet, and therefore what data are imported.
+#' This is used in public sector to look for the relevant information at the top
+#' of the sheet and above the subtables. Where there is conflicting title,
+#' units, or vintage information between the sheet and subtable metadata, rules
+#' are implemented by the called functions to select the correct one.
+#'
+#' Conflicts between the year found in sheet and subtable metadata are handled
+#' outside this function (by get_year_for_use_in_data) as it is more complex.
+#'
+#' Title and units are simply extracted from the information above the data.
+#' Vintage and dropdown values also use information supplied from the user
+#' settings and other places (i.e. release number).
+#'
+#' Note on the dropdown cell value: In some DLUHC (MHCLG) datasets we have to
+#' use the LA_dropdown tab. In these sheets there is a dropdown at the top that
+#' controls what data are shown on the sheet, and therefore what data are
+#' imported. If the wrong value is selected in the dropdown, users need to be
+#' made aware of this, hence including it in the metadata.
 #'
 #' @param sheet_dat dataframe in xlsx_cells format, containing metadata from
 #' the top of the sheet.
-#' @param dropdown_pattern
-#' @param single_vintage
-#' @param
+#' @param dropdown_pattern character string. regular expression to match the
+#' expected contents of the dropdown cell. In pub sec this variable is specified
+#' by dropdown_pattern.
+#' @param single_vintage character string. Vintage as specified in the settings.
+#' In pub sec this variable is specified by single_vintage.
+#' @param release_number integer between 1 and 9 or NA.
+#' @param table_dat dataframe in xlsx_cells format, containing metadata from
+#' above the table (i.e. after the first header row, but before the table first
+#' header row). Only relevant for datasets with multiple tables in a sheet.
+#' @param sheet_title character string. The title at the top of the sheet.
+#' @param sheet_units character string. Units taken from the top of the sheet.
 #'
+#' @returns named list giving character string values for 'units', 'dropdown'
+#' 'title', 'year', and 'vintage'. 'year' can be a vector with more than one
+#' element. All others have a single element.
+#'
+#' @examples
+#' \dontrun{
+#' sheet_dat <- data.frame(
+#'     character = c(
+#'         "All data for 2022-23 to 2026-27",
+#'         "£ million unless otherwise stated",
+#'         "England"
+#'         ),
+#'     address = c("A1", "A2", "A4"),
+#'     row = c(1, 2, 4),
+#'     col = 1
+#'     )
+#' table_dat <- data.frame(
+#'     character = c("Data for 2024-25", "£ thousand"),
+#'     address = "A40",
+#'     row = 40,
+#'     col = 1
+#'     )
+#' dropdown_pattern <- "(?i)Eng"
+#' single_vintage <- "final"
+#'
+#' sheet_metadata <- get_metadata(
+#'     sheet_dat, dropdown_pattern, single_vintage
+#'     )
+#' table_metadata <- get_metadata(
+#'     sheet_dat, dropdown_pattern, single_vintage, NA, table_dat,
+#'     sheet_metadata[['title']], sheet_metadata[['units']]
+#'     )
+#' }
+#' @export
 get_metadata <- function(
     sheet_dat, dropdown_pattern, single_vintage = NA, release_number = NA,
-    table_dat = NA, sheet_title = NA, sheet_units = NA, sheet_year = NA,
-    filename_year = NA, use_year_from_filename = NA, no_warning = NA
-) {
+    table_dat = NA, sheet_title = NA, sheet_units = NA
+    ) {
 
   # Both the sheet and table metadata tables are required when getting vintage
   # for tables. However, for all other types of metadata only one metadata table
@@ -30,12 +86,20 @@ get_metadata <- function(
     stop("No data found.")
   }
 
+  if (! all(c("row", "col", "character") %in% names(dat))) {
+    stop(
+      "Data must be imported using xlsx_cells and contain the following ",
+      "columns: 'row', 'col', 'character'."
+      )
+  }
   current_units <- extract_units(dat)
 
   dropdown <- get_dropdown_value(dat, dropdown_pattern)
 
+  message("Getting title.")
   all_metadata <- dat$character
   current_title <- all_metadata[!is.na(all_metadata)][1]
+  message("Title found: '", current_title, "'.")
 
   # If year is mentioned in the title ignore years mentioned in the rest of the
   # metadata, as the year in the title is more likely to be the year of the data
@@ -64,7 +128,6 @@ get_metadata <- function(
   )
 
   return(metadata_list)
-
 }
 
 
@@ -546,6 +609,7 @@ get_units <- function(sheet_units, table_units) {
 #' @export
 extract_units <- function(dat) {
 
+  message("Getting units")
   pattern <- "((?i)thousand|(?i)000s)|(?i)million|(?i)(\\s|\\(|^)(count)(\\s|\\)|$)"
   units_extracted <- extract_matches(dat$character, pattern)
 
@@ -563,6 +627,11 @@ extract_units <- function(dat) {
       unique(units_extracted[!is.na(units_extracted)]),
       collapse = ', '
     )
+  }
+  if(is.na(units)) {
+    message("No units found.")
+  } else {
+    message("Units found: ", units)
   }
 
   return(units)
@@ -644,7 +713,14 @@ get_dropdown_value <- function(dat, pattern=NA) {
     slice_tail(n = 1) %>%
     pull(character)
 
-  message("Value found: '", dropdown_entry, "'.")
+  if (length(dropdown_entry) > 0) {
+    message("Value found: '", dropdown_entry, "'.")
+  } else {
+    message(
+      "No dropdown value found to match the dropdown pattern supplied in ",
+      "the settings."
+    )
+  }
 
   return(dropdown_entry)
 
