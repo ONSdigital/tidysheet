@@ -7,8 +7,8 @@
 #' there is a dropdown at the top that controls what data are shown on the
 #' sheet, and therefore what data are imported.
 #'
-#' @param dat dataframe in xlsx_cells format, containing only metadata i.e.
-#' information above the table or tables.
+#' @param sheet_dat dataframe in xlsx_cells format, containing metadata from
+#' the top of the sheet.
 #' @param dropdown_pattern
 #' @param single_vintage
 #' @param
@@ -594,19 +594,21 @@ extract_matches <- function(dat, pattern) {
 }
 
 
-#' @title Add a column filled with info that matches a regular expression
+#' @title Get the value from a dropdown cell above the data.
 #'
-#' @description Get the value of the last cell found to match a
-#' specified regular expression. This function was created for use in public
-#' sector to take information from a dropdown cell by using a regular expression
-#' to identify the contents of the dropdown. An assumption is made that
-#' the dropdown cell is closer to the table than any other information above the
-#' table.
+#' @description Get the value of the last cell found to match a specified
+#' regular expression.
 #'
-#' @param dat dataframe or tibble that the new column will be added to.
-#' @param pattern character string regular expression to match the cell whose
-#' contents will be used to fill the new column. In pub sec this variable is
-#' specified by dropdown_pattern.
+#' @details
+#' This function was created for use in public sector to get information from a
+#' dropdown cell by using a regular expression to identify the contents of the
+#' dropdown. An assumption is made that the dropdown cell is closer to the table
+#' than any other information above the table.
+#'
+#' @param dat dataframe imported using xlsx_cells. Contains metadata.
+#' @param pattern character string regular expression to match the expected
+#' contents of the dropdown cell. In pub sec this variable is specified by
+#' dropdown_pattern.
 #'
 #' @returns dataframe or tibble. dat is returned with the newly created column.
 #' If only one of new_column or pattern is NA, an error is raised. If both
