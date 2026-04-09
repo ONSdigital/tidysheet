@@ -144,7 +144,6 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     )
 
   # separate the info above the table from the main table and get metadata------
-
   full_sheet <- split_data_from_metadata(
     cells_removed, header_identifier, header_identifier_instance,
     header_row_offset
@@ -175,7 +174,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     stop("Fewer tables found than the number of tables set to be processed.")
   }
 
-  # create a place to store all processed sub-tables
+  # go through tables individually, storing processed tables in all_tables------
   all_tables <- NULL
 
   dict_split_by_table <- split_args_by_separator(
@@ -233,17 +232,14 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       subtitle_offset, subtitle_horizontal_index
     )
 
-    table_first_header_row <- get_header_row(
-      single_table, table_header_identifier,
-      table_header_identifier_instance, table_header_row_offset
-    )
-
     all_table_data <- split_data_from_metadata(
       single_table, table_header_identifier,
       table_header_identifier_instance, table_header_row_offset
     )
+
     main_table <- all_table_data[['data']]
     info_above_table <- all_table_data[['metadata']]
+    table_first_header_row <- all_table_data[['split_row']]
 
     # get info from above the table
     table_metadata <- get_metadata(

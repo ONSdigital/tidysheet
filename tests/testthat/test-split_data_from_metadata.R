@@ -10,7 +10,7 @@ test_that("split_data_from_metadata returns a list of dataframes", {
 
   dat <- filter(all, row == 3:4)
   meta <- filter(all, row == 1)
-  expected <- list("data" = dat, "metadata" = meta)
+  expected <- list("data" = dat, "metadata" = meta, "split_row" = 3)
 
   result <- suppressMessages(split_data_from_metadata(all, "(?i)value", NA, NA))
 

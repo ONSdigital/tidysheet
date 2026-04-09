@@ -125,7 +125,8 @@ match_sheet_to_regex <- function(sheet_names, pattern){
 #' first header row, offset_by will be 1. If the pattern is on the row before
 #' the first header row, offset_by will be -1.
 #'
-#' @returns named list of dataframes. Tables are called 'data' and 'metadata'.
+#' @returns named list: 'data' and 'metadata' are dataframes, 'split_row' is
+#' an integer and is the source data row number of the first header row.
 #'
 #' @examples
 #' \dontrun{
@@ -162,7 +163,7 @@ split_data_from_metadata <- function(
   metadata <- get_info_above_table(dat, first_header_row)
 
   table_list <- list(
-    "data" = data, "metadata" = metadata
+    "data" = data, "metadata" = metadata, "split_row" = first_header_row
   )
 
   return(table_list)
