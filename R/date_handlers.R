@@ -464,7 +464,7 @@ get_year_for_use_in_data <- function(
 #' but the calendar year is still returned if not financial year is available
 #' (this is handled in get_year).
 #'
-#' @param year vector of character strings, each of which is a year in either
+#' @param years vector of character strings, each of which is a year in either
 #' calendar or financial year format.
 #' @param preferred characters string. Financial or calendar.
 #'
@@ -472,7 +472,7 @@ get_year_for_use_in_data <- function(
 #' returned in chronological order.
 #'
 #' @examples
-#' \donotrun{
+#' \dontrun{
 #' refine_metadata_year(c("2022-23", "2021-22", "2022"), "financial")
 #' refine_metadata_year(c("2022-23", "2021-22", "2022"), NA)
 #' refine_metadata_year(c("2022-23", "2021-22", "2022"), "calendar")

@@ -7,10 +7,10 @@
 refine_metadata_year(years, preferred)
 }
 \arguments{
-\item{preferred}{characters string. Financial or calendar.}
-
-\item{year}{vector of character strings, each of which is a year in either
+\item{years}{vector of character strings, each of which is a year in either
 calendar or financial year format.}
+
+\item{preferred}{characters string. Financial or calendar.}
 }
 \value{
 character string vector of years or NA (see details). Years are
@@ -32,7 +32,7 @@ but the calendar year is still returned if not financial year is available
 (this is handled in get_year).
 }
 \examples{
-\donotrun{
+\dontrun{
 refine_metadata_year(c("2022-23", "2021-22", "2022"), "financial")
 refine_metadata_year(c("2022-23", "2021-22", "2022"), NA)
 refine_metadata_year(c("2022-23", "2021-22", "2022"), "calendar")

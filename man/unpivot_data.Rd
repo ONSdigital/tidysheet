@@ -21,7 +21,8 @@ unpivot_data(
 )
 }
 \arguments{
-\item{dat}{Dataframe created using tidyxl::xlsx_cells().}
+\item{dat}{Dataframe created using tidyxl::xlsx_cells(), in which metadata
+above the table has been removed.}
 
 \item{columns_to_create}{character vector. The names of columns that will
 be created during behead. The top header in dat will be pivoted to a

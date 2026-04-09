@@ -33,7 +33,7 @@
 #' specified, but rows_to_check_for_removal is NA, 5 will be used.
 #' @param combine_start_row_identifier character string. A regular expression
 #' that first appears in the first of the header rows that needs to be combined.
-#' @param combine_end_row_identifiercharacter string. A word or pattern that
+#' @param combine_end_row_identifier character string. A word or pattern that
 #' first appears in the last of the header rows that needs to be combined.
 #' @param columns_to_remove_patterns character string vector. Each is a regular
 #' expression that matches the name of a column in the raw data to be removed.
