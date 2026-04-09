@@ -137,10 +137,10 @@ match_sheet_to_regex <- function(sheet_names, pattern){
 #'     numeric = c(NA, NA, NA, 10)
 #'     )
 #'
-#' split_data_from_sheet_info(dat, "(?i)value", NA, NA)
+#' split_data_from_metadata(dat, "(?i)value", NA, NA)
 #' }
 #' @export
-split_data_from_sheet_info <- function(dat, pattern, instance, offset_by) {
+split_data_from_metadata <- function(dat, pattern, instance, offset_by) {
 
   message(
     "Splitting metadata at the top of the sheet from the rest of the data"

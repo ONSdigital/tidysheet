@@ -145,7 +145,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
 
   # separate the info above the table from the main table and get metadata------
 
-  full_sheet <- split_data_from_sheet_info(
+  full_sheet <- split_data_from_metadata(
     cells_removed, header_identifier, header_identifier_instance,
     header_row_offset
   )
@@ -238,7 +238,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       table_header_identifier_instance, table_header_row_offset
     )
 
-    all_table_data <- split_data_from_sheet_info(
+    all_table_data <- split_data_from_metadata(
       single_table, table_header_identifier,
       table_header_identifier_instance, table_header_row_offset
     )
