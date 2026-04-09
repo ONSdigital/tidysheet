@@ -103,14 +103,14 @@ match_sheet_to_regex <- function(sheet_names, pattern){
 #' @title Split metadata at the top of the sheet from the rest of the data.
 #'
 #' @description
-#' Many Excel datasets have metadata at the top of each sheet giving, for
-#' example, the title, units, and notes. This function separates out the sheet
-#' metadata from the rest of the sheet.
+#' Many Excel datasets have metadata above the data e.g. at the top of the sheet
+#' or above each table in a multi-table sheet. This function separates out the
+#' metadata from the data.
 #'
 #' @details
-#' Where sheets contain multiple tables, each of the sub tables may have their
-#' own blocks of metadata. This function *does not* remove the metadata from
-#' subtables.
+#' Metadata may contain information such as the title, units, dates, and notes.
+#' These may be required for output data. However, even if the metadata is not
+#' needed, it must be removed before the data can be un-pivotted using behead.
 #'
 #' @param dat dataframe imported using xlsx_cells.
 #' @param pattern character string. A regular expression to search for in the
@@ -126,6 +126,20 @@ match_sheet_to_regex <- function(sheet_names, pattern){
 #' the first header row, offset_by will be -1.
 #'
 #' @returns named list of dataframes. Tables are called 'data' and 'metadata'.
+#'
+#' @examples
+#' \dontrun{
+#' dat <- data.frame(
+#'     address = c("A1", "A2", "A3", "A4"),
+#'     row = 1:4,
+#'     col = 1,
+#'     character = c("Some data", NA, "value", NA),
+#'     numeric = c(NA, NA, NA, 10)
+#'     )
+#'
+#' split_data_from_sheet_info(dat, "(?i)value", NA, NA)
+#' }
+#' @export
 split_data_from_sheet_info <- function(dat, pattern, instance, offset_by) {
 
   message(
