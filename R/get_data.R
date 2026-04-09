@@ -100,6 +100,52 @@ match_sheet_to_regex <- function(sheet_names, pattern){
 }
 
 
+#' @title Split metadata at the top of the sheet from the rest of the data.
+#'
+#' @description
+#' Many Excel datasets have metadata at the top of each sheet giving, for
+#' example, the title, units, and notes. This function separates out the sheet
+#' metadata from the rest of the sheet.
+#'
+#' @details
+#' Where sheets contain multiple tables, each of the sub tables may have their
+#' own blocks of metadata. This function *does not* remove the metadata from
+#' subtables.
+#'
+#' @param dat dataframe imported using xlsx_cells.
+#' @param pattern character string. A regular expression to search for in the
+#' data to identify the first header row. In pub sec this variable is specified
+#' with header_identifier.
+#' @param instance An integer specifying which instance of the header identifier
+#' pattern to use. Defaults to 1 (the first instance). In pub sec this variable
+#' is specified with header_identifier_instance.
+#' @param offset_by An integer specifying the number of rows to offset
+#' the header row. Defaults to 0. In pub sec this variable is specified with
+#' header_row_offset. If the row the pattern is found on is the row after the
+#' first header row, offset_by will be 1. If the pattern is on the row before
+#' the first header row, offset_by will be -1.
+#'
+#' @returns named list of dataframes. Tables are called 'data' and 'metadata'.
+split_data_from_sheet_info <- function(dat, pattern, instance, offset_by) {
+
+  message(
+    "Splitting metadata at the top of the sheet from the rest of the data"
+  )
+
+  first_header_row <- get_header_row(dat, pattern, instance, offset_by)
+
+  data <- get_table_data(dat, first_header_row)
+
+  metadata <- get_info_above_table(dat, first_header_row)
+
+  table_list <- list(
+    "data" = data, "metadata" = metadata
+  )
+
+  return(table_list)
+}
+
+
 #' @title Get the table data (excluding information above the table)
 #'
 #' @description Retain only data that is part of the table itself.
