@@ -27,12 +27,14 @@ test_that("combine_columns successfully combines multiple string columns", {
 
   expected <- data.frame(newcol = c("A - a - Aa", "B - Bb"))
 
-  expect_message(
-    result <- combine_columns(
-      dat, c("col1", "col2", "col3"), "newcol", NA
-      ),
-    "Concatenated strings will be given as 'newcol'"
-  )
+  messages <- capture_messages(
+    combine_columns(dat, c("col1", "col2", "col3"), "newcol", NA)
+    )
+  expect_true(grepl("newcol", messages[2]))
+
+  result <- suppressMessages(
+    combine_columns(dat, c("col1", "col2", "col3"), "newcol", NA)
+    )
 
   expect_equal(result, expected)
 

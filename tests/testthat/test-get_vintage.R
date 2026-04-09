@@ -121,9 +121,16 @@ test_that("get_vintage returns top sheet vintage if only it exists and is valid"
 
 test_that("get_vintage returns NA and a message if no vintages are found", {
 
-  expect_message(
-    result <- get_vintage(NA, NA, NA, data.frame(), NA, data.frame()),
-    "vintage not found in dataset metadata or in settings"
+
+  messages <- capture_messages(
+    get_vintage(NA, NA, NA, data.frame(), NA, data.frame())
+  )
+  expect_true(
+    grepl("vintage not found in dataset metadata or in settings.", messages[2])
+    )
+
+  result <- suppressMessages(
+    get_vintage(NA, NA, NA, data.frame(), NA, data.frame())
   )
   expect_equal(result, NA)
 

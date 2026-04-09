@@ -2,9 +2,9 @@ test_that("add_single_value_columns raises an error if column names and column
 fillers are of different lengths", {
 
   dat <- data.frame(a = 1:3, b = 4:6)
-  expect_error(
-      add_single_value_columns(dat, c("desc_1", "desc_2"), "hello"),
-      "Names and values must be the same length"
+  expect_error(suppressMessages(
+      add_single_value_columns(dat, c("desc_1", "desc_2"), "hello")
+      ), "Names and values must be the same length"
   )
 
 })

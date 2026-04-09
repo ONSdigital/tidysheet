@@ -35,3 +35,4 @@ test_that("extract_matches returns a list", {
 test_that("extract_matches returns NA for items with no match", {
   expect_equal(extract_matches(c( "a2", "none"), '[0-9]'), list("2", NA))
 })
+

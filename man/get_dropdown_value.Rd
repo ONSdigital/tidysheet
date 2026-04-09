@@ -2,16 +2,16 @@
 % Please edit documentation in R/get_information.R
 \name{get_dropdown_value}
 \alias{get_dropdown_value}
-\title{Add a column filled with info that matches a regular expression}
+\title{Get the value from a dropdown cell above the data.}
 \usage{
 get_dropdown_value(dat, pattern = NA)
 }
 \arguments{
-\item{dat}{dataframe or tibble that the new column will be added to.}
+\item{dat}{dataframe imported using xlsx_cells. Contains metadata.}
 
-\item{pattern}{character string regular expression to match the cell whose
-contents will be used to fill the new column. In pub sec this variable is
-specified by dropdown_pattern.}
+\item{pattern}{character string regular expression to match the expected
+contents of the dropdown cell. In pub sec this variable is specified by
+dropdown_pattern.}
 }
 \value{
 dataframe or tibble. dat is returned with the newly created column.
@@ -19,12 +19,14 @@ If only one of new_column or pattern is NA, an error is raised. If both
 new_column and pattern are NA, dat is returned with no changes.
 }
 \description{
-Get the value of the last cell found to match a
-specified regular expression. This function was created for use in public
-sector to take information from a dropdown cell by using a regular expression
-to identify the contents of the dropdown. An assumption is made that
-the dropdown cell is closer to the table than any other information above the
-table.
+Get the value of the last cell found to match a specified
+regular expression.
+}
+\details{
+This function was created for use in public sector to get information from a
+dropdown cell by using a regular expression to identify the contents of the
+dropdown. An assumption is made that the dropdown cell is closer to the table
+than any other information above the table.
 }
 \examples{
 \dontrun{

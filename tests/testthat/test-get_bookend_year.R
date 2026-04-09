@@ -33,7 +33,7 @@ test_that("get_bookend_year works as expected for financial years", {
 
 test_that("get_bookend_year does as expected in a string with more than one calendar year", {
   expect_warning(
-    result <- get_bookend_year("2021 2034", 1, "calendar"),
+    result <- suppressMessages(get_bookend_year("2021 2034", 1, "calendar")),
     "More than one calendar year provided"
   )
   expect_equal(result, NA)
@@ -42,8 +42,9 @@ test_that("get_bookend_year does as expected in a string with more than one cale
 
 test_that("get_bookend_year does as expected in a string with more than one financial year", {
   expect_warning(
-    result <- get_bookend_year("2021-22 2023-24", 1, "financial"),
-    "More than one financial year provided"
+    result <- suppressMessages(
+      get_bookend_year("2021-22 2023-24", 1, "financial")
+    ), "More than one financial year provided"
   )
   expect_equal(result, NA)
 
@@ -52,7 +53,7 @@ test_that("get_bookend_year does as expected in a string with more than one fina
 
 test_that("get_bookend_year does as expected in a string with no financial year", {
   expect_warning(
-    result <- get_bookend_year("2021", 1, "financial"),
+    result <- suppressMessages(get_bookend_year("2021", 1, "financial")),
     "No financial year provided"
   )
   expect_equal(result, NA)
@@ -61,7 +62,7 @@ test_that("get_bookend_year does as expected in a string with no financial year"
 
 test_that("get_bookend_year does as expected in a string with no calendar year", {
   expect_warning(
-    result <- get_bookend_year("2021-22", 1, "calendar"),
+    result <- suppressMessages(get_bookend_year("2021-22", 1, "calendar")),
     "No calendar year provided"
   )
   expect_equal(result, NA)

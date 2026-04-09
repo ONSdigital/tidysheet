@@ -13,7 +13,7 @@ test_that("remove_unwanted_cells raises error for address out of range", {
   dat <- data.frame(address = "A1")
 
   expect_warning(
-    result <- remove_unwanted_cells(dat, "A2"),
+    result <- suppressMessages(remove_unwanted_cells(dat, "A2")),
     "A2 has not been found in the data, so cannot be removed"
     )
 

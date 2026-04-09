@@ -14,7 +14,13 @@ get_year_for_use_in_data(
 )
 }
 \arguments{
-\item{filename_year}{character string vector.}
+\item{sheet_year}{character string vector. Years found at the top of the
+sheet above the first header row.}
+
+\item{table_year}{character string vector. Years found above an individual
+table before the table's first header row.}
+
+\item{filename_year}{character string.}
 
 \item{use_filename_year}{boolean. Default is FALSE. If FALSE and there is a
 mismatch, the year found above the table will be returned.If TRUE and no year
@@ -35,8 +41,6 @@ will be turned off. In pub sec this variable is specified by
 suppress_year_above_table_warning. It is required because there are some
 cases where we expect a mismatch and giving a warning would be confusing to
 users.}
-
-\item{title}{character string.}
 }
 \value{
 list of 'year' and 'warn': 'year' is a character string, 'warn' is
