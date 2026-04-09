@@ -261,45 +261,18 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       use_sheet_year_over_table_year, suppress_year_above_table_warning
     )
 
-    # Where dates are given as headings, and this info appears in the date
-    # column of xlsx_cells data we need to be able to access it in the character
-    # column. (eg in MHCLG/DLUHC borrowing and investments)
-    date_as_character <- convert_date_to_char(main_table)
+    table_data_cleaned <- clean_xlsx_cells_table_data(
+      main_table,
+      extend_row_pattern, extend_row_order, extend_row_with,
+      metadata_cells_to_remove_patterns,
+      populated_rows_to_check_for_metadata_to_remove,
+      combine_start_row_identifier, combine_end_row_identifier,
+      columns_to_remove_patterns, columns_to_remove_offset,
+      columns_to_create, table_first_header_row
+      )
 
-    rownames_extended <- extend_row_value(
-      main_table, extend_row_pattern, extend_row_order, extend_row_with
-    )
-
-    # without this step, if there is a blank column in the middle of the dataset,
-    # the columns after the blank column will not get correctly beheaded.
-    # This does not always remove 'blank' columns created through an editing
-    # error by the suppliers (e.g. in dluhc revenue expenditure budget 2020-21),
-    # because for some reason the cells are not seen as blank but as character
-    # with a string of "..." - these are removed later by remove_no_data_rows
-    no_empty_rows <- remove_empty_lines(rownames_extended, "row")
-    no_empty_cols <- remove_empty_lines(no_empty_rows, "col")
-
-    metadata_cell_removed <- remove_metadata_cells(
-      no_empty_cols, metadata_cells_to_remove_patterns,
-      populated_rows_to_check_for_metadata_to_remove
-    )
-
-    # Combine cells that have been artificially split by the supplier
-    # e.g. in DLUHC council tax and NNDR
-    headers_vertically_combined <- combine_rows_by_column(
-      metadata_cell_removed, combine_start_row_identifier,
-      combine_end_row_identifier
-    )
-
-    header_row_count <- length(columns_to_create)
-
-    for_reformatting <- remove_columns(
-      headers_vertically_combined, columns_to_remove_patterns,
-      columns_to_remove_offset, table_first_header_row, header_row_count
-    )
-
-    unpivotted <- unpivot_data (
-      for_reformatting,
+    unpivotted <- unpivot_data(
+      table_data_cleaned,
       columns_to_create,
       table_first_header_row,
       tolerance,

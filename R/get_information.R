@@ -104,7 +104,8 @@ get_metadata <- function(
   # If year is mentioned in the title ignore years mentioned in the rest of the
   # metadata, as the year in the title is more likely to be the year of the data
   year <- extract_all_years(current_title)
-  if (all(is.na(year))) {
+  blank_year <- any(all(is.na(year)), all(year == ""))
+  if (blank_year) {
     year <- extract_all_years(dat)
   }
 

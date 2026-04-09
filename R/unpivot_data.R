@@ -6,7 +6,8 @@
 #' not useful for subsequent purposes. This function is largely based on
 #' unpivotr.
 #'
-#' @param dat Dataframe created using tidyxl::xlsx_cells().
+#' @param dat Dataframe created using tidyxl::xlsx_cells(), in which metadata
+#' above the table has been removed.
 #' @param columns_to_create character vector. The names of columns that will
 #' be created during behead. The top header in dat will be pivoted to a
 #' column that is given the first name in columns_to_create. If there is a
