@@ -152,7 +152,9 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
   main_table <- full_sheet[['data']]
   info_at_top_of_sheet <- full_sheet[['metadata']]
 
-  sheet_metadata <- get_metadata(info_at_top_of_sheet, dropdown_pattern)
+  sheet_metadata <- get_metadata(
+    info_at_top_of_sheet, dropdown_pattern = dropdown_pattern
+    )
 
   # title is assumed to be in the first populated cell
   title <- sheet_metadata[['title']]
@@ -245,7 +247,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
 
     # get info from above the table
     table_metadata <- get_metadata(
-      info_at_top_of_sheet, table_dropdown_pattern,
+      info_at_top_of_sheet, dropdown_pattern = table_dropdown_pattern,
       single_vintage = single_vintage, release_number = release_number,
       table_dat = info_above_table, sheet_title = title,
       sheet_units = sheet_units
@@ -555,7 +557,7 @@ get_pattern_names <- function() {
 
 #' @title Remove unwanted cells from xlsx_cells data
 #'
-#' @descrpition Remove cells using specified cell addresses and cells containing
+#' @description Remove cells using specified cell addresses and cells containing
 #' strings where the font is the same colour as the background.
 #'
 #' @details
@@ -563,8 +565,8 @@ get_pattern_names <- function() {
 #' because not doing so results in errors during beheading (unpivotting).
 #'
 #' @param dat data that has been imported using xlsx_cells.
-#' @param cells_to_remove
-#' @param input_filepath
+#' @param cells_to_remove character string.
+#' @param input_filepath character string.
 #' @param hidden_strings bool. TRUE, FALSE or NA. Default is NA. FALSE leads to
 #' the same behaviour as NA. In pub sec this variable is specified by
 #' remove_hidden_strings_bool.

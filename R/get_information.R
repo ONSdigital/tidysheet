@@ -71,7 +71,7 @@
 #' }
 #' @export
 get_metadata <- function(
-    sheet_dat, dropdown_pattern, single_vintage = NA, release_number = NA,
+    sheet_dat, dropdown_pattern = NA, single_vintage = NA, release_number = NA,
     table_dat = NA, sheet_title = NA, sheet_units = NA
     ) {
 
@@ -104,7 +104,7 @@ get_metadata <- function(
   # If year is mentioned in the title ignore years mentioned in the rest of the
   # metadata, as the year in the title is more likely to be the year of the data
   year <- extract_all_years(current_title)
-  if (length(year) == 0) {
+  if (all(is.na(year))) {
     year <- extract_all_years(dat)
   }
 
@@ -628,6 +628,9 @@ extract_units <- function(dat) {
       collapse = ', '
     )
   }
+
+  if (units == "") { units <- NA }
+
   if(is.na(units)) {
     message("No units found.")
   } else {
