@@ -553,39 +553,3 @@ get_pattern_names <- function() {
   )
   return(pattern_names)
 }
-
-
-#' @title Remove unwanted cells from xlsx_cells data
-#'
-#' @description Remove cells using specified cell addresses and cells containing
-#' strings where the font is the same colour as the background.
-#'
-#' @details
-#' The cells removed by this function are usually specified as needing removal
-#' because not doing so results in errors during beheading (unpivotting).
-#'
-#' @param dat data that has been imported using xlsx_cells.
-#' @param cells_to_remove character string.
-#' @param input_filepath character string.
-#' @param hidden_strings bool. TRUE, FALSE or NA. Default is NA. FALSE leads to
-#' the same behaviour as NA. In pub sec this variable is specified by
-#' remove_hidden_strings_bool.
-#'
-clean_xlsx_cells_data <- function(
-    dat, cells_to_remove = NA, input_filepath, hidden_strings = NA
-) {
-
-  unwanted_cells_removed <- remove_unwanted_cells(dat, cells_to_remove)
-
-  cells_removed <- remove_hidden_character_strings(
-    unwanted_cells_removed, input_filepath, hidden_strings
-  )
-
-  return(cells_removed)
-
-}
-
-
-
-
-
