@@ -305,7 +305,8 @@ find_all_instances <- function(dat, pattern, direction = "row") {
 
   if (all(c("character", direction) %in% colnames(dat)) == FALSE) {
     stop(
-      "dat must be xlsx_cells data containing columns named character and ",
+      "Data must be imported using xlsx_cells and contain columns named ",
+      "'character' and ",
       direction
     )
   }

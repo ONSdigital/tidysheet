@@ -140,7 +140,16 @@ match_sheet_to_regex <- function(sheet_names, pattern){
 #' split_data_from_metadata(dat, "(?i)value", NA, NA)
 #' }
 #' @export
-split_data_from_metadata <- function(dat, pattern, instance, offset_by) {
+split_data_from_metadata <- function(
+    dat, pattern, instance = NA, offset_by = NA
+    ) {
+
+  if (! all(c("address", "row", "col") %in% names(dat))) {
+    stop(
+      "Data must be imported using xlsx_cells and contain e.g. the following ",
+      "columns: 'row', 'col', 'address'."
+    )
+  }
 
   message(
     "Splitting metadata at the top of the sheet from the rest of the data"
