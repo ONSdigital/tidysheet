@@ -17,7 +17,8 @@ replace_string_col}
 used to identify the locations where replacements should be made. Must be
 in the same order as \code{to}. The text identified by the first element in
 'from_regex' will be replaced with the text given in the first element of
-'to'. In pub sec this variable is specified by replace_string_from_col_patterns.}
+'to'. In pub sec this variable is specified by
+replace_string_from_col_patterns.}
 
 \item{to}{vector of character strings containing the new text.
 In pub sec this variable is specified by replace_string_to.}

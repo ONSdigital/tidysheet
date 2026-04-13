@@ -56,6 +56,10 @@ be the same length as single_value_values.}
 \item{single_value_values}{vector of values. The order and number of
 values must correspond to the order of single_value_names.}
 
+\item{main_dropdown_name}{character_string. The name of the column you want to
+populate with main_dropdown_value. In pub sec this variable is specified
+using dropdown_name.}
+
 \item{main_dropdown_value}{character_string. The value found in the dropdown
 cell at the top of the sheet.}
 
@@ -65,9 +69,13 @@ to populate with table_dropdown_value.}
 \item{table_dropdown_value}{character_string. The value found in the dropdown
 cell above the table.}
 
-\item{col_with_totals_pattern}{character string. Regular expression matching
+\item{table_title_column}{character string. The name of the column in
+which to put the names of the groups that have a total. In pub sec this
+variable is specified using name_for_total_column.}
+
+\item{name_for_total_column}{character string. Regular expression matching
 the name of the column currently containing the totals and what these totals
-are of.}
+are of. In pub sec this variable is specified using col_with_totals_pattern.}
 
 \item{total_column_fill_dir}{character string. Default is 'up'. The direction
 that names of the totals will be filled in. If totals are below the
@@ -86,6 +94,10 @@ subtitle_horizontal_index}
 \item{name_for_group_row_column}{character string. The name of the column to
 put row header information in when putting row headers that other
 descriptions are nested under into their own column.}
+
+\item{name_for_nested_row_column}{character string. The name of the column
+in which to put information that falls under row headers. Used when putting
+row headers that other descriptions are nested under into their own column.}
 
 \item{col_with_row_headers_pattern}{character string. Regular expression
 matching the name of the column currently containing both the grouping
@@ -129,26 +141,21 @@ MHCLG etc.}
 the collection of data from a webpage) e.g. revenue_expediture_budget.}
 
 \item{dataset}{character string. The name of the dataset.}
-
-\item{dropdown_name}{character_string. The name of the column you want to
-populate with main_dropdown_value.}
-
-\item{name_for_total_column.}{character string. The name of the column in
-which to put the names of the groups that have a total.}
-
-\item{name_for_nested_row_column.}{character string. The name of the column
-in which to put information that falls under row headers. Used when putting
-row headers that other descriptions are nested under into their own column.}
 }
 \value{
 dataframe with additions made.
 }
 \description{
 Fill missing information in both rows and columns of
-un-pivotted data (i.e. a standard data frame rather than xlsx_cells data)
+un-pivotted data (i.e. a standard data frame rather than xlsx_cells data).
 }
 \details{
+This function includes some functions that deal with time periods
+(split_date_to_columns, and split_year_and_vintage), but most of that is
+done in add_time_period_columns.
+
 For more details see documentation for rename_reserved_colnames, fill_blanks,
 add_single_value_columns, add_totals_as_column, add_subtable_names,
-add_row_headers_column, split_date_to_columns, split_year_and_vintage,
+add_row_headers_column, split_date_to_columns, split_year_and_vintage, and
+add_metadata_columns.
 }

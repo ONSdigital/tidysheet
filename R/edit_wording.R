@@ -7,6 +7,7 @@
 #' settings (see params). For more details and examples see the documentation
 #' for replace_strings, standardise_mentioned_years, and replace_blanks.
 #'
+#' @param dat dataframe.
 #' @param replace_string_col character string giving name of column that
 #' contains the text to replace. Must be exact. In pub sec this variable is
 #' specified by replace_string_col.

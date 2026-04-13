@@ -307,26 +307,18 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       col_pattern_with_blanks_to_replace, col_pattern_to_replace_blanks_with
       )
 
-    quarter_added <- wording_edited %>%
-      add_quarter_column(quarter_from_col_pattern, quarter_col_name)
-
-    fy_start_added <- quarter_added %>%
-      get_fy_start(
-        year_from_pattern, fy_from_fy_end, fy_start_from_fy_end, fy_end_pattern,
-        calendar_year_to_fy_start, q1_is_jan_to_mar, quarter_col_pattern,
-        month_col_pattern
-      )
-
-    year_col_cleaned <- process_year_column(
-      fy_start_added, year_col_pattern, single_year_of_data, year_for_column,
+    time_periods_added <- add_time_period_columns(
+      wording_edited, quarter_from_col_pattern, quarter_col_name,
+      year_from_pattern, fy_from_fy_end, fy_start_from_fy_end, fy_end_pattern,
+      calendar_year_to_fy_start, q1_is_jan_to_mar, quarter_col_pattern,
+      month_col_pattern,
+      year_col_pattern, single_year_of_data, year_for_column,
       single_year_overrides_all, multi_year_range_is_not_valid
-    )
-
-    simple_fy_start_added <- fill_missing_fy_start(year_col_cleaned)
+      )
 
     # --- initial removal of rows that might not be identifiable once columns are joined
     NA_rows_removed <- drop_rows_with_NA(
-      simple_fy_start_added, col_patterns_to_drop_NA_rows
+      time_periods_added, col_patterns_to_drop_NA_rows
     )
 
     # --- join columns

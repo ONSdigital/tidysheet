@@ -59,13 +59,15 @@ Potential year columns are identified either by their matching a provided
 pattern OR by matching '(?i)year' if pattern is not provided. Where there is
 no year column, it will be generated from a provided single year if
 use_single_year is true.
-
+}
+\details{
 If more than one year column is available, financial is preferred over
 calendar, which is preferred over a mix of the two, which is preferred over
 a given single year, unless single_overrides all is true. Note that in pub
-sec, single year is taken from the filename which comes from the user
-selection of what to download/process.
-if the user has supplied a pattern and it matches the name of a column/
+sec, single year is taken from the filename or the information above the
+data.
+
+If the user has supplied a pattern and it matches the name of a column/
 columns containing valid years, this/these columns will be the only
 possible_cols. If pattern is not supplied, any column with 'year' in the
 name that contains valid years will be included (one column per year type).
