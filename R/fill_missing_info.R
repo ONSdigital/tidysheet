@@ -1,3 +1,151 @@
+#' @title Fill missing info in un-pivotted data
+#'
+#' @description Fill missing information in both rows and columns of
+#' un-pivotted data (i.e. a standard data frame rather than xlsx_cells data)
+#'
+#' @details
+#' For more details see documentation for rename_reserved_colnames, fill_blanks,
+#' add_single_value_columns, add_totals_as_column, add_subtable_names,
+#' add_row_headers_column, split_date_to_columns, split_year_and_vintage,
+#'
+#'
+#' @param dat dataframe.
+#' @param xlsx_cells_names character string vector. Column names of the source
+#' @param fill_columns_column_names charater string vector. The names of the
+#' columns in which information above or below NA rows will be used to replace
+#' the NAs.
+#' @param fill_columns_fill_dirs character string vector. Must be the same
+#' length as fill_columns_column_names Values allowed are "down", "up", "downup"
+#' (i.e. first down and then up) or "updown" (first up and then down). If NA,
+#' and fill_columns_column_names is not NA, it defaults to 'down'.
+#' @param single_value_names vector of column names. Must
+#' be the same length as single_value_values.
+#' @param single_value_values vector of values. The order and number of
+#' values must correspond to the order of single_value_names.
+#' @param main_dropdown_name character_string. The name of the column you want to
+#' populate with main_dropdown_value. In pub sec this variable is specified
+#' using dropdown_name.
+#' @param main_dropdown_value character_string. The value found in the dropdown
+#' cell at the top of the sheet.
+#' @param table_dropdown_name character_string. The name of the column you want
+#' to populate with table_dropdown_value.
+#' @param table_dropdown_value character_string. The value found in the dropdown
+#' cell above the table.
+#' @param table_title_column character string. The name of the column in
+#' which to put the names of the groups that have a total. In pub sec this
+#' variable is specified using name_for_total_column.
+#' @param name_for_total_column character string. Regular expression matching
+#' the name of the column currently containing the totals and what these totals
+#' are of. In pub sec this variable is specified using col_with_totals_pattern.
+#' @param total_column_fill_dir character string. Default is 'up'. The direction
+#' that names of the totals will be filled in. If totals are below the
+#' information they sum, the direction should be 'up'. If totals are above the
+#' items they sum, then fill_dir should be set to 'down' Options: "down", "up".
+#' "downup" (i.e. first down and then up) or "updown" (first up and then down)
+#' can theoretically also be used.
+#' @param subtable_names dataframe with an integer column called 'row' and
+#' a character column giving the subtitle found on that row. The name of this
+#' character column is the name the column will have in the returned data. In
+#' pub sec this is created by get_subtitles() using the settings
+#' subtable_title_column, subtable_title_patterns, subtitle_offset, and
+#' subtitle_horizontal_index
+#' @param name_for_group_row_column character string. The name of the column to
+#' put row header information in when putting row headers that other
+#' descriptions are nested under into their own column.
+#' @param name_for_nested_row_column character string. The name of the column
+#' in which to put information that falls under row headers. Used when putting
+#' row headers that other descriptions are nested under into their own column.
+#' @param col_with_row_headers_pattern character string. Regular expression
+#' matching the name of the column currently containing both the grouping
+#' variable and the nested variable. Used when putting row headers that other
+#' descriptions are nested under into their own column.
+#' @param row_header_fill_dir string. The direction that headers will
+#' be filled in. If header rows are above the information nested under them,
+#' the direction should be 'down'. If header information is below the info
+#' nested under it, then direction should be set to 'up' Options: "down", "up".
+#' "downup" (i.e. first down and then up) or "updown" (first up and then down)
+#' can also be used. If other row_headers settings are not NA, the default is
+#' 'down'.
+#' @param group_row_na_identifier string. Either the name of a column in dat
+#' that contains NAs for rows containing the grouping variable, or 'all' (the
+#' default), in which case grouping variable rows are identified by being
+#' associated with an otherwise blank row.
+#' @param POSIX_column character string. The exact name of the column containing
+#' the date.
+#' @param vintage_with_year_column character string. A single regular expression
+#' to match a column containing both the year and the vintage. Year can be
+#' financial or calendar. Accepted vintages are budget, provisional, forecast,
+#' final, and actual (not case sensitive), though these could be expanded upon.
+#' @param title character string. The title of the sheet.
+#' @param table_title character string. The title of the table.
+#' @param units character string. The units of the table.
+#' @param vintage character string. The vintage of the table (budget,
+#' provisional, or final).
+#' @param supplier character string. The data supplier, e.g. scottish_gov,
+#' MHCLG etc.
+#' @param source_group character string. The name of the source (the name of
+#' the collection of data from a webpage) e.g. revenue_expediture_budget.
+#' @param dataset character string. The name of the dataset.
+#'
+#' @returns dataframe with additions made.
+#' @export
+fill_missing_info <- function(
+    dat, xlsx_cells_names, fill_columns_column_names, fill_columns_fill_dirs,
+    single_value_names, single_value_values, main_dropdown_name,
+    main_dropdown_value, table_dropdown_name, table_dropdown_value,
+    table_title_column, name_for_total_column, col_with_totals_pattern,
+    total_column_fill_dir, subtable_names, name_for_group_row_column,
+    name_for_nested_row_column, col_with_row_headers_pattern,
+    row_header_fill_dir, group_row_na_identifier, POSIX_column,
+    vintage_with_year_column, title, table_title, units, vintage, supplier,
+    source_group, dataset
+    ) {
+
+  reserved_names <- c(
+    "title", "supplier", "source", "dataset", "value", "non_numeric_value"
+  )
+  names_protected <- rename_reserved_colnames(dat, reserved_names)
+
+  blanks_filled <- fill_blanks(
+    names_protected, fill_columns_column_names, fill_columns_fill_dirs
+  )
+
+  single_value_columns_added <- blanks_filled %>%
+    add_single_value_columns(
+      single_value_names, single_value_values, "single_value settings"
+    ) %>%
+    add_single_value_columns(
+      main_dropdown_name, main_dropdown_value, "dropdown"
+    ) %>%
+    add_single_value_columns(
+      table_dropdown_name, table_dropdown_value, "table dropdown"
+    )
+
+  totals_as_column <- add_totals_as_column(
+    single_value_columns_added, xlsx_cells_names, name_for_total_column,
+    col_with_totals_pattern, total_column_fill_dir
+  )
+
+  with_subtable_names <- add_subtable_names(totals_as_column, subtable_names)
+
+  row_headers_as_column <- add_row_headers_column(
+    with_subtable_names, xlsx_cells_names, name_for_group_row_column,
+    name_for_nested_row_column, col_with_row_headers_pattern,
+    row_header_fill_dir, group_row_na_identifier
+  )
+
+  date_split <- split_date_to_columns(row_headers_as_column, POSIX_column)
+
+  vintage_split <- split_year_and_vintage(date_split, vintage_with_year_column)
+
+  metadata_added <- add_metadata_columns(
+    vintage_split, title, table_title, units, vintage, supplier,
+    source_group, dataset
+  )
+
+  return(metadata_added)
+  }
+
 #' @title fill blanks in a descriptor column
 #'
 #' @description If data have row headers that are nested, with some being in
@@ -888,4 +1036,93 @@ add_subtable_names <- function(dat, subtable_names) {
     fill(!!sym(subtitle_colname), .direction = "down")
 
   return (output)
+}
+
+
+#' @title split a date formatted column into columns for day, month, and year
+#'
+#' @description Where a column can be unambiguously converted to a POSIXt object,
+#' split the column out into day, month, and year columns. If it cannot be
+#' converted, return the original data and an error message.
+#'
+#' The information in neonscience.org/resources/learning-hub/tutorials/
+#' dc-convert-date-time-posix-r was used to create code that extracts year and
+#' day.
+#'
+#' @param dat dataframe that contains the column name given by column.
+#' @param column character string. The exact name of the column containing
+#' the date. In pub_sec this variable is specified by POSIX_column.
+#'
+#' @returns datafram. dat with columns day, month, and year added, and
+#' column removed.
+#'
+#' @examples
+#' \dontrun{
+#'
+#'  dat <- data.frame(
+#'    period = c("2017-01-08", "2017-08-14"),
+#'    value = c(1:2)
+#'  )
+#'
+#'  split_date_to_columns(dat, "period")
+#' }
+#' @export
+split_date_to_columns <- function(dat, column) {
+
+  if (is.na(column)) {
+    return(dat)
+  } else {
+    message("Splitting POSIX column into year, month, and day columns.")
+  }
+
+  if (all(is.na(dat[column]))) {
+    warning(
+      "'", column, "' is in the settings as 'POSIX_column', but it ",
+      "is not read as a date by xlsx_cells. Please check that year is as ",
+      "expected in the preprocessed data. If not, please contact a developer."
+    )
+    return(dat)
+  }
+
+  if(str_to_lower(column) %in% str_to_lower(names(dat)) == FALSE) {
+    stop(
+      "column ('", column, "') in dev_config sheet_structure is ",
+      "not a column in the data. Please contact a developer."
+    )
+  }
+
+  # check that the column in question can be converted to POSIXlt
+  tryCatch ({
+
+    # for some reason, dates in the format dd/mm/yyyy
+    # are converted wrongly:
+    if (any(grepl("/", dat[[column]]))) {
+      stop(
+        "Error in split_date_to_columns: Please contact a developer. ",
+        "The column given in sheet_structure for column is not being ",
+        "read into R as an unambiguous date."
+      )
+    }
+
+    date_split <- dat %>%
+      mutate(day = unclass(as.POSIXlt(!!sym(column)))$mday,
+             month = months(as.POSIXlt(!!sym(column)), abbreviate = TRUE),
+             year = unclass(as.POSIXlt(!!sym(column)))$year + 1900)
+
+    return(date_split)
+  },
+  warning = function(w){
+    message(w)
+    return(dat)
+  },
+  error = function(e) {
+    stop(
+      "Error in split_date_to_columns: Please contact a developer. ",
+      "The column given in sheet_structure for column is not being ",
+      "read into R as an unambiguous date."
+    )
+  }
+  )
+
+
 }

@@ -43,6 +43,7 @@ test_that("Example 1 is processed as expected", {
     units = "£ thousand",
     geography = "England (grossed, excluding double counting)",
     title = "Example 1 2023-24",
+    table_title = as.character(NA),
     vintage = "final",
     # supplier = "testthat",
     source = "testdata",
@@ -59,7 +60,8 @@ test_that("Example 1 is processed as expected", {
     select(-supplier)
 
   expect_equal(result, expected)
-})
+
+  })
 
 
 test_that("Example 2 is processed as expected", {
@@ -99,6 +101,7 @@ test_that("Example 2 is processed as expected", {
         each = 2), times = 2),
     year = c(rep(c("2019-20", "2020-21"), times = 6), rep("2025", times = 12)),
     title = "Example 2: years as column names (one table financial, one calendar), and where some row names that refer to the row name above",
+    table_title = as.character(NA),
     units = as.character(NA),
     vintage = "final",
     # supplier = "testthat",
@@ -135,7 +138,6 @@ test_that("Example 3 is processed as expected", {
   multitable_arg_separator: -next-,
   table_header_identifier: (?i)group, -next-, (?i)year, -next-, (?i)group,
   columns_to_create: year, -next-, description_1, -next-, year,
-  table_title_column: table,
   tidy_data: true,
   tidy_notes_name: vintage, -next-, NA, -next-, NA,
   single_vintage: NA, -next-, final, -next-, final,
@@ -144,8 +146,8 @@ test_that("Example 3 is processed as expected", {
   replace_string_to: budget, final, -next-, NA, -next-, NA,
   columns_to_combine_patterns: NA, -next-, NA, -next-, (?i)^group, (?i)sub,
   columns_to_combine_combined_names: NA, -next-, NA, -next-, description_1,
-  columns_to_rename_patterns: (?i)^group, -next-, NA, -next-, NA,
-  columns_to_rename_names: description_1, -next-, NA, -next-, NA,
+  columns_to_rename_patterns: (?i)^group, table_title, -next-, table_title, -next-, table_title,
+  columns_to_rename_names: description_1, table, -next-, table, -next-, table,
   }"
 
   arg_values <- c("--args", filepath, "example 3", NA, settings, "1")
@@ -156,10 +158,10 @@ test_that("Example 3 is processed as expected", {
     value = c(200, 150, NA, 100, 200, 200, 150),
     description_1 = c("A", "B", "*f: forecast", "A", "A", "A - a", "A - b"),
     year = c(rep("2021-22", 3),"2020-21", rep("2021-22", 3)),
+    title = "Tidy data example: England, 2019-20 to 2021-22 (£ millions)",
     table = c(rep("Table 3 - with notes, and year as a column heading", 3),
               rep("Table 1 - simple", 2),
               rep("Table 2 - with 2 descriptor columns", 2)),
-    title = "Tidy data example: England, 2019-20 to 2021-22 (£ millions)",
     units = "million",
     # supplier = "testthat",
     source = "testdata",
@@ -211,6 +213,7 @@ test_that("Example 4 is processed as expected", {
     description_2 = c(rep(c("part a", "part b", "total", NA), 6), NA),
     description_4 = c(rep("group A", 16), rep("group B", 8), NA),
     title = "Example 1: metadata in title (2023-24, £ thousand, provisional data), multiple header rows; hidden text; totals information needs to be associated with descriptors above them",
+    table_title = as.character(NA),
     units = "thousand",
     vintage = "provisional",
     # supplier = "testthat",
@@ -265,6 +268,7 @@ test_that("Example 5 is processed as expected", {
     year = rep(c("2022-23", "2023-24"), times = 5),
     vintage = rep(c("provisional", "budget"), times = 5),
     title = "Example 5: Unwanted proportions; vintage in the headers; and an unwanted left block column",
+    table_title = as.character(NA),
     units = as.character(NA),
     # supplier = "testthat",
     source = "testdata",
@@ -318,6 +322,7 @@ test_that("Example 6 is processed as expected", {
     taxa = rep(c("butterflies", "birds"), each = 4),
     description_1 = c(rep(c("group 1", "group 2"), each = 2), rep("group 1", 4)),
     title = "Example 6: Using subtables",
+    table_title = "Table 1: counts",
     units = "count",
     vintage = as.character(NA),
     # supplier = "testthat",
@@ -383,6 +388,7 @@ test_that("Example 7 is processed as expected", {
           times = 16),
     code = rep(c("ABCD", "EFGH", "CDID"), 16),
     title = "Example 7: Artificially split column names and all sorts of dates",
+    table_title = as.character(NA),
     units =  as.character(NA),
     vintage = as.character(NA),
     # supplier = "testthat",
@@ -432,6 +438,7 @@ test_that("Example 8 is processed as expected", {
     year = rep(c("2024-25", "2023-24", "2022-23"), each = 3),
     vintage = rep(c("forecast", "provisional", "final"), each = 3),
     title = "Example 8: Lots of suppressed (non numeric) values; vintage in the same column as year",
+    table_title = as.character(NA),
     units = as.character(NA),
     # supplier = "testthat",
     source = "testdata",
@@ -486,6 +493,7 @@ test_that("Example 9 is processed as expected", {
         "second description A - measure 1 previous financial year"),
       times = 2),
     title = "Example 9: year is mentioned in headers, where current year is 2023-24; filling blanks in column with values from another",
+    table_title = as.character(NA),
     units = as.character(NA),
     vintage = as.character(NA),
     # supplier = "testthat",

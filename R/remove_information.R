@@ -566,8 +566,7 @@ remove_unwanted_cols <- function(dat) {
     "row", "col", "content", "is_blank", "data_type", "error", "logical",
     "date", "character_formatted", "formula", "is_array", "formula_ref",
     "formula_group", "comment", "height", "width", "style_format",
-    "local_format_id", "table_title", "row_outline_level",
-    "col_outline_level"
+    "local_format_id", "row_outline_level", "col_outline_level"
   )
 
   cols_to_remove_indices <- which(unwanted_cols %in% names(dat))

@@ -284,55 +284,25 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       tidy_notes_name
     )
 
-    reserved_names <- c(
-      "title", "supplier", "source", "dataset", "value", "non_numeric_value"
+    missing_info_added <- fill_missing_info(
+      unpivotted, names(source_data),
+      fill_columns_column_names, fill_columns_fill_dirs,
+      single_value_names, single_value_values,
+      dropdown_name, main_dropdown_value, table_dropdown_name,
+      table_dropdown_value,
+      table_title_column, name_for_total_column, col_with_totals_pattern,
+      total_column_fill_dir,
+      subtable_names,
+      name_for_group_row_column, name_for_nested_row_column,
+      col_with_row_headers_pattern, row_header_fill_dir, group_row_na_identifier,
+      POSIX_column,
+      vintage_with_year_column,
+      title, table_title, units, vintage, supplier, source_group, dataset
       )
-    names_protected <- rename_reserved_colnames(unpivotted, reserved_names)
-
-    # ---fill missing info (rows and columns)
-    blanks_filled <- fill_blanks(
-      names_protected, fill_columns_column_names, fill_columns_fill_dirs
-    )
-
-    single_value_columns_added <- blanks_filled %>%
-      add_single_value_columns(
-        single_value_names, single_value_values, "single_value settings"
-        ) %>%
-      add_single_value_columns(
-        dropdown_name, main_dropdown_value, "dropdown"
-        ) %>%
-      add_single_value_columns(
-        table_dropdown_name, table_dropdown_value, "table dropdown"
-        ) %>%
-      add_single_value_columns(table_title_column, table_title, "table title")
-
-    totals_as_column <- add_totals_as_column(
-      single_value_columns_added, names(source_data), name_for_total_column,
-      col_with_totals_pattern, total_column_fill_dir
-      )
-
-    with_subtable_names <- add_subtable_names(totals_as_column, subtable_names)
-
-    row_headers_as_column <- add_row_headers_column(
-      with_subtable_names, names(source_data), name_for_group_row_column,
-      name_for_nested_row_column, col_with_row_headers_pattern,
-      row_header_fill_dir, group_row_na_identifier
-    )
-
-    date_split <- split_date_to_columns(row_headers_as_column, POSIX_column)
-
-    vintage_split <- split_year_and_vintage(
-      date_split, vintage_with_year_column
-      )
-
-    metadata_added <- add_metadata_columns(
-      vintage_split, title, table_title, units, vintage, supplier,
-      source_group, dataset
-    )
 
     # ---replace/edit wording
     strings_replaced <- replace_strings(
-      metadata_added, replace_string_col, replace_string_from_col_patterns,
+      missing_info_added, replace_string_col, replace_string_from_col_patterns,
       replace_string_to, replace_string_keep_original
     )
     years_generalised <- standardise_mentioned_years(
@@ -392,6 +362,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
     duplicates_removed <- deduplicate_data(
       value_rows_removed, ignore_cols, arrange_by_cols
     )
+
     xlsx_cells_columns_removed <- remove_unwanted_cols(duplicates_removed)
 
     line_breaks_removed <- remove_line_breaks(xlsx_cells_columns_removed)
@@ -444,7 +415,6 @@ get_variable_names <- function() {
     "table_split_pattern_instances", "table_split_pattern_offsets",
     "tables_to_process", "multitable_arg_separator",
     "exclude_from_reserved_word_check",
-    "table_title_column",
     "subtable_title_column", "subtable_title_patterns", "subtitle_offset",
     "subtitle_horizontal_index",
     "table_header_identifier", "table_header_identifier_instance",
