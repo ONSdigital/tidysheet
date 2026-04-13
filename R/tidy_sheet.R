@@ -300,19 +300,14 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       title, table_title, units, vintage, supplier, source_group, dataset
       )
 
-    # ---replace/edit wording
-    strings_replaced <- replace_strings(
+    wording_edited <- edit_wording(
       missing_info_added, replace_string_col, replace_string_from_col_patterns,
-      replace_string_to, replace_string_keep_original
-    )
-    years_generalised <- standardise_mentioned_years(
-      strings_replaced, descriptors_to_standardise_year_in, year_for_column$year
-    )
-    blanks_replaced <- replace_blanks(
-      years_generalised, col_pattern_with_blanks_to_replace, col_pattern_to_replace_blanks_with
-    )
+      replace_string_to, replace_string_keep_original,
+      descriptors_to_standardise_year_in, year_for_column$year,
+      col_pattern_with_blanks_to_replace, col_pattern_to_replace_blanks_with
+      )
 
-    quarter_added <- blanks_replaced %>%
+    quarter_added <- wording_edited %>%
       add_quarter_column(quarter_from_col_pattern, quarter_col_name)
 
     fy_start_added <- quarter_added %>%

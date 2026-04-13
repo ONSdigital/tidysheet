@@ -1,3 +1,59 @@
+#' @title Replace words and fill blanks in specified columns
+#'
+#' @description Replace or edit wording of values (not column names) in the
+#' columns supplied by the settings.
+#'
+#' @details The different types of replacement are controlled by different
+#' settings (see params). For more details and examples see the documentation
+#' for replace_strings, standardise_mentioned_years, and replace_blanks.
+#'
+#' @param replace_string_col character string giving name of column that
+#' contains the text to replace. Must be exact. In pub sec this variable is
+#' specified by replace_string_col.
+#' @param replace_string_from_col_patterns vector of character strings giving
+#' the regular expressions used to identify the locations where replacements
+#' should be made. Must be in the same order as `replace_string_to`. The text
+#' identified by the first element in 'replace_string_from_col_patterns' will be
+#' replaced with the text given in the first element of 'replace_string_to'.
+#' @param replace_string_to vector of character strings containing the new text.
+#' @param replace_string_keep_original boolean. If TRUE make a copy of column
+#' and rename it with '_original' as a postscript.
+#' @param descriptors_to_standardise_year_in character string vector. Each
+#' element must match the name of a column in dat. These are the columns in
+#' which you want the replacement to be made.
+#' @param year character string. A single year, either financial or calendar.
+#' @param col_pattern_with_blanks_to_replace character vector. Regular
+#' expression to match the name of the column in which you want to replace the
+#' blanks. Must be the same length as col_pattern_to_replace_blanks_with.
+#' @param col_pattern_to_replace_blanks_with character vector. Regular
+#' expression to match the name of the column whose values you want to use to
+#' replace the blanks in to_column. Must be the same length as
+#' col_pattern_with_blanks_to_replace.
+#'
+#' @returns dataframe with wording cleaned up
+edit_wording <- function(
+    dat, replace_string_col, replace_string_from_col_patterns,
+    replace_string_to, replace_string_keep_original,
+    descriptors_to_standardise_year_in, year,
+    col_pattern_with_blanks_to_replace, col_pattern_to_replace_blanks_with
+    ) {
+
+  strings_replaced <- replace_strings(
+    dat, replace_string_col, replace_string_from_col_patterns,
+    replace_string_to, replace_string_keep_original
+  )
+  years_generalised <- standardise_mentioned_years(
+    strings_replaced, descriptors_to_standardise_year_in, year
+  )
+  blanks_replaced <- replace_blanks(
+    years_generalised, col_pattern_with_blanks_to_replace,
+    col_pattern_to_replace_blanks_with
+  )
+
+return (blanks_replaced)
+
+}
+
 #' @title Replace text in a specified column with different text
 #'
 #' @description In very particular cases we may want to change text in a
@@ -15,10 +71,11 @@
 #' to replace. Must be exact. In pub sec this variable is specified by
 #' replace_string_col
 #' @param from_regex vector of character strings giving the regular expressions
-#'  used to identify the locations where replacements should be made. Must be
-#'  in the same order as `to`. The text identified by the first element in
-#'  'from_regex' will be replaced with the text given in the first element of
-#'  'to'. In pub sec this variable is specified by replace_string_from_col_patterns.
+#' used to identify the locations where replacements should be made. Must be
+#' in the same order as `to`. The text identified by the first element in
+#' 'from_regex' will be replaced with the text given in the first element of
+#' 'to'. In pub sec this variable is specified by
+#' replace_string_from_col_patterns.
 #' @param to vector of character strings containing the new text.
 #' In pub sec this variable is specified by replace_string_to.
 #' @param keep boolean. If TRUE make a copy of column and rename it with
