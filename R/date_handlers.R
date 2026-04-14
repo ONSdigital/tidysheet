@@ -191,9 +191,14 @@ make_quarter_patterns <- function() {
 #' @title Make regex patterns for months and quarters in Q1 of a calendar year
 #'
 #' @description Create regular expressions that can be used to identify the
-#' months and quarters of a calendar year whose financial year start year is the
-#' calendar year minus 1.
-#'
+#' rows related to the months Jan to Mar (Q1 of a calendar year).
+#' 
+#' @details 
+#' This function creates a regular expression that matches the months and 
+#' quarters belonging to the months Jan to Mar. The part of the pattern relating
+#' to quarter values is therefore different depending on whether Q1 in the data 
+#' refers to Jan to Mar, or Apr to Jun.
+#' 
 #' @param period Must be 'all', 'quarter', or 'month'. Default is 'all'.
 #' @param q1_jan_to_mar bool, default is TRUE. If FALSE, it is assumed that
 #' Q4 is jan to mar, and Q1 is the start of the financial year.
@@ -204,7 +209,6 @@ make_quarter_patterns <- function() {
 #' \dontrun{
 #' make_calendar_q1_month_and_quarter_patterns(q1_jan_to_mar=FALSE)
 #' }
-#' @export
 make_calendar_q1_month_and_quarter_patterns <- function(
     period = "all", q1_jan_to_mar = TRUE
 ) {
@@ -242,18 +246,37 @@ make_calendar_q1_month_and_quarter_patterns <- function(
 
 #' @title Get and compare year from above the data to a set year
 #'
-#' @description For data that are for a single year where there is no year
-#' column. Year may be given in information above the table. In public sector
-#' a year is also given in the file name. This function finds years in the
-#' info above the data (dat) that are of the same type (calendar/financial)
-#' as the year in the file name. It compares them to the year in the file name,
-#' and if they are different, it selects one based on `use_filename_year`.
+#' @description This function is required for data that relate to a single year.
+#' Year is unlikely to be given as a column in such datasets so we need to get 
+#' the year from the information above the data instead (either at the top of
+#' sheet or directly above the table if there are multiple tables in the sheet).
+#' In public sector we can also get year from the file name. This function gets
+#' the year from above the data, compares in to the year in the file name, and
+#' returns the preferred year. If a mismatch is found, this is flagged.
+#' 
+#' @details
+#' This function finds years in the info above the data (dat) that are of the 
+#' same type (calendar/financial) as the year in the file name. It compares them
+#' to the year in the file name, and if they are different, it selects one based
+#' on `use_filename_year`.
 #'
-#' If multiple are found and one of them matches the file name, the year from
-#' the file name is used.
-#' If multiple are found and none of them match the file name, and
-#' use_filename_year is FALSE, the first is used and a warning is given.
-#' If none are found, the file name year is used as default.
+#' If multiple unique years are found and one of them matches the file name, the
+#' year from the file name is returned.
+#' 
+#' If multiple unique years are found, none of them match the file name, and 
+#' use_filename_year is FALSE, the first of either the year at the top of the 
+#' sheet or the first of the year above the table is used and the mismatch is 
+#' flagged. By default the year above the table is preferred to the year at the 
+#' top of the sheet if both exist. However this can be changed by setting
+#' prefer_sheet_year to TRUE.
+#' 
+#' If no years are found above the data, or if use_filename_year is TRUE, the 
+#' filename year is used.
+#' 
+#' Mismatches are flagged rather than raising a warning because the user only
+#' needs to be given the warning if the variable is actually used. For example,
+#' if year is already a column in the data the returned variable will not be
+#' used and it does not matter if multiple years are mentioned in the metadata.
 #'
 #' @param sheet_year character string vector. Years found at the top of the
 #' sheet above the first header row.
@@ -295,6 +318,7 @@ make_calendar_q1_month_and_quarter_patterns <- function(
 #'     "Title 2026", "2024_25", use_filename_year = TRUE
 #'     )
 #' }
+#' @export
 get_year_for_use_in_data <- function(
     sheet_year, table_year, filename_year=NA, use_filename_year = FALSE,
     prefer_sheet_year = FALSE, suppress_warning = FALSE
@@ -515,7 +539,8 @@ refine_metadata_year <- function(years, preferred) {
 #'
 #' @description
 #' Select between two provided year vectors. One will be taken from the metadata
-#' at the top of the sheet, the other from the metadata directly above the table.
+#' at the top of the sheet, the other from the metadata directly above the 
+#' table.
 #'
 #' If they are the same, just return one. If one is NA, return the other. If
 #' they are different return the one stated by the prefer_sheet_year setting.
@@ -651,6 +676,7 @@ choose_from_multiple_years <- function(years) {
 #' @description Get the first year from a specified column or vector and put it
 #' in a new column called 'year' (can be changed using new_col arg).
 #'
+#' @details
 #' If a string contains more than one year (of the same type), only the first is
 #' put in 'year'.
 #'
@@ -660,6 +686,11 @@ choose_from_multiple_years <- function(years) {
 #'
 #' If `type` = 'single' year will be restricted to either calendar or financial
 #' years (whichever is set by prefer).
+#' 
+#' This function is used in multiple places in tidysheet. It differs from 
+#' extract_all_years in that it adds a column to a dataframe, returning the 
+#' first year of the preferred type for each row. In contrast, extract_all_years
+#' returns a vector of all years found regardless of row.
 #'
 #' @param dat dataframe or vector. If a dataframe, it must contain a column with
 #' the name from `from`.
@@ -785,9 +816,10 @@ get_year <- function (
 
 #' @title Check if there are multiple different years in any one entry.
 #'
-#' @description Check if there are multiple different years in any  single entry
-#' of specified column. Used internally by get_year.
+#' @description Check if there are multiple different years in any single entry
+#' of specified column. Used by get_year.
 #'
+#' @details
 #' If `type` is not specified, both financial and calendar years will be
 #' checked - so if an entry contains both a financial year and a calendar year,
 #' these will be classed as different years and TRUE will be returned.
@@ -870,6 +902,11 @@ check_for_multiple_years <- function(
 #' If no years are found NA is returned. If one or more years are found, unique
 #' years are returned.
 #'
+#' @details This function differs from get_year in that it returns a vector of
+#' all unique years regardless of the row in which the year was found. In
+#' contrast, get_year returns the first year of the preferred type 
+#' (financial/ calendar) for each row. 
+#' 
 #' @param dat numeric or character string. Accepts vector, matrices and
 #' dataframe data.
 #' @param type character string. Either 'both' (default), 'financial', or
@@ -927,8 +964,8 @@ extract_all_years <- function(dat, type = "both") {
 
 #' @title Get the year type for each row of a dataframe, or for a single year
 #'
-#' @description Get an unambiguous year type. If more than one year type is
-#' found NA is returned.
+#' @description Get an unambiguous year type (financial or calendar). If more 
+#' than one year type is found NA is returned.
 #'
 #' @param dat character string, integer, or dataframe. If character string or
 #' integer, one calendar or financial year. If dataframe, a dataframe with a
@@ -936,8 +973,9 @@ extract_all_years <- function(dat, type = "both") {
 #' @param column character string or NA. defaults to NA as this arg is only used
 #' when dat is a dataframe or tibble.
 #'
-#' @returns same type as dat, stating the year type. If dat is a dataframe a new
+#' @returns character string, stating the year type. If dat is a dataframe a new
 #' column is added called 'year_type' containing 'financial', 'calendar' or NA.
+#' If dat is a vector, a vector is returned.
 #'
 #' @examples
 #' \dontrun{
@@ -987,7 +1025,7 @@ get_year_type <- function(dat, column = NA) {
 #' @title Get the years before or after the current year
 #'
 #' @description Get the string for the year x years before or after the given
-#' year. Only a single year (calendar or financial must be given). If multiple
+#' year. Only a single year (calendar or financial) must be given. If multiple
 #' valid years (or no valid years) are provided, NA is returned with a warning.
 #'
 #' @param year character string or integer. Only a single year must be given,
@@ -1005,7 +1043,6 @@ get_year_type <- function(dat, column = NA) {
 #' get_bookend_year("2021-22", 1, "financial")
 #' get_bookend_year("2021", -1, "calendar")
 #' }
-#' @export
 get_bookend_year <- function(year, x, type) {
 
   if (! type %in% c("financial", "calendar")) {
