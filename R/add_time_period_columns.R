@@ -7,7 +7,9 @@
 #'
 #' @details
 #' Some functions that deal with time periods (split_date_to_columns,
-#' and split_year_and_vintage), are done prior to this in fill_missing_info.
+#' and split_year_and_vintage) are done prior to this in fill_missing_info.
+#' For more details see the documentation for add_quarter_column, 
+#' get_fy_start, process_year_column, and fill_missing_fy_start.
 #'
 #' @param dat dataframe.
 #' @param quarter_from_col_pattern character string. A regular expression that
@@ -60,6 +62,8 @@
 #' year_type will be NA for invalid year entries.
 #'
 #' @returns dataframe with quarter, fy_start, and year columns.
+#' 
+#' @export
 add_time_period_columns <- function(
     dat, quarter_from_col_pattern, quarter_col_name, year_from_pattern,
     fy_from_fy_end, fy_start_from_fy_end, fy_end_pattern,
@@ -110,6 +114,7 @@ add_time_period_columns <- function(
 #' )
 #' add_quarter_column(dat, "x", "quarter")
 #' }
+#' @export
 add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
 
   if (all(is.na(quarter_from_pattern), is.na(quarter_col_name))) {
@@ -202,9 +207,12 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
 #'
 #' @details If a row has 'financial' as year_type and fy_start is missing (or
 #' the column does not exist), extract the first four digits from the year
-#' column and use this for fy_start. Rows with other year_type values are left
-#' unchanged. This function is intended for use with datasets that contain
-#' both calendar and financial years but could be used in other scenarios.
+#' column and use this for fy_start. Note that this requires the year column to 
+#' ONLY contain year.
+#' 
+#' Rows with other year_type values are left unchanged. This function is 
+#' intended for use with datasets that contain both calendar and financial years
+#' but could be used in other scenarios.
 #'
 #' @param dat dataframe containing columns called 'year' and 'year_type'.
 #'
@@ -221,7 +229,7 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
 #' fill_missing_fy_start(dat)
 #'
 #' }
-#'
+#' @export
 fill_missing_fy_start <- function(dat) {
 
   message(
