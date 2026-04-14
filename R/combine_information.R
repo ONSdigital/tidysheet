@@ -1,11 +1,21 @@
-#' @title concatenate columns
+#' @title Combine columns
 #'
-#' @description combine the information in the specified columns to create a
-#' single column. information from the different columns are separated with a
-#' hyphen. If more than one grouping is required, group_count can be used to
-#' show where the split is.
+#' @description Combine the information in the columns to create a single
+#' column. Information from the different columns are separated with a
+#' hyphen. 
+#' 
+#' @details Multiple groups of columns can be separately combined. For example,
+#' you may want to combine columns A and B to create column AB, and also to 
+#' combine columns C, D, and E to create column CDE. To do this you would 
+#' specify combined_names as c(A, B, C, D, E), and group_count as c(2, 3) 
+#' because you are combining the first 2, then combining the next 3.
+#' 
+#' This function is used on data that have already been unpivotted, so a
+#' column you are combining with another column may have originally been 
+#' header rows (not columns).
 #'
-#' @param dat dataframe with the columns specified by columns_to_combine_patterns.
+#' @param dat dataframe with the columns specified by 
+#' columns_to_combine_patterns.
 #' @param columns_to_combine_patterns  vector of character strings. Each
 #' string matches the name of a column in dat.
 #' @param combined_names character string vector giving the names of the columns

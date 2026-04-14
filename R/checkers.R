@@ -147,6 +147,7 @@ check_dropdown <- function(pattern, dat) {
 #' dat <- data.frame(source = "scottish_gov", source = c("A", "B"), value = 1:2)
 #' check_for_duplicate_names(dat)
 #' }
+#' @export
 check_for_duplicate_names <- function(dat) {
   ids <- str_to_lower(names(dat))
   duplicates <- unique(ids[duplicated(ids)])
