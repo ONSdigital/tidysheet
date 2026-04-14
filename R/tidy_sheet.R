@@ -16,9 +16,9 @@
 #'
 #' @param arg_values character string vector. The values for the following
 #' (order is important):
-#' "--args", input filepath, regular expression matching the sheet name,
-#' output filepath, settings (see example),
-#' file part (integer, nearly always 1).
+#' "--args" (optional), input filepath, regular expression matching the
+#' sheet name, output filepath, settings (see example), file part (integer,
+#' nearly always 1).
 #' @param to_csv boolean. Default is TRUE. If FALSE the output is returned
 #' rather than being saved to csv.
 #'
@@ -35,7 +35,6 @@
 #'
 #' # Without using the command line, this would look like e.g.:
 #' arg_values <- c(
-#'     "--args",
 #'     "D:/some_file-2023_24.xlsx", "(?i)sheet1", "D:/some_file-2023_24.csv",
 #'     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2}",
 #'     "1"
@@ -47,10 +46,17 @@
 tidy_sheet <- function(arg_values, to_csv = TRUE) {
 
   arg_names <- c(
-    "--args",
     "input_filepath", "tab_regex", "output_filepath",
     "sheet_structure_json", "file_part"
   )
+
+  # Not sure how we are going to call tidy_sheet in the new system
+  # when tidy_sheet is called from python using subprocess --args will be the
+  # first arg_value. We can strip this out for cases where tidy_sheet is called
+  # from R.
+  if (arg_values[1] == "--args") {
+    arg_values <- arg_values[2:length(arg_values)]
+  }
 
   # Join the argument names to their values passed from subprocess
   message("Assigning values from Python to variables:")
