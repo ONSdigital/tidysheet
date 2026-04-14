@@ -10,27 +10,27 @@ tidy_sheet(arg_values, to_csv = TRUE)
 \item{arg_values}{character string vector. The values for the following
 (order is important):
 "--args", input filepath, regular expression matching the sheet name,
-output filepath, settings (as a json.dumps string from Python - see example),
+output filepath, settings (see example),
 file part (integer, nearly always 1).}
 
 \item{to_csv}{boolean. Default is TRUE. If FALSE the output is returned
 rather than being saved to csv.}
 }
 \value{
-saved csv file. File is saved to the specified output_filepath.
+saved csv file. File is saved to the specified output_filepath,
+and contains tidy data. Data has only one numeric value per row, with all
+other columns holding descriptive data for that value. Metadata are added to
+the output as columns including year, year_type, supplier, source, dataset,
+title, units, and vintage.
 }
 \description{
 Runner script for pre-processing xlsx data for public sector
-input data at the ONS. Tidy data so that there is only one numeric value per
-row, with all other columns holding descriptive data for that value.
-Metadata are added to the output as columns including year, year_type,
-supplier, source, dataset, title, units, and vintage.
+input data at the ONS.
 
-The core variables are r_vars and sheet_structure. r_vars is a vector of all
-names of the possible settings. sheet_structure is a flattened dictionary (a
-string) that contains only the relevant variables (settings) for the specific
-dataset, where the key is the name of the variable, and the value is the
-value. Where an r_vars setting does not have a value in the sheet_structure
+settings is a flattened dictionary (a json.dumps string from Python) that
+contains only the relevant variables (settings) for the specific
+dataset: The key is the name of the variable, and the value is the
+value. Where a setting does not have a value in the sheet_structure
 it is assigned NA.
 
 filepath must only contain a single year. Where the data are for

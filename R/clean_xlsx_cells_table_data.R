@@ -459,7 +459,7 @@ remove_empty_lines <- function(dat, direction, formula_zero_as_blank=TRUE) {
 #' number of non-blank rows are checked for the pattern using n_row.
 #'
 #' @details
-#' This function is not included in clean_xlsx_cells_data because that is only
+#' This function is not included in remove_from_input because that is only
 #' called for the whole sheet, whereas this function is better called at the
 #' table level.
 #'
@@ -792,4 +792,77 @@ remove_columns <- function(dat, patterns, offset, first_row, header_count) {
     )
   }
   return(columns_removed)
+}
+
+
+#' @title Identify header cells to remove from xlsx_cells data.
+#'
+#' @description Use regular expressions to identify which column of the data
+#' they appear in. Only header rows are checked for matches.
+#'
+#' If a pattern is matched in more than one column none of those matches are
+#' returned as columns to remove. This does not affect the use of any other
+#' patterns provided.
+#'
+#' @param dat dataframe imported using xlsx_cells.
+#' @param patterns vector of character strings that are regular expressions,
+#' each one matching the name of a column in the raw data.
+#' @param offset vector of integers. Must be either NA or the same length as
+#' patterns. If the column to remove is not named but it's location is known in
+#' relation to a named column, specify the pattern for the named column and use
+#' offset to move x columns to the left (negative) or right (positive).
+#' @param target_rows vector of integers. The numbers of the rows in which
+#' column headings are given
+#'
+#' @returns vector of character strings giving the column numbers identified.
+#' If no match is found in the data for a pattern a warning is given.
+#'
+#' @examples
+#' \dontrun{
+#' dat <- data.frame(
+#'   "row" = c(1, 1, 1, 2, 2, 2),
+#'   "col" = c(1, 2, 3, 1, 2, 3),
+#'   "address" = c("A1", "B1", "C1", "A2", "B2", "C2"),
+#'   "numeric" = c(NA, NA, NA, NA, 1, 100),
+#'   "character" = c("name", "id", "value", "first row", NA, NA),
+#'   "data_type" = c(rep("character", 4), rep("numeric", 2))
+#' )
+#' # view as it would be in excel:
+#' rectify(dat)
+#'
+#' identify_columns_to_remove(dat, "id", NA, 1)
+#' }
+#' @export
+identify_columns_to_remove <- function(dat, patterns, offset, target_rows) {
+
+  if (all(is.na(offset))) {offset <- rep(0, length(patterns))}
+
+  all_cols_to_remove <- c()
+
+  for (i in 1:length(patterns)) {
+    col_identified <- dat %>%
+      filter(row %in% target_rows & str_detect(character, patterns[i])) %>%
+      distinct(col) %>%
+      pull(col)
+
+    if (length(col_identified) == 1) {
+      col_to_remove <- col_identified + offset[i]
+      all_cols_to_remove <- c(all_cols_to_remove, col_to_remove)
+
+    } else if (length(col_identified) > 1) {
+      stop(
+        "More than one column matched the pattern '", patterns[i],
+        "' given for columns_to_remove_patterns in the settings. This setting ",
+        "will therefore be ignored. Please contact a developer."
+      )
+
+    } else if (length(col_identified) == 0) {
+      warning(
+        "No columns matched the pattern '", patterns[i],
+        "' given for columns_to_remove_patterns in the settings. ",
+        "Please contact a developer if data do not look as expected."
+      )
+    }
+  }
+  return (all_cols_to_remove)
 }

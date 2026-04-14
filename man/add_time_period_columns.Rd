@@ -77,14 +77,14 @@ this year value. Must be specified if use_single_year is TRUE. In pub sec
 this variable is taken either from the file name (which gets its year or from
 information above the data.}
 
-\item{single_overrides_all}{boolean or NA. If TRUE, and single_year_of_data
-is TRUE, single_year overrides any columns found with year in the name. If
-FALSE or NA, other options for filling the year are used first and single
-year is only used as a final option.  N.B If single_overrides_all is TRUE we
-would not expect year_col_pattern to have been specified (unless it is also
-used in other functions).}
+\item{single_year_overrides_all}{boolean or NA. If TRUE, and
+single_year_of_data is TRUE, single_year overrides any columns found with
+year in the name. If FALSE or NA, other options for filling the year are used
+first and single year is only used as a final option.  N.B If
+single_overrides_all is TRUE we would not expect year_col_pattern to have
+been specified (unless it is also used in other functions).}
 
-\item{multi_year_entries_as_na}{bool. If NA or NULL defaults to FALSE
+\item{multi_year_range_is_not_valid}{bool. If NA or NULL defaults to FALSE
 If TRUE, and the year is a range of years e.g '2021-22 to 2023-24' or
 '2023, 2024', the year column will show NA. Whether it is TRUE or FALSE,
 year_type will be NA for invalid year entries.}

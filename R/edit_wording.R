@@ -50,8 +50,9 @@ edit_wording <- function(
     years_generalised, col_pattern_with_blanks_to_replace,
     col_pattern_to_replace_blanks_with
   )
+  line_breaks_removed <- remove_line_breaks(blanks_replaced)
 
-return (blanks_replaced)
+return (line_breaks_removed)
 
 }
 
@@ -412,7 +413,7 @@ replace_blanks <- function(dat, to_columns = NA, from_columns = NA) {
 #'
 #' @param dat dataframe.
 #'
-#' @returns dataframe with line breaks from all character strings.
+#' @returns dataframe with line breaks removed from all character strings.
 #'
 #' @examples
 #' \dontrun{

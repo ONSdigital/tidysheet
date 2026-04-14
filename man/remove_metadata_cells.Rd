@@ -39,7 +39,7 @@ removing a cell that is actually wanted. To mitigate this risk only a given
 number of non-blank rows are checked for the pattern using n_row.
 }
 \details{
-This function is not included in clean_xlsx_cells_data because that is only
+This function is not included in remove_from_input because that is only
 called for the whole sheet, whereas this function is better called at the
 table level.
 

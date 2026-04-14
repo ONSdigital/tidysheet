@@ -39,7 +39,8 @@ fill_missing_info(
 \arguments{
 \item{dat}{dataframe.}
 
-\item{xlsx_cells_names}{character string vector. Column names of the source}
+\item{xlsx_cells_names}{character string vector. Column names of the source
+data which will have been imported using xlsx_cells.}
 
 \item{fill_columns_column_names}{charater string vector. The names of the
 columns in which information above or below NA rows will be used to replace
@@ -73,9 +74,11 @@ cell above the table.}
 which to put the names of the groups that have a total. In pub sec this
 variable is specified using name_for_total_column.}
 
-\item{name_for_total_column}{character string. Regular expression matching
-the name of the column currently containing the totals and what these totals
-are of. In pub sec this variable is specified using col_with_totals_pattern.}
+\item{name_for_total_column}{character string. The name of the column in
+which to put the names of the groups that have a total.}
+
+\item{col_with_totals_pattern}{character string. Regular expression matching
+the name of the column currently containing the totals.}
 
 \item{total_column_fill_dir}{character string. Default is 'up'. The direction
 that names of the totals will be filled in. If totals are below the

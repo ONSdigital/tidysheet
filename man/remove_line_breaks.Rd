@@ -10,7 +10,7 @@ remove_line_breaks(dat)
 \item{dat}{dataframe.}
 }
 \value{
-dataframe with line breaks from all character strings.
+dataframe with line breaks removed from all character strings.
 }
 \description{
 Remove line breaks from character strings.

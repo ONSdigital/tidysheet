@@ -17,6 +17,8 @@ edit_wording(
 )
 }
 \arguments{
+\item{dat}{dataframe.}
+
 \item{replace_string_col}{character string giving name of column that
 contains the text to replace. Must be exact. In pub sec this variable is
 specified by replace_string_col.}

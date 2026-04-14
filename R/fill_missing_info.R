@@ -15,6 +15,7 @@
 #'
 #' @param dat dataframe.
 #' @param xlsx_cells_names character string vector. Column names of the source
+#' data which will have been imported using xlsx_cells.
 #' @param fill_columns_column_names charater string vector. The names of the
 #' columns in which information above or below NA rows will be used to replace
 #' the NAs.

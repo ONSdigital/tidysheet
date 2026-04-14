@@ -1,154 +1,46 @@
-#' @title Remove unwanted cells from xlsx_cells data
+#' @title Remove unwanted rows and columns from the output dataframe
 #'
-#' @description Remove cells using specified cell addresses and cells containing
-#' strings where the font is the same colour as the background.
+#' @description Remove blank rows, duplicated rows, and unwanted columns created
+#' by xlsx_cells. These are columns such as 'row', 'col', 'local_format_id',
+#' some of which will have been used as part of tidying the data, but others
+#' are not used by this pipeline.
 #'
 #' @details
-#' The cells removed by this function are usually specified as needing removal
-#' because not doing so results in errors during beheading (un-pivotting).
+#' For more information see documentation for remove_is_blank_rows,
+#' drop_rows_with_values, deduplicate_data, and remove_unwanted_cols.
 #'
-#' For more information and for examples, see the documentation for
-#' remove_unwanted_cells and remove_hidden_character_strings.
+#' @param col_patterns_with_values_to_drop character vector. Regular expressions
+#' to match the names of the columns containing the values that match
+#' value_patterns_to_drop.
+#' @param value_patterns_to_drop character vector. Regular expressions to match
+#' the values whose rows are to be dropped.
+#' @param xlsx_cells_names character string vector. Column names of the source
+#' data which will have been imported using xlsx_cells.
 #'
-#' @param dat data that has been imported using xlsx_cells.
-#' @param cells_to_remove character string.
-#' @param input_filepath character string.
-#' @param hidden_strings bool. TRUE, FALSE or NA. Default is NA. FALSE leads to
-#' the same behaviour as NA. In pub sec this variable is specified by
-#' remove_hidden_strings_bool.
-#'
-#' @returns dataframe (dat) with unwanted information removed
-clean_xlsx_cells_data <- function(
-    dat, cells_to_remove = NA, input_filepath = NA, hidden_strings = NA
+#' @returns dataframe with specified rows, blank rows, repeat rows, and
+#' unwanted columns from xlsx_cells removed. A warning is raised if repeat
+#' rows are found.
+remove_from_output <- function(
+    dat, col_patterns_with_values_to_drop, value_patterns_to_drop,
+    xlsx_cells_names
 ) {
 
-  unwanted_cells_removed <- remove_unwanted_cells(dat, cells_to_remove)
+  blanks_removed <- remove_is_blank_rows(dat)
 
-  cells_removed <- remove_hidden_character_strings(
-    unwanted_cells_removed, input_filepath, hidden_strings
+  value_rows_removed <- drop_rows_with_values(
+    blanks_removed, col_patterns_with_values_to_drop, value_patterns_to_drop
+  )
+  ignore_cols <- xlsx_cells_names[xlsx_cells_names != "numeric"]
+  arrange_by_cols <- c("row", "col")[
+    c("row", "col") %in% names(value_rows_removed)
+  ]
+  duplicates_removed <- deduplicate_data(
+    value_rows_removed, ignore_cols, arrange_by_cols
   )
 
-  return(cells_removed)
-}
+  xlsx_cells_columns_removed <- remove_unwanted_cols(duplicates_removed)
 
-
-#' @title Remove cells from input data that are not needed.
-#'
-#' @description Remove rows from an xlsx_cells imported dataframe
-#' using cell addresses to identify which rows to remove.
-#'
-#' @param dat dataframe imported using tidyxl::xlsx_cells
-#' @param cells vector of character strings. The Excel addresses of
-#' cells to be removed from data e.g. 'A1'. In pub sec this variable is
-#' specified by cells_to_remove
-#'
-#' @examples
-#' \dontrun{
-#' dat <- data.frame(address = c("A1", "A2", "A3"), numeric = 1:3)
-#'
-#' cells_to_remove <- c("A1", "A2")
-#'
-#' remove_unwanted_cells(dat, cells_to_remove)
-#' }
-#' @export
-remove_unwanted_cells <- function(dat, cells = NA) {
-
-  if (all(is.na(cells))) {return(dat)}
-
-  message ("Removing cells specified by address.")
-
-  filtered <- dat
-  for (i in 1:length(cells)) {
-
-    cell <- cells[i]
-
-    if (! cell %in% dat$address) {
-      warning(
-        "Cell ", cell, " has not been found in the data, so cannot be removed."
-      )
-    } else {
-
-      type <- dat$data_type[dat$address == cell]
-      content <- dat[[type]][dat$address == cell]
-      removed_content <- ifelse(
-        is.null(content), "nothing", paste0("'", content, "'")
-      )
-
-      filtered <- filter(filtered, address != cell)
-
-      warning(
-        "Cell ", cell, " containing ", removed_content, " has been removed."
-        )
-    }
-  }
-
-  return(filtered)
-
-}
-
-
-#' @title Remove hidden character strings in the first header row.
-#'
-#' @description Remove cells whose text is the same colour as the background.
-#' This function was created because in pub sec scot gov HRA 2021-22 there are
-#' hidden character strings in the
-#' first header row that are hidden by being the same colour as the background.
-#' These need to be removed so that un-pivotting works correctly.
-#'
-#' @param dat dataframe imported using tidyxl::xlsx_cells()
-#' @param filepath string. Filepath for input data to detect cell formats.
-#' @param remove_cell bool. TRUE, FALSE or NA. Default is NA. FALSE leads to the
-#' same behaviour as NA. In pub sec this variable is specified by
-#' remove_hidden_strings_bool.
-#'
-#' @returns dataframe. dat with rows removed for the identified cells. A warning
-#' is raised if rows are removed.
-#'
-#' @examples
-#' \dontrun{
-#' dat <- data.frame(address = c("A1"),
-#'                   local_format_id = c(1))
-#' filepath <- D:/.../interim/test_dat.xlsx
-#' remove_hidden_strings_bool <- "TRUE"
-#'
-#' remove_hidden_character_strings(dat, filepath, remove_hidden_strings_bool)
-#' }
-#' @export
-remove_hidden_character_strings <- function(dat, filepath, remove_cell=NA) {
-
-  if (is.na(remove_cell)) {
-    return(dat)
-  } else if (remove_cell == FALSE) {
-    return(dat)
-  }
-
-  message(
-    "Removing cells where the text is the same colour as the background ",
-    "(hidden info)."
-  )
-
-  # get all the formatting info from excel
-  formats <- xlsx_formats(filepath)
-  # we are only interested in the colour 'codes' for this situation
-  tint <- formats$local$font$color$tint
-  rgb <- formats$local$font$color$rgb
-  white_text_codes <- which(rgb=="FFFFFFFF" & is.na(tint))
-
-  hidden_characters_to_remove <- dat %>%
-    filter(local_format_id %in% white_text_codes) %>%
-    select(address) %>% pull()
-
-  if (length(hidden_characters_to_remove) > 0) {
-    dat <- dat %>%
-      filter(local_format_id %in% white_text_codes == FALSE)
-
-    warning(
-      "The following cells have been removed as they have been flagged ",
-      "as having hidden and text that is not required: ",
-      paste(hidden_characters_to_remove, collapse = ", "), "."
-    )
-  }
-  return(dat)
+  return(xlsx_cells_columns_removed)
 }
 
 
@@ -577,78 +469,3 @@ remove_unwanted_cols <- function(dat) {
   return(dat)
 
 }
-
-
-#' @title Identify header cells to remove from xlsx_cells data.
-#'
-#' @description Use regular expressions to identify which column of the data
-#' they appear in. Only header rows are checked for matches.
-#'
-#' If a pattern is matched in more than one column none of those matches are
-#' returned as columns to remove. This does not affect the use of any other
-#' patterns provided.
-#'
-#' @param dat dataframe imported using xlsx_cells.
-#' @param patterns vector of character strings that are regular expressions,
-#' each one matching the name of a column in the raw data.
-#' @param offset vector of integers. Must be either NA or the same length as
-#' patterns. If the column to remove is not named but it's location is known in
-#' relation to a named column, specify the pattern for the named column and use
-#' offset to move x columns to the left (negative) or right (positive).
-#' @param target_rows vector of integers. The numbers of the rows in which
-#' column headings are given
-#'
-#' @returns vector of character strings giving the column numbers identified.
-#' If no match is found in the data for a pattern a warning is given.
-#'
-#' @examples
-#' \dontrun{
-#' dat <- data.frame(
-#'   "row" = c(1, 1, 1, 2, 2, 2),
-#'   "col" = c(1, 2, 3, 1, 2, 3),
-#'   "address" = c("A1", "B1", "C1", "A2", "B2", "C2"),
-#'   "numeric" = c(NA, NA, NA, NA, 1, 100),
-#'   "character" = c("name", "id", "value", "first row", NA, NA),
-#'   "data_type" = c(rep("character", 4), rep("numeric", 2))
-#' )
-#' # view as it would be in excel:
-#' rectify(dat)
-#'
-#' identify_columns_to_remove(dat, "id", NA, 1)
-#' }
-#' @export
-identify_columns_to_remove <- function(dat, patterns, offset, target_rows) {
-
-  if (all(is.na(offset))) {offset <- rep(0, length(patterns))}
-
-  all_cols_to_remove <- c()
-
-  for (i in 1:length(patterns)) {
-    col_identified <- dat %>%
-      filter(row %in% target_rows & str_detect(character, patterns[i])) %>%
-      distinct(col) %>%
-      pull(col)
-
-    if (length(col_identified) == 1) {
-      col_to_remove <- col_identified + offset[i]
-      all_cols_to_remove <- c(all_cols_to_remove, col_to_remove)
-
-    } else if (length(col_identified) > 1) {
-      stop(
-        "More than one column matched the pattern '", patterns[i],
-        "' given for columns_to_remove_patterns in the settings. This setting ",
-        "will therefore be ignored. Please contact a developer."
-      )
-
-    } else if (length(col_identified) == 0) {
-      warning(
-        "No columns matched the pattern '", patterns[i],
-        "' given for columns_to_remove_patterns in the settings. ",
-        "Please contact a developer if data do not look as expected."
-      )
-    }
-  }
-  return (all_cols_to_remove)
-}
-
-
