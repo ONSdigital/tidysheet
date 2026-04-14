@@ -2,7 +2,7 @@
 % Please edit documentation in R/clean_xlsx_cells_table_data.R
 \name{remove_metadata_cells}
 \alias{remove_metadata_cells}
-\title{Remove first cell from a dataset matching each regular expression}
+\title{Remove the first cell from a dataset that matches a pattern}
 \usage{
 remove_metadata_cells(dat, patterns = NA, n_row = 5)
 }
@@ -31,12 +31,8 @@ and a warning is raised. If the pattern is not found, a warning is raised
 and no rows are removed.
 }
 \description{
-Remove rows from an xlsx_cells imported dataframe if the
-character value is the first match for the supplied regular expression.
-
-It should only be used when absolutely necessary as it carries the risk of
-removing a cell that is actually wanted. To mitigate this risk only a given
-number of non-blank rows are checked for the pattern using n_row.
+Remove the row from an xlsx_cells imported dataframe where the
+character value is the first match for the supplied pattern.
 }
 \details{
 This function is not included in remove_from_input because that is only
@@ -48,8 +44,9 @@ in the same row as the headers, and therefore interfere with beheading.
 If the cells to remove are metadata cells this function must be called after
 the required information has been extracted from those cells.
 
-Non-metadata cells could theoretically be removed using this function, but
-first check if there is a more appropriate function.
+It should only be used when absolutely necessary as it carries the risk of
+removing a cell that is actually wanted. To mitigate this risk only a given
+number of non-blank rows are checked for the pattern using n_row.
 }
 \examples{
 \dontrun{

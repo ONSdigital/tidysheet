@@ -26,9 +26,10 @@ be classed as having multiple different values.}
 boolean. TRUE if any entry contains more than one unique year.
 }
 \description{
-Check if there are multiple different years in any  single entry
-of specified column. Used internally by get_year.
-
+Check if there are multiple different years in any single entry
+of specified column. Used by get_year.
+}
+\details{
 If \code{type} is not specified, both financial and calendar years will be
 checked - so if an entry contains both a financial year and a calendar year,
 these will be classed as different years and TRUE will be returned.

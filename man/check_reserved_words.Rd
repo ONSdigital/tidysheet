@@ -22,11 +22,6 @@ Check if any reserved words are used in the settings.
 The list of reserved words is taken from the column names created by
 xlsx_cells. Using them for new column names can cause issues that
 are hard to identify.
-The variables that must not be assigned a reserved word at time of writing
-are group_col, nested_col_1 , nested_col_2, group_row, nested_row_1,
-nested_row_2, and left_headers. However a conservative approach
-is taken so that we don't need to specify new variables here
-if and when new settings are added that also must not use reserved words.
 }
 \examples{
 \dontrun{

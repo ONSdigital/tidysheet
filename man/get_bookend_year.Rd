@@ -21,7 +21,7 @@ provided year.
 }
 \description{
 Get the string for the year x years before or after the given
-year. Only a single year (calendar or financial must be given). If multiple
+year. Only a single year (calendar or financial) must be given. If multiple
 valid years (or no valid years) are provided, NA is returned with a warning.
 }
 \examples{

@@ -9,6 +9,7 @@
 #' For more information see documentation for remove_is_blank_rows,
 #' drop_rows_with_values, deduplicate_data, and remove_unwanted_cols.
 #'
+#' @param dat dataframe.
 #' @param col_patterns_with_values_to_drop character vector. Regular expressions
 #' to match the names of the columns containing the values that match
 #' value_patterns_to_drop.
@@ -50,7 +51,7 @@ remove_from_output <- function(
 #' blank that are leftover from xlsx_cells data are no longer required. This
 #' function removes those rows.
 #'
-#' @param dat dataframe
+#' @param dat dataframe that contains a boolean column called is_blank.
 #'
 #' @returns dat with is_blank == TRUE rows removed
 #'
@@ -440,7 +441,7 @@ deduplicate_data <- function(dat, ignore_cols = NA, arrange_by = NA) {
 #'
 #' @param dat dataframe imported using tidyxl::xlsx_cells.
 #'
-#' @return dat dataframe without columns removed.
+#' @return dataframe with columns removed.
 #'
 #' @examples
 #' \dontrun{

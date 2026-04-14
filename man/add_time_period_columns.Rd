@@ -99,5 +99,7 @@ for the year column (see documentation for process_year_column).
 }
 \details{
 Some functions that deal with time periods (split_date_to_columns,
-and split_year_and_vintage), are done prior to this in fill_missing_info.
+and split_year_and_vintage) are done prior to this in fill_missing_info.
+For more details see the documentation for add_quarter_column,
+get_fy_start, process_year_column, and fill_missing_fy_start.
 }

@@ -19,6 +19,15 @@ If the data_type is 'date' and the date column is not NA, update
 the data_type column to character and cut information from the date
 column into the character column.
 }
+\details{
+When data are imported using xlsx_cells, each cell is given it's own row
+and where the value of the cell is put depends on the data type. Numeric
+data are put in the numeric column, character values in the character column
+etc. If a cell is specified as a date in Excel it will be put in the date
+column. Tidysheet, however, works on the principle that all descriptor
+information that should be kept is in the chararacter column. This function
+therfore moves information from the date column into the character column.
+}
 \examples{
 \dontrun{
 convert_date_to_char(source_df)

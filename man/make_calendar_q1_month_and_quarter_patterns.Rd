@@ -20,8 +20,13 @@ a regular expression pattern for the selected period(s)
 }
 \description{
 Create regular expressions that can be used to identify the
-months and quarters of a calendar year whose financial year start year is the
-calendar year minus 1.
+rows related to the months Jan to Mar (Q1 of a calendar year).
+}
+\details{
+This function creates a regular expression that matches the months and
+quarters belonging to the months Jan to Mar. The part of the pattern relating
+to quarter values is therefore different depending on whether Q1 in the data
+refers to Jan to Mar, or Apr to Jun.
 }
 \examples{
 \dontrun{

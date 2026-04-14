@@ -33,6 +33,14 @@ dataframe.
 Use a specified pattern to find values in the character column
 of an xlsx_cells dataframe and extend the found value with information from
 either the rows above or below.
+}
+\details{
+This function is used for datasets where the descriptors for a
+value are not unique because they relate to information above or (less
+likely) below them. For example the descriptor '...of which HRA' may be
+repeated multiple times to indicate that the values in that row are a
+subset of the value above. However, taken on their own they are fairly
+meaningless.
 
 NOTE: If the pattern has matches in multiple columns, the change is only made
 to the column where it occurs most. If this is not the desired behaviour, the
@@ -42,7 +50,11 @@ to  which the changes are desired can be specified (e.g. using column name
 pattern matching).
 
 This was written to address an issue in pub sec in the LA Dropdown tab of the
-DLUHC (MHCLG) capital payments receipts data (see example~).
+DLUHC (MHCLG) capital payments receipts data (see example).
+
+TODO: this function should be re-written to be called \emph{after} data have
+been unpivotted. this will allow users to specify which column the changes
+should be made in.
 }
 \examples{
 \dontrun{

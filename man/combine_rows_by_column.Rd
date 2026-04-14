@@ -28,11 +28,12 @@ Use regular expression patterns to find the first
 and last of the rows that need to be combined into a single value, and
 concatenate those values. Cells will only be combined with others that sit in
 the same column. Combined character strings are spearated by a space.
-
+}
+\details{
 This was written to address an issue in the pub sec DLUHC (MHCLG) NNDR and
 council tax data, where headings had been split over multiple Excel rows,
-rather than using alt enter to get a new line in the cell (see example for a
-simplified situation.
+rather than using alt+enter to get a new line in the cell (see example for a
+simplified situation).
 }
 \examples{
 \dontrun{

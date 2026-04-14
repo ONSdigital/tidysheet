@@ -23,7 +23,8 @@ columns have been removed.
 \description{
 Remove rows from a dataframe imported using tidyxl::xlsx_cells
 if they belongs to a row or column in the Excel data that is empty.
-
+}
+\details{
 If a cell contains a formula the result of which is 0, this is counted as a
 blank row by default. If this is not the desired behaviour set
 formula_zero_as_blank to FALSE.

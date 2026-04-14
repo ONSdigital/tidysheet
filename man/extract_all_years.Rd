@@ -23,6 +23,12 @@ Get all years (from the 20th and 21st centuries).
 If no years are found NA is returned. If one or more years are found, unique
 years are returned.
 }
+\details{
+This function differs from get_year in that it returns a vector of
+all unique years regardless of the row in which the year was found. In
+contrast, get_year returns the first year of the preferred type
+(financial/ calendar) for each row.
+}
 \examples{
 \dontrun{
 test_dat <- c("a date: 1998-1999", "1995 6", "1993 end", "a1995", "1995a", "a

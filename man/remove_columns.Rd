@@ -2,7 +2,7 @@
 % Please edit documentation in R/clean_xlsx_cells_table_data.R
 \name{remove_columns}
 \alias{remove_columns}
-\title{Remove lines that were unwanted columns in the Excel data}
+\title{Remove columns from the Excel data where a string matches a pattern}
 \usage{
 remove_columns(dat, patterns, offset, first_row, header_count)
 }
@@ -31,15 +31,23 @@ patterns provided in the patterns vector. If no match is found in the
 data for a patterns pattern a warning is given.
 }
 \description{
-Remove all rows relating to a column in data imported using
-tidyxl::xlsx_cells if a pattern is matched by a character in that column.
-
+If one of \code{patterns} matches a value in a column of the Excel
+data remove all data from that column.
+}
+\details{
 More than one column can be removed by providing more than one pattern.
 
 If the name of the column to be removed is blank, or if it is unstable (i.e.
 writing a pattern to match it is hard/impossible), a pattern that matches a
 nearby column can be used along with offset. This requires that you are
 confident about the order of the columns.
+
+When data are imported using xlsx_cells, each cell is given it's own row
+and where the value of the cell is put depends on the data type. Numeric
+data are put in the numeric column, character values in the character column
+etc. Row and Col numbers are given as columns in the xlsx_cells data.
+This function looks for a match to the pattern in the character column, and
+removes all data that have the same 'row' number.
 }
 \examples{
 \dontrun{

@@ -10,7 +10,7 @@ remove_unwanted_cols(dat)
 \item{dat}{dataframe imported using tidyxl::xlsx_cells.}
 }
 \value{
-dat dataframe without columns removed.
+dataframe with columns removed.
 }
 \description{
 xlsx_cells data always has the same column names. Many of these

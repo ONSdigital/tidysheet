@@ -7,7 +7,7 @@
 remove_is_blank_rows(dat)
 }
 \arguments{
-\item{dat}{dataframe}
+\item{dat}{dataframe that contains a boolean column called is_blank.}
 }
 \value{
 dat with is_blank == TRUE rows removed

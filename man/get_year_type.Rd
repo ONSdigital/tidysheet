@@ -15,12 +15,13 @@ column named the same as \code{column}.}
 when dat is a dataframe or tibble.}
 }
 \value{
-same type as dat, stating the year type. If dat is a dataframe a new
+character string, stating the year type. If dat is a dataframe a new
 column is added called 'year_type' containing 'financial', 'calendar' or NA.
+If dat is a vector, a vector is returned.
 }
 \description{
-Get an unambiguous year type. If more than one year type is
-found NA is returned.
+Get an unambiguous year type (financial or calendar). If more
+than one year type is found NA is returned.
 }
 \examples{
 \dontrun{

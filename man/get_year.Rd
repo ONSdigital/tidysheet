@@ -35,7 +35,8 @@ of years if input is a vector.
 \description{
 Get the first year from a specified column or vector and put it
 in a new column called 'year' (can be changed using new_col arg).
-
+}
+\details{
 If a string contains more than one year (of the same type), only the first is
 put in 'year'.
 
@@ -45,6 +46,11 @@ returned.
 
 If \code{type} = 'single' year will be restricted to either calendar or financial
 years (whichever is set by prefer).
+
+This function is used in multiple places in tidysheet. It differs from
+extract_all_years in that it adds a column to a dataframe, returning the
+first year of the preferred type for each row. In contrast, extract_all_years
+returns a vector of all years found regardless of row.
 }
 \examples{
 \dontrun{

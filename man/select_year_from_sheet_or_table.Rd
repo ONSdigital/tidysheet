@@ -24,7 +24,8 @@ single character vector of years.
 }
 \description{
 Select between two provided year vectors. One will be taken from the metadata
-at the top of the sheet, the other from the metadata directly above the table.
+at the top of the sheet, the other from the metadata directly above the
+table.
 
 If they are the same, just return one. If one is NA, return the other. If
 they are different return the one stated by the prefer_sheet_year setting.

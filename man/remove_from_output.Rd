@@ -12,6 +12,8 @@ remove_from_output(
 )
 }
 \arguments{
+\item{dat}{dataframe.}
+
 \item{col_patterns_with_values_to_drop}{character vector. Regular expressions
 to match the names of the columns containing the values that match
 value_patterns_to_drop.}

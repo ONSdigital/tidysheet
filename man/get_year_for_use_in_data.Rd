@@ -51,18 +51,37 @@ to the data as a column. If 'warn' is TRUE a warning is raised if and when
 'year' is added as a column to the data.
 }
 \description{
-For data that are for a single year where there is no year
-column. Year may be given in information above the table. In public sector
-a year is also given in the file name. This function finds years in the
-info above the data (dat) that are of the same type (calendar/financial)
-as the year in the file name. It compares them to the year in the file name,
-and if they are different, it selects one based on \code{use_filename_year}.
+This function is required for data that relate to a single year.
+Year is unlikely to be given as a column in such datasets so we need to get
+the year from the information above the data instead (either at the top of
+sheet or directly above the table if there are multiple tables in the sheet).
+In public sector we can also get year from the file name. This function gets
+the year from above the data, compares in to the year in the file name, and
+returns the preferred year. If a mismatch is found, this is flagged.
+}
+\details{
+This function finds years in the info above the data (dat) that are of the
+same type (calendar/financial) as the year in the file name. It compares them
+to the year in the file name, and if they are different, it selects one based
+on \code{use_filename_year}.
 
-If multiple are found and one of them matches the file name, the year from
-the file name is used.
-If multiple are found and none of them match the file name, and
-use_filename_year is FALSE, the first is used and a warning is given.
-If none are found, the file name year is used as default.
+If multiple unique years are found and one of them matches the file name, the
+year from the file name is returned.
+
+If multiple unique years are found, none of them match the file name, and
+use_filename_year is FALSE, the first of either the year at the top of the
+sheet or the first of the year above the table is used and the mismatch is
+flagged. By default the year above the table is preferred to the year at the
+top of the sheet if both exist. However this can be changed by setting
+prefer_sheet_year to TRUE.
+
+If no years are found above the data, or if use_filename_year is TRUE, the
+filename year is used.
+
+Mismatches are flagged rather than raising a warning because the user only
+needs to be given the warning if the variable is actually used. For example,
+if year is already a column in the data the returned variable will not be
+used and it does not matter if multiple years are mentioned in the metadata.
 }
 \examples{
 \dontrun{
