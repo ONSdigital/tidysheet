@@ -7,10 +7,10 @@
 build_regex(instructions)
 }
 \arguments{
-\item{instructions}{vector of strings containing words given in regex_lookup.
-Each string in the vector can have multiple instruction words in it.
-Each instruction word is converted to a regular expression and these are
-pasted together to create a single pattern from each string. Must not
+\item{instructions}{character string vector. Must only contain words given in
+regex_lookup. Each string in the vector can have multiple instruction words
+in it. Each instruction word is converted to a regular expression and these
+are pasted together to create a single pattern from each string. Must not
 contain punctuation.}
 }
 \value{

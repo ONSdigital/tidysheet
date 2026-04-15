@@ -2,7 +2,7 @@
 % Please edit documentation in R/dict_handlers.r
 \name{remove_invalid_args}
 \alias{remove_invalid_args}
-\title{Remove rows for invalid variables from the dictionary of settings.}
+\title{Remove invalid variables from the settings.}
 \usage{
 remove_invalid_args(dict, variables)
 }
@@ -29,5 +29,4 @@ dict <- data.frame(key = c("do_thing", "sing"), item = c("jump", "A"))
 variables <- c("do_thing", "ignore_thing")
 remove_invalid_args(dict, variables)
 }
-
 }

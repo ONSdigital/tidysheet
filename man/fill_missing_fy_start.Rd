@@ -19,9 +19,12 @@ Fill in missing fy_start values for rows where year_type is
 \details{
 If a row has 'financial' as year_type and fy_start is missing (or
 the column does not exist), extract the first four digits from the year
-column and use this for fy_start. Rows with other year_type values are left
-unchanged. This function is intended for use with datasets that contain
-both calendar and financial years but could be used in other scenarios.
+column and use this for fy_start. Note that this requires the year column to
+ONLY contain year.
+
+Rows with other year_type values are left unchanged. This function is
+intended for use with datasets that contain both calendar and financial years
+but could be used in other scenarios.
 }
 \examples{
 \dontrun{
@@ -34,5 +37,4 @@ dat <- data.frame(
 fill_missing_fy_start(dat)
 
 }
-
 }

@@ -7,10 +7,10 @@
 #' This function uses standard strings that don't cause problems in subprocess
 #' to build the regular expression inside R.
 #'
-#' @param instructions vector of strings containing words given in regex_lookup.
-#' Each string in the vector can have multiple instruction words in it.
-#' Each instruction word is converted to a regular expression and these are
-#' pasted together to create a single pattern from each string. Must not
+#' @param instructions character string vector. Must only contain words given in
+#' regex_lookup. Each string in the vector can have multiple instruction words 
+#' in it. Each instruction word is converted to a regular expression and these 
+#' are pasted together to create a single pattern from each string. Must not
 #' contain punctuation.
 #'
 #' @returns a vector of regular expressions; one for each instruction string
@@ -120,18 +120,19 @@ build_regex <- function(instructions){
 #' @description The form of a Python dict brought into R as a string is
 #' "key: item, key: item", with or without curly braces.
 #'
-#' In R, to access items using their key we convert this string into a dataframe
+#' To access items using their key we convert this string into a dataframe
 #' where the first column contains keys, and the second column contains item
 #' lists.
 #'
-#' This is not written for use with nested dictionaries.
+#' This is only written for use with simple dictionaries, not nested dicts.
 #'
 #' @param input_string A character string containing key-value pairs separated
 #' by commas. See example.
 #'
 #' @returns A data frame representing a dictionary with keys corresponding
-#' to a list of items. If the input string is empty, an empty data frame is returned.If the
-#' input string contains any empty keys, they are replaced with NA values.
+#' to a list of items. If the input string is empty, an empty data frame is 
+#' eturned.If the input string contains any empty keys, they are replaced with 
+#' NA values.
 #'
 #' @examples
 #' \dontrun{
@@ -140,7 +141,7 @@ build_regex <- function(instructions){
 #' result_dict <- string_to_dict(input_string)
 #'
 #' # nested
-#' input_string <- "key1: [value 1, value 1b], key2: [value2, value2b], key3: value3"
+#' input_string <- "key1: [val1, val1b], key2: [val2, val2b], key3: val3"
 #' result_dict <- string_to_dict(input_string)
 #' }
 #' @export
@@ -208,7 +209,7 @@ string_to_dict <- function(input_string) {
 }
 
 
-#' @title Remove rows for invalid variables from the dictionary of settings.
+#' @title Remove invalid variables from the settings.
 #'
 #' @description In pub sec all possible R variable names are passed to R from
 #' Python as a list (r_vars). If there is a variable in the dict that is not in
@@ -229,7 +230,7 @@ string_to_dict <- function(input_string) {
 #' variables <- c("do_thing", "ignore_thing")
 #' remove_invalid_args(dict, variables)
 #' }
-#'
+#' @export
 remove_invalid_args <- function(dict, variables) {
 
   keep <- NULL
@@ -292,7 +293,7 @@ get_dict_item <- function(key, dict) {
 }
 
 
-#' @title Split dictionary of arguments by subtable
+#' @title Split dictionary style dataframe of arguments by a specified string
 #'
 #' @description The dictionary of arguments has a key column that gives the
 #' variable name and an item column that gives the values for each variable.
@@ -305,17 +306,21 @@ get_dict_item <- function(key, dict) {
 #' the separator string. Where the same value is required for all tables the
 #' separator need not be included - the same value will be given for each table.
 #'
-#' So this:
-#'     key                    >  item
-#' multitable_arg_separator   > 'next_table'
-#' header_identifier > c('p1', 'next', 'p2')
-#' year_column_name           > "^year$"
-#'
-#' is turned into:
-#'     key                    >  item                 >  item_1  > item_2
-#' multitable_arg_separator   > 'next'                >  'next'  > 'next'
-#' header_identifier > c('p1', 'next', 'p2') >   'p1'   > 'p2'
-#' year_column_name           > '^year$'              > '^year$' > '^year$'
+#' @details
+#' A 'dictionary' dataframe that looks like this:
+#' | __key__ | __item__ |
+#' |----|----|
+#' |multitable_arg_separator | next |
+#' |header_identifier | c('p1', 'next', 'p2') |
+#' |year_column_name  | ^year$ |
+#' 
+#' has the arguments split out by the separator string into new columns like so:
+#' 
+#' |  __key__ | __item__ | __item_1__ | __item_2__ |
+#' |----|----|----|----|
+#' | multitable_arg_separator | next | next | next |
+#' | header_identifier | c('p1', 'next', 'p2') | 'p1' | 'p2' |
+#' | year_column_name | ^year$ | ^year$ | ^year$ |
 #'
 #' @param dict dataframe with columns 'key' and 'item'. 'key' gives the name of
 #' the variable to be, 'item' the value of that variable.
@@ -337,6 +342,7 @@ get_dict_item <- function(key, dict) {
 #'
 #' result <- split_args_by_separator(dict, separator = "next")
 #' }
+#' @export
 split_args_by_separator <- function(dict, separator) {
 
   if (is.na(separator)) {
@@ -429,6 +435,8 @@ split_args_by_separator <- function(dict, separator) {
 #' @description When args are split by separator, they are separated into
 #' columns. This function retains only the relevant column for the table in
 #' question.
+#' 
+#' @details See split_args_by_separator for more information.
 #'
 #' @param dict dataframe with a column for key and one or more item columns.
 #' @param part integer. The number of the item column to keep.
@@ -446,8 +454,7 @@ split_args_by_separator <- function(dict, separator) {
 #' result <- select_relevant_args(dict, 1)
 #' result <- select_relevant_args(dict, 2)
 #' }
-#'
-#'
+#' @export
 select_relevant_args <- function(dict, part) {
 
   if (length(names(dict)) == 2) {

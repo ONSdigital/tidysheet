@@ -9,9 +9,9 @@ tidy_sheet(arg_values, to_csv = TRUE)
 \arguments{
 \item{arg_values}{character string vector. The values for the following
 (order is important):
-"--args", input filepath, regular expression matching the sheet name,
-output filepath, settings (see example),
-file part (integer, nearly always 1).}
+"--args" (optional), input filepath, regular expression matching the
+sheet name, output filepath, settings (see example), file part (integer,
+nearly always 1).}
 
 \item{to_csv}{boolean. Default is TRUE. If FALSE the output is returned
 rather than being saved to csv.}
@@ -45,7 +45,6 @@ arg_values <- commandArgs(trailingOnly = TRUE)
 
 # Without using the command line, this would look like e.g.:
 arg_values <- c(
-    "--args",
     "D:/some_file-2023_24.xlsx", "(?i)sheet1", "D:/some_file-2023_24.csv",
     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2}",
     "1"

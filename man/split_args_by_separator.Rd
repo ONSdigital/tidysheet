@@ -2,7 +2,7 @@
 % Please edit documentation in R/dict_handlers.r
 \name{split_args_by_separator}
 \alias{split_args_by_separator}
-\title{Split dictionary of arguments by subtable}
+\title{Split dictionary style dataframe of arguments by a specified string}
 \usage{
 split_args_by_separator(dict, separator)
 }
@@ -30,18 +30,22 @@ will have the item value c(TRUE, 'next_table', FALSE). This function splits
 the args for each table into separate columns in the dictionary, based on
 the separator string. Where the same value is required for all tables the
 separator need not be included - the same value will be given for each table.
+}
+\details{
+A 'dictionary' dataframe that looks like this:\tabular{ll}{
+   \strong{key} \tab \strong{item} \cr
+   multitable_arg_separator \tab next_table \cr
+   header_identifier \tab c('p1', 'next', 'p2') \cr
+   year_column_name \tab ^year$ \cr
+}
 
-So this:
-key                    >  item
-multitable_arg_separator   > 'next_table'
-header_identifier > c('p1', 'next', 'p2')
-year_column_name           > "^year$"
 
-is turned into:
-key                    >  item                 >  item_1  > item_2
-multitable_arg_separator   > 'next'                >  'next'  > 'next'
-header_identifier > c('p1', 'next', 'p2') >   'p1'   > 'p2'
-year_column_name           > '^year$'              > '^year$' > '^year$'
+is turned into:\tabular{llll}{
+   \strong{key} \tab \strong{item} \tab \strong{item_1} \tab \strong{item_2} \cr
+   multitable_arg_separator \tab next \tab next \tab next \cr
+   header_identifier \tab c('p1', 'next', 'p2') \tab 'p1' \tab 'p2' \cr
+   year_column_name \tab ^year$ \tab ^year$ \tab ^year$ \cr
+}
 }
 \examples{
 \dontrun{

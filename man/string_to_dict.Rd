@@ -12,18 +12,19 @@ by commas. See example.}
 }
 \value{
 A data frame representing a dictionary with keys corresponding
-to a list of items. If the input string is empty, an empty data frame is returned.If the
-input string contains any empty keys, they are replaced with NA values.
+to a list of items. If the input string is empty, an empty data frame is
+eturned.If the input string contains any empty keys, they are replaced with
+NA values.
 }
 \description{
 The form of a Python dict brought into R as a string is
 "key: item, key: item", with or without curly braces.
 
-In R, to access items using their key we convert this string into a dataframe
+To access items using their key we convert this string into a dataframe
 where the first column contains keys, and the second column contains item
 lists.
 
-This is not written for use with nested dictionaries.
+This is only written for use with simple dictionaries, not nested dicts.
 }
 \examples{
 \dontrun{
@@ -32,7 +33,7 @@ input_string <- "key1: value1, key2: value2, key3: value3"
 result_dict <- string_to_dict(input_string)
 
 # nested
-input_string <- "key1: [value 1, value 1b], key2: [value2, value2b], key3: value3"
+input_string <- "key1: [val1, val1b], key2: [val2, val2b], key3: val3"
 result_dict <- string_to_dict(input_string)
 }
 }
