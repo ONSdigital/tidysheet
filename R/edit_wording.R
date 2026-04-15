@@ -165,17 +165,25 @@ replace_strings <- function (dat, column=NA, from_regex=NA, to=NA, keep=FALSE) {
 }
 
 
-#' @title standardise the wording of years in specified columns
+#' @title Standardise the wording of years in specified columns
 #'
 #' @description
 #' Where the given year is mentioned in a specified character column, replace
 #' it with standardised wording. This wording differs depending on whether the
 #' year is on a financial or calendar year basis.
+#' 
+#' @details
+#' This is required for descriptions that need to have standard wording across 
+#' releases, in order for rows to be correctly mapped during processing.
+#' 
+#' The original wording may have come from a column name or row name in the 
+#' raw data as this change is applied after unpivotting.
+#' 
 #' If the year itself is found it is replaced replaced with "current year"/
 #' "current financial year". If the prior year is found it is replaced with
 #' "previous year"/ "previous financial year". If the subsequent year is found
 #' it is replaced with "next year"/ "next financial year".
-#'
+#' 
 #' @param dat dataframe
 #' @param columns character string vector. Each element must match the name of
 #' a column in dat. These are the columns in which you want the replacement to
@@ -311,7 +319,7 @@ standardise_mentioned_years <- function(dat, columns = NA, year) {
 #' @title Fill blanks in one column with values from another
 #'
 #' @description Where there is an NA in a specified column, fill it with the
-#' value from another.
+#' value from another (on the same row).
 #'
 #' @param dat dataframe
 #' @param to_columns character vector. Regular expression to match the name of
@@ -409,7 +417,9 @@ replace_blanks <- function(dat, to_columns = NA, from_columns = NA) {
 
 #' @title Remove line breaks from character strings.
 #'
-#' @description Remove line breaks from character strings.
+#' @description Remove line breaks from character values. Line breaks include
+#' \r and \n. Extra spaces are also removed. This function acts on the contents 
+#' of all character columns, but not on column names.
 #'
 #' @param dat dataframe.
 #'
