@@ -1,10 +1,14 @@
 #' @title Rename columns with reserved names
 #'
 #' @description Column names that match a string listed in reserved_names are
-#' given a postscript. This guards against overwriting existing columns with
-#' information we have pulled from outside of the main table, so if there is
-#' a column with the same name as one of the reserved names an _1 postscript is
-#' appended to it.
+#' given a postscript. 
+#' 
+#' @details This function is used to guard against overwriting existing columns 
+#' with information we have pulled from outside of the main table: If there is
+#' a column with the same name as a reserved names it will be given a 
+#' postscript. For example, If there is a column in the raw data called
+#' 'source', because 'cource' is a column we add to all datasets,
+#' our 'source' column in the raw data will become 'source_1'.
 #'
 #' @param dat dataframe.
 #' @param reserved_names vector of character strings. Column names that we
@@ -34,10 +38,13 @@ rename_reserved_colnames <- function(dat, reserved_names) {
 }
 
 
-#' @title rename columns using regular expressions to identify them
+#' @title Rename columns using regular expressions to identify them
 #'
 #' @description Use regular expressions to identify which columns to rename,
 #' and rename them.
+#' 
+#' @details This renaming is controlled by the settings - if no columns require 
+#' renaming, the settings do not need to be supplied.
 #'
 #' @param dat dataframe
 #' @param exclude_names character string. Any column names that should not be
@@ -135,20 +142,13 @@ rename_columns <- function(dat, exclude_names, patterns, new_names){
 #' @title Rename the value columns
 #'
 #' @description
-#' Standardise column names so that if data are in any layout other than
-#' 'tidy_data', the numeric column gets renamed 'value' and the character column
-#' gets renamed 'non_numeric_value'. The latter is because if there is a
-#' string character in a column that should be numeric in the raw data, it will
-#' remain in the 'character' column. We want to keep it
-#' because it is likely to be a note about why the value is missing.
-#'
-#' This is not relevant for data in a 'tidy_data' layout because for this
-#' layout the xlsx_cells columns are not kept - No unpivotting is done to the
-#' raw data and the original (raw data) column names are used.
-#'
-#' We would only expect to have to rename one if both exist (because they are
-#' created by xlsx_cells on reading the data). Therefore if either of 'numeric'
-#' or 'character' are missing for the the column names, neither are renamed.
+#' Standardise column names so that the numeric column gets renamed 'value' and
+#' the character column gets renamed 'non_numeric_value'. 
+#' 
+#' @details The non-numeric_value column will only be populated if there are
+#' character values in a column that should be numeric in the raw data. For 
+#' example if 's' is used to indicate suppressed values in numeric columns, 
+#' it will end up in the non_numeric_value column.
 #'
 #' @param dat (tibble)
 #'
