@@ -1,4 +1,4 @@
-#' @title take non-tidy data out of xlsx_cells layout
+#' @title Take non-tidy data out of xlsx_cells layout
 #'
 #' @description Convert untidy Excel data to tidy data with one numeric value
 #' per row and any number of descriptor columns. dat is tidy because it is
@@ -202,10 +202,11 @@ unpivot_data <- function(dat,
 #' row, a single row of column headers, and a single data type in each column,
 #' this function is used to take the data out of xlsx_cells format.
 #'
-#'  Note that if there are ANY character strings in the 'value' column, that
-#'  column will be treated as a character column not numeric. It is assumed
-#'  that if data really are in a tidy format, this will not occur. However a fix
-#'  may need to be coded in if this ever comes up.
+#' @details
+#' Note that if there are ANY character strings in the 'value' column, that
+#' column will be treated as a character column not numeric. It is assumed
+#' that if data really are in a tidy format, this will not occur. However a fix
+#' may need to be coded in if this ever comes up.
 #'
 #' @param dat xlsx_cells data
 #' @param columns_to_create character string. Optional. Used as the name of a
@@ -342,7 +343,6 @@ reformat_tidy_data <- function(
 #' number_rows <- get_vector_locs_of_type(dat, "numeric", 0.5, "row")
 #' }
 #' @md
-#' @export
 get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", include_blanks=TRUE) {
 
   tolerance <- as.numeric(tolerance)
@@ -391,7 +391,7 @@ get_vector_locs_of_type <- function(dat, datatype, tolerance, direction="col", i
 }
 
 
-#' @title get the number of the first column with numeric data
+#' @title Get the number of the first column with numeric data
 #'
 #' @description Find the first of consecutive existing columns that have been
 #' identified as numeric. The number of consecutive columns required is set
@@ -502,7 +502,6 @@ get_first_data_col_number <- function(
 #' get_first_of_consecutives(sequence, 2)
 #' get_first_of_consecutives(sequence, 3)
 #' }
-#' @export
 get_first_of_consecutives <- function(
     sequence, min_consecutives = 2, offset = 0
     ) {
@@ -740,7 +739,7 @@ get_left_col_names <- function(
 }
 
 
-#' @title Get the column number of an outer right descriptor column.
+#' @title Get the column number of an outer right descriptor column
 #'
 #' @description Some datasets have the following structure:
 #' Descriptor columns e.g. Year > Numeric columns > Descriptor e.g. notes
@@ -906,7 +905,7 @@ get_outer_descriptor_col_loc <- function (
 }
 
 
-#' @title Only keep the first of multiple rows of matching headers.
+#' @title Only keep the first of multiple rows of matching headers
 #'
 #' @description This function exists because in the DLUHC CPR files (e.g.
 #' in 2024-25), the year_&_quarter_series table contains two tables stacked
@@ -1058,7 +1057,6 @@ remove_duplicated_header_rows <- function (
 #'
 #' get_duplicated_rows(example_dat, 1)
 #' }
-#' @export
 get_duplicated_rows <- function(dat, row_num) {
 
   raw_colnames <- dat$character[dat$row==row_num]
@@ -1078,7 +1076,7 @@ get_duplicated_rows <- function(dat, row_num) {
 }
 
 
-#' @title Only retain rows that relate to numeric columns in the Excel data.
+#' @title Only retain rows that relate to numeric columns in the Excel data
 #'
 #' @description Remove the left block of row descriptors and, if it exists, the
 #' column of descriptors to the right of the data.
@@ -1324,7 +1322,7 @@ behead_left_block <- function(
 
 
 
-#' @title Join the main value data to the left block of row descriptor columns.
+#' @title Join the main value data to the left block of row descriptor columns
 #'
 #' @description The left block contains descriptor columns, the right block
 #' contains both the numeric value column and the descriptors whose entries come
@@ -1384,7 +1382,7 @@ join_left_and_right_unpivotted_data <- function(
 }
 
 
-#' @title Join data to the right of the table to the rest of the data by row.
+#' @title Join data to the right of the table to the rest of the data by row
 #'
 #' @description When there is non-numeric information to the right of the
 #' numeric data it has to be beheaded separately (because it is not numeric).
@@ -1499,7 +1497,7 @@ add_columns_to_right_of_data_back_in <- function(
 
 }
 
-#' @title Remove info from above the top row of data.
+#' @title Remove info from above the top row of data
 #'
 #' @description Because of how the data are imported with every cell in the
 #' Excel data having it's own row in our input, we are left with rows in the
