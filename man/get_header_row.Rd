@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_information.R
 \name{get_header_row}
 \alias{get_header_row}
-\title{Get the row index of a header based on specified identifiers}
+\title{Get the row number of the first header row.}
 \usage{
 get_header_row(dat, pattern, instance = 1, offset_by = NA)
 }
@@ -30,10 +30,13 @@ populated row if no pattern is provided.
 \description{
 Identify the row number of the first header in the dataset based on
 a specified regular expression, desired instance of the match (1st, 2nd etc),
-and the header row offset. If the header row offset is not specified, the
+and the header row offset.
+}
+\details{
+If the header row offset is not specified, the
 header row is assumed to be the row on which the specified instance of the
 match occurs. However if the matching cell is known to be found on e.g. the
-row after the first header row, offset_by can be used.
+row after the first header row, offset_by (as -1) can be used.
 
 If the specified instance or row is invalid, warnings are issued, and the
 function defaults to the first valid instance.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_fy_start.R
 \name{get_fy_start_from_fy_end}
 \alias{get_fy_start_from_fy_end}
-\title{get financial year start year from financial year end year}
+\title{Get financial year start year from financial year end year}
 \usage{
 get_fy_start_from_fy_end(dat, end_year)
 }

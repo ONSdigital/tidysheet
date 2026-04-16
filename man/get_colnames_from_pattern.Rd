@@ -22,7 +22,9 @@ the columns that matched the pattern. If the number of matches is not 1 a
 warning is given and NA is returned for that item.
 }
 \description{
-For each pattern supplied column name that matches is returned.
+For each pattern supplied, the column name that matches is
+returned as a value in a named list. The new name for the column is given
+as the name in the list (taken from 'identitites').
 }
 \examples{
 dat <- data.frame(

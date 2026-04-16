@@ -28,5 +28,4 @@ dat <- data.frame(
     )
 get_table_data(dat, 3)
 }
-
 }

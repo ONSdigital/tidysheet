@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_information.R
 \name{get_subtitles}
 \alias{get_subtitles}
-\title{Record subtable titles and their location}
+\title{Record subtable title and it's location}
 \usage{
 get_subtitles(dat, column, patterns, row_offset, horizontal_index)
 }
@@ -32,11 +32,20 @@ dataframe with a column for row and a a column named using the
 'column' arg containing the subtitles.
 }
 \description{
-Use regular expressions to find specific rows. The row that you
-want to locate must contain all the provided regular expressions. Once the
-row is identified, the row containing the subtitles can be identified through
+Find and record character strings and their row numbers.
+This function is written for locating subtitles but could be used for other
+cases.
+}
+\details{
+A set of regular expression patterns is used to locate a row. This
+row can be the row of the cell containing the subtitle, or a row that is a
+known distance from the subtitle. The row that you want to locate must have
+matches to \emph{all} provided patterns. Once that row number
+is identified, the row containing the subtitles can be identified through
 its relative position to the found row. If it is known to be two rows above,
-use offset = -2. Ideally, the patterns provided will match the subtable title
+use offset = -2.
+
+Ideally, the patterns provided will match the subtable title
 rows, in which case offset is 0 and does not need to be specified. Once the
 target row is identified, if there is more than one character cell in that
 row, the index of the required cell can be specified using horizontal_index.

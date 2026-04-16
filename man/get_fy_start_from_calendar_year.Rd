@@ -46,11 +46,13 @@ Get financial year (FY) start for quarters. This is calculated
 differently when year is given as calendar year but Q1 is Apr-Jun and when
 Q1 is Jan-May. In the former, financial year start will equal the calendar
 year for Q1-Q3 but Q4/Jan-Mar financial year start will be year minus one.
-
-SAP processing may require FY start to perform calculations but in data
-published on a calendar year basis (where Q1 is the first quarter of the
-calendar year), FY may not be given. This function calculates financial year
-start from the calendar year and either the quarter or the month.
+}
+\details{
+Where the output of tidysheet is used for calculations on a financial year
+basis, but the source data was published on a calendar year basis (where Q1
+is the first quarter of the calendar year), financial year may not be given.
+This function calculates financial year start from the calendar year and
+either the quarter or the month.
 
 See make_calendar_q1_month_and_quarter_patterns() for the accepted
 presentation of months and quarters (e.g. 'jan'/'Jan-Mar'/'Q1'/'Quarter 1').

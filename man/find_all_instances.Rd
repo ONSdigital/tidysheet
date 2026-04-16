@@ -22,7 +22,7 @@ Returns an empty vector if no matches are found.
 \description{
 Take an xlsx_cells dataframe and a pattern known to be
 in the character cells of the rows or columns you wish to identify. Note that
-numeric cells are ignored even if pattern is a number.
+numeric and date cells are ignored even if pattern is a number.
 }
 \examples{
 \dontrun{

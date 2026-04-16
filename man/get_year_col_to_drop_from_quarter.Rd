@@ -17,8 +17,11 @@ character string. The name of the year column
 }
 \description{
 Get the name of the column that matches the year pattern and
-contains a valid years. If more than one year type is found, preferentially
-return calendar year, then the column that contains at least some calendar
+contains a valid years.
+}
+\details{
+If more than one year type is found, this function preferentially
+returns calendar year, then the column that contains at least some calendar
 years, then financial. This order is selected because the quarter column is
 more likely to state a calendar year than financial in sources seen so far.
 However, if the financial column is preferred over the calendar year, this

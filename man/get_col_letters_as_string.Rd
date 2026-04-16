@@ -19,9 +19,10 @@ Use cell addresses in an xlsx_cells dataframe to get the Excel
 column letters for a string of comma-separated column  numbers.
 Required for messages to users - users are used to
 looking up a  column in an Excel file based on letters not numbers.
-
-For code that gets excel column letters from column number without an
-xlsx_cells dataframe for lookup, see
+}
+\details{
+For alternative code that gets excel column letters from column number
+without an xlsx_cells dataframe for lookup, see
 https://stackoverflow.com/questions/9905533/convert-excel-column-alphabet-e-g-aa-to-number-e-g-25
 }
 \examples{

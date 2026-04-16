@@ -92,7 +92,7 @@ get_metadata <- function(
       "columns: 'row', 'col', 'character'."
       )
   }
-  current_units <- extract_units(dat)
+  current_units <- get_units(dat)
 
   dropdown <- get_dropdown_value(dat, dropdown_pattern)
 
@@ -117,7 +117,7 @@ get_metadata <- function(
       table_dat
     )
     # If table units is not blank use that, otherwise use sheet, otherwise NA.
-    units <- get_units(sheet_units, current_units)
+    units <- select_units(sheet_units, current_units)
   } else {
     vintage <- NA
     units <- current_units
@@ -132,15 +132,18 @@ get_metadata <- function(
 }
 
 
-#' @title Get the row index of a header based on specified identifiers
+#' @title Get the row number of the first header row.
 #'
 #' @description
 #' Identify the row number of the first header in the dataset based on
 #' a specified regular expression, desired instance of the match (1st, 2nd etc),
-#' and the header row offset. If the header row offset is not specified, the
+#' and the header row offset. 
+#' 
+#' @details
+#' If the header row offset is not specified, the
 #' header row is assumed to be the row on which the specified instance of the
 #' match occurs. However if the matching cell is known to be found on e.g. the
-#' row after the first header row, offset_by can be used.
+#' row after the first header row, offset_by (as -1) can be used.
 #'
 #' If the specified instance or row is invalid, warnings are issued, and the
 #' function defaults to the first valid instance.
@@ -281,7 +284,7 @@ get_first_instance <- function(dat, pattern, direction = "row") {
 #'
 #' @description Take an xlsx_cells dataframe and a pattern known to be
 #' in the character cells of the rows or columns you wish to identify. Note that
-#' numeric cells are ignored even if pattern is a number.
+#' numeric and date cells are ignored even if pattern is a number.
 #'
 #' @param dat  An xlsx_cells dataframe
 #' @param pattern character vector of length 1. Regular expression to be matched.
@@ -301,7 +304,6 @@ get_first_instance <- function(dat, pattern, direction = "row") {
 #'                   "numeric" = c(rep(NA, times = 5), 50))
 #' find_all_instances(dat, "services")
 #'}
-#' @export
 find_all_instances <- function(dat, pattern, direction = "row") {
 
   if (all(c("character", direction) %in% colnames(dat)) == FALSE) {
@@ -349,6 +351,7 @@ find_all_instances <- function(dat, pattern, direction = "row") {
     }
   )
 }
+
 
 #' @title Get row or column number from a vector of possibilities
 #'
@@ -406,8 +409,9 @@ get_loc_from_instance <- function(possibilities, instance, offset_by) {
 
 #' @title Get column names that match regular expressions
 #'
-#' @description For each pattern supplied column name that matches is returned.
-#'
+#' @description For each pattern supplied, the column name that matches is 
+#' returned as a value in a named list. The new name for the column is given
+#' as the name in the list (taken from 'identitites').
 #'
 #' @param dat dataframe containing the column names to find.
 #' @param identities vector of character strings. Each is a name that will be
@@ -488,7 +492,9 @@ get_colnames_from_pattern <- function(dat, identities, patterns) {
 #' @title Get column names that contain a pattern
 #'
 #' @description Return all column names from a dataset that match a regular
-#' expression
+#' expression.
+#' 
+#' @details See get_colnames_from_pattern for a similar function. 
 #'
 #' @param dat dataframe
 #' @param pattern string. Regular expression you want to match
@@ -518,8 +524,9 @@ get_matching_colnames <- function(dat, pattern){
 #' Required for messages to users - users are used to
 #' looking up a  column in an Excel file based on letters not numbers.
 #'
-#' For code that gets excel column letters from column number without an
-#' xlsx_cells dataframe for lookup, see
+#' @details
+#' For alternative code that gets excel column letters from column number 
+#' without an xlsx_cells dataframe for lookup, see
 #' https://stackoverflow.com/questions/9905533/convert-excel-column-alphabet-e-g-aa-to-number-e-g-25
 #'
 #' @param dat Dataframe. Imported using xlsx_cells
@@ -537,7 +544,6 @@ get_matching_colnames <- function(dat, pattern){
 #'
 #' get_col_letters_as_string(dat, c(1, 2))
 #' }
-#' @export
 get_col_letters_as_string <- function (dat, col_numbers) {
 
   dat %>%
@@ -551,7 +557,7 @@ get_col_letters_as_string <- function (dat, col_numbers) {
 }
 
 
-#' @title Get a single units value
+#' @title Select a single units value
 #'
 #' @description Choose between units taken from the top of the sheet, and units
 #' taken from above the subtable. Units taken from above the subtable take
@@ -565,11 +571,11 @@ get_col_letters_as_string <- function (dat, col_numbers) {
 #'
 #' @examples
 #' \dontrun{
-#' get_units("millions", NA)
-#' get_units("millions", "thousands")
-#' get_units(NA, "thousands")
+#' select_units("millions", NA)
+#' select_units("millions", "thousands")
+#' select_units(NA, "thousands")
 #' }
-get_units <- function(sheet_units, table_units) {
+select_units <- function(sheet_units, table_units) {
 
   if (!is.na(table_units) & table_units != "") {
     message("Units taken from above the table: '", table_units, "'.")
@@ -606,10 +612,10 @@ get_units <- function(sheet_units, table_units) {
 #'         )
 #'     )
 #'
-#' units <- extract_units(info_at_top_of_sheet)
+#' units <- get_units(info_at_top_of_sheet)
 #' }
 #' @export
-extract_units <- function(dat) {
+get_units <- function(dat) {
 
   message("Getting units")
   pattern <- "((?i)thousand|(?i)000s)|(?i)million|(?i)(\\s|\\(|^)(count)(\\s|\\)|$)"
@@ -843,13 +849,21 @@ get_release_number <- function(dat) {
 }
 
 
-#' @title Record subtable titles and their location
+#' @title Record subtable title and it's location
 #'
-#' @description Use regular expressions to find specific rows. The row that you
-#' want to locate must contain all the provided regular expressions. Once the
-#' row is identified, the row containing the subtitles can be identified through
+#' @description Find and record character strings and their row numbers. 
+#' This function is written for locating subtitles but could be used for other
+#' cases.
+#' 
+#' @details A set of regular expression patterns is used to locate a row. This
+#' row can be the row of the cell containing the subtitle, or a row that is a 
+#' known distance from the subtitle. The row that you want to locate must have 
+#' matches to _all_ provided patterns. Once that row number 
+#' is identified, the row containing the subtitles can be identified through
 #' its relative position to the found row. If it is known to be two rows above,
-#' use offset = -2. Ideally, the patterns provided will match the subtable title
+#' use offset = -2. 
+#' 
+#' Ideally, the patterns provided will match the subtable title
 #' rows, in which case offset is 0 and does not need to be specified. Once the
 #' target row is identified, if there is more than one character cell in that
 #' row, the index of the required cell can be specified using horizontal_index.
@@ -891,6 +905,7 @@ get_release_number <- function(dat) {
 #'     )
 #' get_subtitles(dat, "subtitle", c("(?i)a", "(?i)col.*b"), -1, -1)
 #' }
+#' @export
 get_subtitles <- function(
     dat, column, patterns, row_offset, horizontal_index
     ) {

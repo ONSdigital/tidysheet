@@ -2,28 +2,32 @@
 % Please edit documentation in R/get_information.R
 \name{get_units}
 \alias{get_units}
-\title{Get a single units value}
+\title{Extract information about units}
 \usage{
-get_units(sheet_units, table_units)
+get_units(dat)
 }
 \arguments{
-\item{sheet_units}{character string. Units taken from the top of the sheet.}
-
-\item{table_units}{character string. Units taken from above the subtable.}
+\item{dat}{dataframe imported using tidyxl::xlsx_cells() containing the cells
+that are likely to include information about units.}
 }
 \value{
-character string. Units from above the subtable unless they are NA,
-in which case units from the top of the sheet.
+A string containing extracted unique unit labels separated by
+commas, or an empty string if no units are found.
 }
 \description{
-Choose between units taken from the top of the sheet, and units
-taken from above the subtable. Units taken from above the subtable take
-precendence. If neither are available, return NA.
+Extract unit labels such as 'thousand', 'million', '000s', or
+'£ Millions' from the character column of data imported using
+tidyxl::xlsx_cells().
 }
 \examples{
 \dontrun{
-get_units("millions", NA)
-get_units("millions", "thousands")
-get_units(NA, "thousands")
+info_at_top_of_sheet <- data.frame(
+    character = c(
+        "Revenue in £ millions (millions)",
+        "All figures are in thousands of pounds (£ thousand)."
+        )
+    )
+
+units <- get_units(info_at_top_of_sheet)
 }
 }

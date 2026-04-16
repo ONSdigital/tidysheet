@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_data.R
 \name{get_info_above_table}
 \alias{get_info_above_table}
-\title{get the string information from above the data in an excel sheet.}
+\title{Get the character string information from above the data}
 \usage{
 get_info_above_table(dat, row_num)
 }
@@ -16,10 +16,9 @@ dataframe in an xlsx_cells layout containing everything from dat that
 is in rows prior to row_num.
 }
 \description{
-Get a subset of the data from dataset imported using tidyxl::
-xlsx_cells() where each row describes a cell in an excel sheet. All character
-string information above a specified row is returned. If data_type is
-anything other than character the row is removed.
+Get character information from rows of the data that are above
+the provided row number. If data_type is anything other than character the
+row is removed.
 }
 \examples{
 \dontrun{

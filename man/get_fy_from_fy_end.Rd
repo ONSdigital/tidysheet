@@ -17,10 +17,11 @@ dataframe dat with a new column  called year, with strings in
 the format yyyy-yy, using the previous year to the one passed in.
 }
 \description{
-Add a new column to a daatframe. Use the financial year end
+Add a new column to a dataframe. Use the financial year end
 (given as yyyy) to generate a column that gives financial year in the format
 yyyy-yy.
-
+}
+\details{
 If the end_year column contains invalid year entries (no numbers, or a number
 that is not four characters long), year will be given as NA, and the user
 is given a warning.

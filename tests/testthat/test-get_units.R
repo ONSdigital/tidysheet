@@ -1,21 +1,28 @@
-test_that("get_units returns table_units before sheet_units", {
-  expect_equal(
-    suppressMessages(get_units("millions", "thousands")), "thousands"
+test_that("get_units correctly extracts units when there are multiple matches", {
+  dat <- data.frame(
+    character = c("Revenue (millions)", "Expenses in thousand", "Title of data")
     )
+  expect_equal(suppressMessages(get_units(dat)), "million, thousand")
 })
 
 
-test_that("get_units returns table_units when sheet_units is NA", {
-  expect_equal(suppressMessages(get_units(NA, "thousands")), "thousands")
+test_that("get_units correctly extracts units when there is one match", {
+  dat <- data.frame(character = c("Sales: £ Millions", "title of data"))
+  expect_equal(suppressMessages(get_units(dat)), "Million")
 })
 
 
-test_that("get_units returns sheet_units before NA", {
-  expect_equal(suppressMessages(get_units("millions", NA)), "millions")
-
+test_that("get_units returns NA when no units are found", {
+  dat <- data.frame(character = c("General information", "No unit mentioned"))
+  expect_equal(suppressMessages(get_units(dat)), NA)
 })
 
 
-test_that("get_units returns NA if both inputs are NA", {
-  expect_equal(suppressMessages(get_units(NA, NA)), NA)
+test_that("get_units handles mixed cases and duplicates", {
+  dat <- data.frame(
+    character = c("million dollar revenue",
+                  "million dollar profit",
+                  "thousand sales")
+    )
+  expect_equal(suppressMessages(get_units(dat)), "million, thousand")
 })

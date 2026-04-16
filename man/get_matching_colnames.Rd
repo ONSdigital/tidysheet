@@ -18,7 +18,10 @@ returned.
 }
 \description{
 Return all column names from a dataset that match a regular
-expression
+expression.
+}
+\details{
+See get_colnames_from_pattern for a similar function.
 }
 \examples{
 \dontrun{

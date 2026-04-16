@@ -54,7 +54,7 @@ fy_start is ascertained, other columns may also be created ('year' and
 \description{
 If financial year start year is not already available, extract
 it from the available information e.g. from financial year, fy end year, or
-calendar year and quarter or month (where Q1 is either Jan to March or Apr to
+calendar year and quarter/month (where Q1 is either Jan to March or Apr to
 Jun).
 }
 \examples{

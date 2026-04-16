@@ -94,7 +94,7 @@ get_fy_start <- function(
 #' @description Find the column containing year using a regular expression,
 #' get the year from that column and put it in a new column called 'year'.
 #' 
-#' @etails
+#' @details
 #' 'year' can contain either financial year, or calendar year,
 #' but not both. By default, if any of the years found in the specified column
 #' are financial (YYYY-YY), only financial years are put in the new column.

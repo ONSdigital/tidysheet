@@ -30,7 +30,8 @@ function is specifcally for use in add_row_headers_column and
 add_totals_as_column: if there is no match, the first possible column name
 is returned. The messages are also specific to add_row_headers_pattern
 
-See get_matching_colnames for a more general function with a similar purpose.
+See get_matching_colnames and get_colnames_from_pattern for more general
+functions with a similar purpose.
 }
 \examples{
 \dontrun{

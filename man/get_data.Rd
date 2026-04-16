@@ -15,7 +15,8 @@ sheet.}
 \value{
 dataframe in an xlsx_cells format with one row for every cell of
 the excel data. If pattern is not provided NULL is returned. If filepath
-is not fir an xlsx file an error is raised.
+is not for an xlsx file an error is raised. If no sheets match the provided
+pattern, an error is raised.
 }
 \description{
 Determine which sheet to read based on a regular expression

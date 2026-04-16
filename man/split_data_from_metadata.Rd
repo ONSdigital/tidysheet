@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_data.R
 \name{split_data_from_metadata}
 \alias{split_data_from_metadata}
-\title{Split metadata at the top of the sheet from the rest of the data.}
+\title{Split metadata from above the data.}
 \usage{
 split_data_from_metadata(dat, pattern, instance = NA, offset_by = NA)
 }
@@ -28,9 +28,9 @@ named list: 'data' and 'metadata' are dataframes, 'split_row' is
 an integer and is the source data row number of the first header row.
 }
 \description{
-Many Excel datasets have metadata above the data e.g. at the top of the sheet
-or above each table in a multi-table sheet. This function separates out the
-metadata from the data.
+Many Excel datasets have metadata above the data e.g. at the top of the
+sheet, or above each table in a multi-table sheet. This function separates
+out the metadata from the data.
 }
 \details{
 Metadata may contain information such as the title, units, dates, and notes.
