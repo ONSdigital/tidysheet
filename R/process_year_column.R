@@ -1,6 +1,6 @@
 #' @title Process the 'year' column in a data frame
 #'
-#' @description Process the 'year' column.
+#' @description
 #' Potential year columns are identified either by their matching a provided
 #' pattern OR by matching '(?i)year' if pattern is not provided. Where there is
 #' no year column, it will be generated from a provided single year if
@@ -223,7 +223,7 @@ get_year_column_names <- function(dat, pattern) {
 }
 
 
-#' @title get the column names and year types of columns containing years
+#' @title Get the column names and year types of columns containing years
 #'
 #' @description Create a named vector that states a maximum of one column name
 #' for each year type, where year types are 'financial' (variations on YYYY-YY,
@@ -250,7 +250,6 @@ get_year_column_names <- function(dat, pattern) {
 #' get_year_names_by_type(dat, names(dat))
 #'
 #' }
-#' @export
 get_year_names_by_type <- function(dat, columns) {
 
   cal_cols <- c()
@@ -310,10 +309,13 @@ get_year_names_by_type <- function(dat, columns) {
 
 #' @title Get the column name that has the highest count value
 #'
-#' @description Get the columns string that is in the same position as the
-#' maximum count value. Designed to select the name of the column that holds the
-#' most valid years, where columns gives the names of the columns holding valid
-#' years, and counts gives the number of valid years found in each of those
+#' @description Get the 'columns' string that is in the same position as the
+#' maximum count value. 
+#' 
+#' @details
+#' Designed to select the name of the column that holds the
+#' most valid years, where 'columns' gives the names of the columns holding 
+#' valid years, and counts gives the number of valid years found in each of those
 #' columns, though it could be used in other contexts.
 #'
 #' @param columns character string vector of the same length as counts.
@@ -417,8 +419,6 @@ get_column_with_most_valid_years <- function(columns, counts) {
 #' possible_cols <- c("financial" = NA, "calendar" = NA, "mixed" = NA)
 #' add_single_year_to_possibilities(possible_cols, TRUE, "2021/22", FALSE)
 #' }
-#'
-#'
 add_single_year_to_possibilities <- function(
     possible_cols, use_single_year, year, single_overrides_all
 ) {
@@ -462,7 +462,10 @@ add_single_year_to_possibilities <- function(
 #' @title Select the best option for the year column and add it to the data
 #'
 #' @description From possible_cols select the column name to use as the 'year'
-#' column and add this to the data. If a column called 'year' already exists in
+#' column and add this to the data. 
+#' 
+#' @details
+#' If a column called 'year' already exists in
 #' the data it will be overwritten.
 #'
 #' If there is more than one potential year column the order of preference is
@@ -550,7 +553,10 @@ add_best_year_column <- function(dat, possible_cols, single_year) {
 #' @title Standardise year column so that financial years are yyyy-yy
 #'
 #' @description Where financial years are not in the standard format of
-#' YYYY-YY, convert them to this format. Accepted input formats are:
+#' YYYY-YY, convert them to this format. 
+#' 
+#' @details 
+#' Accepted input formats are:
 #' YYYY_YY or YYYY_YYYY and any number of spaces either side of the underscore,
 #' YYYY-YY or YYYY-YYYY and any number of spaces either side of the dash,
 #' YYYYtoYY, and YYYY_to_YY.
@@ -639,7 +645,6 @@ standardise_year <- function(dat, column = NA) {
 #' \dontrun{
 #' convert_long_form_fy_to_short(c("2021-2022", "2022 to 2023"))
 #' }
-#' @export
 convert_long_form_fy_to_short <- function(year) {
   first_half <- substr(year, 1, nchar(year)-4)
   last_half <- substr(year, nchar(year)-1, nchar(year))
