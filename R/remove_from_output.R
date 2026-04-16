@@ -6,7 +6,7 @@
 #' are not used by this pipeline.
 #'
 #' @details
-#' For more information see documentation for remove_is_blank_rows,
+#' For more information and examples see documentation for remove_is_blank_rows,
 #' drop_rows_with_values, deduplicate_data, and remove_unwanted_cols.
 #'
 #' @param dat dataframe.
@@ -21,6 +21,7 @@
 #' @returns dataframe with specified rows, blank rows, repeat rows, and
 #' unwanted columns from xlsx_cells removed. A warning is raised if repeat
 #' rows are found.
+#' @export
 remove_from_output <- function(
     dat, col_patterns_with_values_to_drop, value_patterns_to_drop,
     xlsx_cells_names
@@ -60,6 +61,7 @@ remove_from_output <- function(
 #' dat <- data.frame(is_blank = c(TRUE, FALSE), numeric = c(NA, 1))
 #' remove_is_blank_rows(dat)
 #' }
+#' @export
 remove_is_blank_rows <- function(dat) {
   if ("is_blank" %in% names(dat)){
     message("Removing 'is_blank' junk rows.")
@@ -260,7 +262,7 @@ drop_rows_with_NA <- function(dat, patterns=NA) {
 #'     )
 #' drop_rows_with_values(dat, c("b", "a"), c("bad", "ang"))
 #' }
-#'
+#' @export
 drop_rows_with_values <- function(dat, col_patterns, value_patterns) {
 
   if (all(is.na(col_patterns), is.na(value_patterns))) {
@@ -330,6 +332,7 @@ drop_rows_with_values <- function(dat, col_patterns, value_patterns) {
 #' look like duplicates in the Excel data but not the xlsx_cells data (which
 #' has one row per cell).
 #'
+#' @details
 #' Columns specified in ignore_cols are excluded from comparison with other
 #' rows.
 #'
