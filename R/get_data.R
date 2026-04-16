@@ -9,7 +9,8 @@
 #'
 #' @returns dataframe in an xlsx_cells format with one row for every cell of
 #' the excel data. If pattern is not provided NULL is returned. If filepath
-#' is not fir an xlsx file an error is raised.
+#' is not for an xlsx file an error is raised. If no sheets match the provided
+#' pattern, an error is raised.
 #'
 #' @export
 get_data <- function (filepath, pattern) {
@@ -63,7 +64,6 @@ get_data <- function (filepath, pattern) {
 #' pattern <- "RA|Data"
 #' match_sheet_to_regex(sheet_names, pattern)
 #' }
-#' @export
 match_sheet_to_regex <- function(sheet_names, pattern){
 
   if (all(is.na(pattern))) {return(NULL)}
@@ -100,12 +100,12 @@ match_sheet_to_regex <- function(sheet_names, pattern){
 }
 
 
-#' @title Split metadata at the top of the sheet from the rest of the data.
+#' @title Split metadata from above the data.
 #'
 #' @description
-#' Many Excel datasets have metadata above the data e.g. at the top of the sheet
-#' or above each table in a multi-table sheet. This function separates out the
-#' metadata from the data.
+#' Many Excel datasets have metadata above the data e.g. at the top of the 
+#' sheet, or above each table in a multi-table sheet. This function separates 
+#' out the metadata from the data.
 #'
 #' @details
 #' Metadata may contain information such as the title, units, dates, and notes.
@@ -190,7 +190,6 @@ split_data_from_metadata <- function(
 #'     )
 #' get_table_data(dat, 3)
 #' }
-#'
 get_table_data <- function(dat, row_num) {
 
   message("Getting dat from the first header row onwards.")
@@ -208,12 +207,11 @@ get_table_data <- function(dat, row_num) {
 }
 
 
-#' @title get the string information from above the data in an excel sheet.
+#' @title Get the character string information from above the data
 #'
-#' @description Get a subset of the data from dataset imported using tidyxl::
-#' xlsx_cells() where each row describes a cell in an excel sheet. All character
-#' string information above a specified row is returned. If data_type is
-#' anything other than character the row is removed.
+#' @description Get character information from rows of the data that are above
+#' the provided row number. If data_type is anything other than character the 
+#' row is removed.
 #'
 #' @param dat dataframe imported using tidyxl::xlsx_cells().
 #' @param row_num The row number of the first row that is to be excluded.
@@ -230,7 +228,6 @@ get_table_data <- function(dat, row_num) {
 #'     )
 #' get_info_above_table(dat, 3)
 #' }
-#' @export
 get_info_above_table <- function(dat, row_num) {
 
   message("Getting metadata from above the first header row.")
