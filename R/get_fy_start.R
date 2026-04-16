@@ -2,7 +2,7 @@
 #'
 #' @description If financial year start year is not already available, extract
 #' it from the available information e.g. from financial year, fy end year, or
-#' calendar year and quarter or month (where Q1 is either Jan to March or Apr to
+#' calendar year and quarter/month (where Q1 is either Jan to March or Apr to
 #' Jun).
 #'
 #' @param dat dataframe
@@ -64,6 +64,7 @@
 #'     calendar_to_fy_start = TRUE,  q1_is_jan_to_mar = FALSE,
 #'     )
 #' }
+#' @export
 get_fy_start <- function(
     dat, year_from_pattern = NA, fy_from_fy_end = FALSE,
     fy_start_from_fy_end = FALSE, fy_end_pattern = NA,
@@ -92,6 +93,8 @@ get_fy_start <- function(
 #'
 #' @description Find the column containing year using a regular expression,
 #' get the year from that column and put it in a new column called 'year'.
+#' 
+#' @etails
 #' 'year' can contain either financial year, or calendar year,
 #' but not both. By default, if any of the years found in the specified column
 #' are financial (YYYY-YY), only financial years are put in the new column.
@@ -125,7 +128,6 @@ get_fy_start <- function(
 #' get_year_from_column(dat_calendar, "(?i)date*.span")
 #' get_year_from_column(dat_financial, "(?i)date*.span")
 #' }
-#' @export
 get_year_from_column <- function(dat, pattern) {
 
   if (is.na(pattern)) { return(dat) }
@@ -265,7 +267,7 @@ get_year_info_from_fy_end <- function(
 }
 
 
-#' @title get financial year start year from financial year end year
+#' @title Get financial year start year from financial year end year
 #'
 #' @description Get the financial year start year from a column containing
 #' the financial year end year as YYYY.  (fy_start = fy_end - 1).
@@ -335,10 +337,11 @@ get_fy_start_from_fy_end <- function (dat, end_year) {
 
 #' @title Convert financial year end column (yyyy) to yyyy-yy
 #'
-#' @description Add a new column to a daatframe. Use the financial year end
+#' @description Add a new column to a dataframe. Use the financial year end
 #' (given as yyyy) to generate a column that gives financial year in the format
 #' yyyy-yy.
 #'
+#' @details
 #' If the end_year column contains invalid year entries (no numbers, or a number
 #' that is not four characters long), year will be given as NA, and the user
 #' is given a warning.
@@ -355,7 +358,6 @@ get_fy_start_from_fy_end <- function (dat, end_year) {
 #' dat <- data.frame(fin_year_end = c("2020", "2021", "999", "non"))
 #' get_fy_from_fy_end(dat, "fin_year_end")
 #' }
-#' @export
 get_fy_from_fy_end <- function(dat, end_year) {
 
   message(
@@ -418,8 +420,11 @@ get_fy_from_fy_end <- function(dat, end_year) {
 #' @title Get the year column name to be used by get_quarter
 #'
 #' @description Get the name of the column that matches the year pattern and
-#' contains a valid years. If more than one year type is found, preferentially
-#' return calendar year, then the column that contains at least some calendar
+#' contains a valid years. 
+#' 
+#' @details
+#' If more than one year type is found, this function preferentially
+#' returns calendar year, then the column that contains at least some calendar
 #' years, then financial. This order is selected because the quarter column is
 #' more likely to state a calendar year than financial in sources seen so far.
 #' However, if the financial column is preferred over the calendar year, this
@@ -441,7 +446,6 @@ get_fy_from_fy_end <- function(dat, end_year) {
 #' )
 #' get_year_col_to_drop_from_quarter(dat, "(?i)year")
 #' }
-#' @export
 get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 
   possible_cols <- get_year_column_names(dat, pattern)
@@ -485,10 +489,12 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #' Q1 is Jan-May. In the former, financial year start will equal the calendar
 #' year for Q1-Q3 but Q4/Jan-Mar financial year start will be year minus one.
 #'
-#' SAP processing may require FY start to perform calculations but in data
-#' published on a calendar year basis (where Q1 is the first quarter of the
-#' calendar year), FY may not be given. This function calculates financial year
-#' start from the calendar year and either the quarter or the month.
+#' @details
+#' Where the output of tidysheet is used for calculations on a financial year
+#' basis, but the source data was published on a calendar year basis (where Q1 
+#' is the first quarter of the calendar year), financial year may not be given. 
+#' This function calculates financial year start from the calendar year and 
+#' either the quarter or the month.
 #'
 #' See make_calendar_q1_month_and_quarter_patterns() for the accepted
 #' presentation of months and quarters (e.g. 'jan'/'Jan-Mar'/'Q1'/'Quarter 1').
