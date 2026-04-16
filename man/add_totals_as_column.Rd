@@ -43,23 +43,28 @@ the same entry as that in the 'from' column.
 \description{
 If a descriptor column has items followed by the totals of those
 items, this function can be used to move the name of the totalled group into
-a separate column and associate it with the items above it. For example:
+a separate column and associate it with the items above it.
+}
+\details{
+For example:\tabular{ll}{
+   \strong{description} \tab \strong{value} \cr
+   red \tab 10 \cr
+   blue \tab 15 \cr
+   Total squares \tab 25 \cr
+   red \tab 1 \cr
+   green \tab 15 \cr
+   total circles \tab 16 \cr
+}
 
-\strong{item} \cr
-A \cr
-B \cr
-Total letters \cr
-1.2.3 \cr
-Total code \cr
 
-becomes:
-\tabular{ll}{
-\strong{item} \tab  \strong{group} \cr
-A \tab              letters \cr
-B \tab              letters \cr
-Total \tab          letters \cr
-1.2.3 \tab          code \cr
-Total \tab          code \cr
+becomes:\tabular{lll}{
+   \strong{species} \tab \strong{group} \tab \strong{value} \cr
+   red \tab squares \tab 10 \cr
+   blue \tab squares \tab 15 \cr
+   Total \tab squares \tab 25 \cr
+   red \tab circles \tab 1 \cr
+   green \tab circles \tab 15 \cr
+   total \tab circles \tab 16 \cr
 }
 }
 \examples{
@@ -75,5 +80,4 @@ add_totals_as_column(
     fill_dir = NA
     )
 }
-
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fill_missing_info.R
 \name{split_date_to_columns}
 \alias{split_date_to_columns}
-\title{split a date formatted column into columns for day, month, and year}
+\title{Split a date formatted column into columns for day, month, and year}
 \usage{
 split_date_to_columns(dat, column)
 }
@@ -17,10 +17,11 @@ datafram. dat with columns day, month, and year added, and
 column removed.
 }
 \description{
-Where a column can be unambiguously converted to a POSIXt object,
-split the column out into day, month, and year columns. If it cannot be
-converted, return the original data and an error message.
-
+Where a column can be unambiguously converted to a POSIXt
+object, split the column out into day, month, and year columns. If it cannot
+be converted, an error is raised.
+}
+\details{
 The information in neonscience.org/resources/learning-hub/tutorials/
 dc-convert-date-time-posix-r was used to create code that extracts year and
 day.

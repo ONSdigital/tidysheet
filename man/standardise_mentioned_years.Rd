@@ -2,7 +2,7 @@
 % Please edit documentation in R/edit_wording.R
 \name{standardise_mentioned_years}
 \alias{standardise_mentioned_years}
-\title{standardise the wording of years in specified columns}
+\title{Standardise the wording of years in specified columns}
 \usage{
 standardise_mentioned_years(dat, columns = NA, year)
 }
@@ -29,6 +29,14 @@ get replaced if year was supplied as '2025-26'.
 Where the given year is mentioned in a specified character column, replace
 it with standardised wording. This wording differs depending on whether the
 year is on a financial or calendar year basis.
+}
+\details{
+This is required for descriptions that need to have standard wording across
+releases, in order for rows to be correctly mapped during processing.
+
+The original wording may have come from a column name or row name in the
+raw data as this change is applied after unpivotting.
+
 If the year itself is found it is replaced replaced with "current year"/
 "current financial year". If the prior year is found it is replaced with
 "previous year"/ "previous financial year". If the subsequent year is found

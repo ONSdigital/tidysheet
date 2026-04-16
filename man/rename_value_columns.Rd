@@ -14,20 +14,14 @@ dat with numeric column named 'value' and character column named
 non_numeric_value if those columns exist
 }
 \description{
-Standardise column names so that if data are in any layout other than
-'tidy_data', the numeric column gets renamed 'value' and the character column
-gets renamed 'non_numeric_value'. The latter is because if there is a
-string character in a column that should be numeric in the raw data, it will
-remain in the 'character' column. We want to keep it
-because it is likely to be a note about why the value is missing.
-
-This is not relevant for data in a 'tidy_data' layout because for this
-layout the xlsx_cells columns are not kept - No unpivotting is done to the
-raw data and the original (raw data) column names are used.
-
-We would only expect to have to rename one if both exist (because they are
-created by xlsx_cells on reading the data). Therefore if either of 'numeric'
-or 'character' are missing for the the column names, neither are renamed.
+Standardise column names so that the numeric column gets renamed 'value' and
+the character column gets renamed 'non_numeric_value'.
+}
+\details{
+The non-numeric_value column will only be populated if there are
+character values in a column that should be numeric in the raw data. For
+example if 's' is used to indicate suppressed values in numeric columns,
+it will end up in the non_numeric_value column.
 }
 \examples{
 \dontrun{

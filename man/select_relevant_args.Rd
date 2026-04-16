@@ -19,6 +19,9 @@ When args are split by separator, they are separated into
 columns. This function retains only the relevant column for the table in
 question.
 }
+\details{
+See split_args_by_separator for more information.
+}
 \examples{
 \dontrun{
 dict <- tibble(
@@ -30,6 +33,4 @@ dict <- tibble(
 result <- select_relevant_args(dict, 1)
 result <- select_relevant_args(dict, 2)
 }
-
-
 }

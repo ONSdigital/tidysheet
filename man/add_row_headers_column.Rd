@@ -52,14 +52,15 @@ tibble. dat but with a new column for group_row
 \description{
 Create a column for grouping variables that are in the same
 column as their nested items.
-
+}
+\details{
 This function is for datasets where there are grouping variables as row names
 that don't have a value associated with them because they are just the group
 under which other items sit. Put these grouping items in a column in
 their own right, and the nested items in another column.
 
 Turn data that look like this:\tabular{ll}{
-   from \tab numeric \cr
+   \strong{item} \tab \strong{value)} \cr
    Education \tab  \cr
    primary \tab 1 \cr
    secondary \tab 3 \cr
@@ -69,7 +70,7 @@ Turn data that look like this:\tabular{ll}{
 
 
 Into this:\tabular{lll}{
-   from \tab row_header \tab numeric \cr
+   \strong{item} \tab \strong{group} \tab \strong{value} \cr
    primary \tab Education \tab 1 \cr
    secondary \tab Education \tab 3 \cr
    roads \tab Transport \tab 5 \cr

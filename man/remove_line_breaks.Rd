@@ -13,7 +13,9 @@ remove_line_breaks(dat)
 dataframe with line breaks removed from all character strings.
 }
 \description{
-Remove line breaks from character strings.
+Remove line breaks from character values. Line breaks include
+\\r and \\n. Extra spaces are also removed. This function acts on the
+contents of all character columns, but not on column names.
 }
 \examples{
 \dontrun{

@@ -34,5 +34,4 @@ dat <- data.frame(
      )
 split_year_and_vintage(dat, "year.*vintage")
 }
-
 }

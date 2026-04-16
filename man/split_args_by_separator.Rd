@@ -34,13 +34,13 @@ separator need not be included - the same value will be given for each table.
 \details{
 A 'dictionary' dataframe that looks like this:\tabular{ll}{
    \strong{key} \tab \strong{item} \cr
-   multitable_arg_separator \tab next_table \cr
+   multitable_arg_separator \tab next \cr
    header_identifier \tab c('p1', 'next', 'p2') \cr
    year_column_name \tab ^year$ \cr
 }
 
 
-is turned into:\tabular{llll}{
+has the arguments split out by the separator string into new columns like so:\tabular{llll}{
    \strong{key} \tab \strong{item} \tab \strong{item_1} \tab \strong{item_2} \cr
    multitable_arg_separator \tab next \tab next \tab next \cr
    header_identifier \tab c('p1', 'next', 'p2') \tab 'p1' \tab 'p2' \cr

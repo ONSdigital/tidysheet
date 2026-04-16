@@ -18,10 +18,15 @@ dat with offending columns given a numeric postscript to the name.
 }
 \description{
 Column names that match a string listed in reserved_names are
-given a postscript. This guards against overwriting existing columns with
-information we have pulled from outside of the main table, so if there is
-a column with the same name as one of the reserved names an _1 postscript is
-appended to it.
+given a postscript.
+}
+\details{
+This function is used to guard against overwriting existing columns
+with information we have pulled from outside of the main table: If there is
+a column with the same name as a reserved names it will be given a
+postscript. For example, If there is a column in the raw data called
+'source', because 'cource' is a column we add to all datasets,
+our 'source' column in the raw data will become 'source_1'.
 }
 \examples{
 \dontrun{

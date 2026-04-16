@@ -24,7 +24,7 @@ dataframe with blanks replaced
 }
 \description{
 Where there is an NA in a specified column, fill it with the
-value from another.
+value from another (on the same row).
 }
 \examples{
 \dontrun{

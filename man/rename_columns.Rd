@@ -2,7 +2,7 @@
 % Please edit documentation in R/edit_names.R
 \name{rename_columns}
 \alias{rename_columns}
-\title{rename columns using regular expressions to identify them}
+\title{Rename columns using regular expressions to identify them}
 \usage{
 rename_columns(dat, exclude_names, patterns, new_names)
 }
@@ -28,6 +28,10 @@ dat with columns renamed
 \description{
 Use regular expressions to identify which columns to rename,
 and rename them.
+}
+\details{
+This renaming is controlled by the settings - if no columns require
+renaming, the settings do not need to be supplied.
 }
 \examples{
 \dontrun{

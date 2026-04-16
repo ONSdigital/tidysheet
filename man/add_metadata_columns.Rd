@@ -16,15 +16,16 @@ dat with additional columns
 }
 \description{
 Include any variables given in dots (...) as a column in dat.
-Each variable must be of length 1.
-
+Each variable must be of length 1. The name of the column will be taken
+as the name of the variable.
+}
+\details{
 This function has a similar effect to add_single_value_columns, in that
 it add columns to the data where the value of each column is the same on
 every row. However, add_single_value_columns takes the column name and value
-as separate vectors. add_single_value_columns is more appropriate to use if
-you only want more control over which datasets are given the column in
-question (by using settings). add_metadata_columns is more appropriate if
-you want all columns to be added to all datasets, even if they are NA.
+as separate vectors. add_single_value_columns can be controlled by user
+settings. add_metadata_columns is not, so will add a column and fill it with
+NA if there is no vale for the variable in question.
 }
 \examples{
 \dontrun{

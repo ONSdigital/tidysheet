@@ -2,7 +2,7 @@
 % Please edit documentation in R/fill_missing_info.R
 \name{fill_blanks}
 \alias{fill_blanks}
-\title{fill blanks in a descriptor column}
+\title{Vertically fill blanks in a descriptor column.}
 \usage{
 fill_blanks(dat, column_names, fill_dirs = "down")
 }
@@ -22,9 +22,29 @@ this variable is specified using fill_columns_fill_dirs.}
 dat with blanks filled.
 }
 \description{
-If data have row headers that are nested, with some being in
-e.g. merged cells, this function can be used to fill the blanks with the
-descriptors above or below.
+Fill blanks within a column with the first populated entry
+either above or below the blank.
+}
+\details{
+This function is useful for data with layouts such as the following:\tabular{lll}{
+   \strong{group} \tab \strong{subgroup} \tab \strong{value} \cr
+   cat \tab seval \tab 10 \cr
+    \tab margay \tab 2 \cr
+    \tab ocelot \tab 15 \cr
+   dog \tab dhole \tab 1 \cr
+    \tab dingo \tab 15 \cr
+}
+
+
+The group column may or may not have contained merged cells but each row in
+group will be given a value if this function is used:\tabular{lll}{
+   \strong{group} \tab \strong{subgroup} \tab \strong{value} \cr
+   cat \tab serval \tab 10 \cr
+   cat \tab margay \tab 2 \cr
+   cat \tab ocelot \tab 15 \cr
+   dog \tab dhole \tab 1 \cr
+   dog \tab dingo \tab 15 \cr
+}
 }
 \examples{
 \dontrun{

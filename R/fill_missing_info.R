@@ -152,11 +152,32 @@ fill_missing_info <- function(
   return(metadata_added)
   }
 
-#' @title fill blanks in a descriptor column
+#' @title Vertically fill blanks in a descriptor column.
 #'
-#' @description If data have row headers that are nested, with some being in
-#' e.g. merged cells, this function can be used to fill the blanks with the
-#' descriptors above or below.
+#' @description Fill blanks within a column with the first populated entry
+#' either above or below the blank.
+#'
+#' @details
+#' This function is useful for data with layouts such as the following:
+#' | __group__ | __subgroup__ | __value__ |
+#' |----|----|----|
+#' | cat | seval | 10 |
+#' |     | margay | 2 |
+#' |     | ocelot | 15 |
+#' | dog | dhole | 1 |
+#' |     | dingo | 15 |
+#'
+#' The group column may or may not have contained merged cells but each row in
+#' group will be given a value if this function is used:
+#' | __group__ | __subgroup__ | __value__ |
+#' |----|----|----|
+#' | cat | serval | 10 |
+#' | cat  | margay | 2 |
+#' | cat | ocelot | 15 |
+#' | dog | dhole | 1 |
+#' | dog | dingo | 15 |
+#'
+#' @md
 #'
 #' @param dat dataframe.
 #' @param column_names charater string vector. The names of the columns to
@@ -330,24 +351,32 @@ add_single_value_columns <- function(
 #'
 #' @description If a descriptor column has items followed by the totals of those
 #' items, this function can be used to move the name of the totalled group into
-#' a separate column and associate it with the items above it. For example:
+#' a separate column and associate it with the items above it.
 #'
-#' \strong{item} \cr
-#' A \cr
-#' B \cr
-#' Total letters \cr
-#' 1.2.3 \cr
-#' Total code \cr
+#' @details
+#' For example:
+#'
+#' | __description__ | __value__ |
+#' |---|---|
+#' | red | 10 |
+#' | blue | 15 |
+#' | Total squares | 25 |
+#' | red | 1 |
+#' | green | 15 |
+#' | total circles | 16 |
 #'
 #' becomes:
-#' \tabular{ll}{
-#' \strong{item} \tab  \strong{group} \cr
-#' A \tab              letters \cr
-#' B \tab              letters \cr
-#' Total \tab          letters \cr
-#' 1.2.3 \tab          code \cr
-#' Total \tab          code \cr
-#' }
+#' | __species__ | __group__ | __value__ |
+#' |---|---|---|
+#' | red | squares |10 |
+#' | blue | squares | 15 |
+#' | Total | squares | 25 |
+#' | red | circles | 1 |
+#' | green | circles |15 |
+#' | total | circles | 16 |
+#'
+#' @md
+#'
 #' @param dat dataframe
 #' @param xlsx_cells_names character string vector. The names of columns in
 #' dataframes imported using xlsx_cells. These columns are not included when
@@ -383,7 +412,7 @@ add_single_value_columns <- function(
 #'     fill_dir = NA
 #'     )
 #' }
-#'
+#' @export
 add_totals_as_column <- function(
     dat, xlsx_cells_names, totals_col, from_pattern, fill_dir = "up"
 ) {
@@ -408,7 +437,7 @@ add_totals_as_column <- function(
   )
 
   possibilities <- setdiff(names(dat), xlsx_cells_names)
-  from <- get_col_with_row_headers_name(possibilities, from_pattern)
+  from <- get_row_headers_colname(possibilities, from_pattern)
 
   newdat <- dat %>%
     # if 'total' is in the entry, assume this is the grouping variable,
@@ -432,27 +461,34 @@ add_totals_as_column <- function(
 }
 
 
-#' @title Get the name of the column containing row headers
+#' @title Get the column name of the column containing row headers/totals
 #'
-#' @description If a column contains row headers, use the provided pattern
-#' to get the name of that column.
+#' @description Get the column name that matches the provided pattern for
+#' the column containing row headers. If there is no match, the first possible
+#' column name is returned.
+#'
+#' @details The wording used in different releases of the same data may
+#' change slightly. As exact column names are therefore unlikely to be known for
+#' descriptor columns in the source data, a pattern is provided instead. This
+#' function is specifcally for use in add_row_headers_column and
+#' add_totals_as_column: if there is no match, the first possible column name
+#' is returned. The messages are also specific to add_row_headers_pattern
+#'
+#' See get_matching_colnames for a more general function with a similar purpose.
 #'
 #' @param possibilities character string vector. The names of possible columns.
-#' In pub sec this will be the names of the left headers.
-#' @param pattern character string. A regular expression that matches the name of the
-#' column with row headers. In pub sec this variable is specified with
-#' col_with_row_headers_pattern.
+#' This can be all column names, or a subset in which the match is expected.
+#' @param pattern character string. A regular expression to match a column name.
 #'
 #' @returns The name of the column matching the pattern. If more than one match
-#' is found, the first is returned with a warning. If none are found the first
-#' of the possibilities is found with a warning. If pattern is NA, NA is
-#' returned.
+#' is found, the first is returned with a warning. If none are found NA is
+#' returned with a warning. If pattern is NA, NA is returned.
 #'
 #' @examples
 #' \dontrun{
-#' get_col_with_row_headers_name(c("column 1", "column 2"), "2")
+#' get_row_headers_colname(c("column 1", "column 2"), ".*2")
 #' }
-get_col_with_row_headers_name <- function(possibilities, pattern) {
+get_row_headers_colname <- function(possibilities, pattern) {
 
   if (is.na(pattern)) {
     return (NA)
@@ -464,7 +500,7 @@ get_col_with_row_headers_name <- function(possibilities, pattern) {
     column <- matches[1]
     warning(
       "More than one column was identified when looking for the column ",
-      "containing row headers/ totals using the pattern '", pattern, "'. ",
+      "containing row headers/totals using the pattern '", pattern, "'. ",
       "The first matching column name will be used by default: '", column,
       "'. If this causes issues downstream, please contact a developer to ",
       "edit the relevant pattern setting."
@@ -473,8 +509,8 @@ get_col_with_row_headers_name <- function(possibilities, pattern) {
     column <- possibilities[1]
     warning(
       "No column was identified when looking for the column containing row ",
-      "headers/ totals using the pattern '", pattern, "'. The first left ",
-      "header column will be used by default: '", column, "'. If this causes ",
+      "headers/totals using the pattern '", pattern, "'. The first descriptor ",
+      "column will be used by default: '", column, "'. If this causes ",
       "issues downstream, please contact a developer to edit the relevant ",
       "pattern setting."
     )
@@ -494,6 +530,7 @@ get_col_with_row_headers_name <- function(possibilities, pattern) {
 #' @description Create a column for grouping variables that are in the same
 #' column as their nested items.
 #'
+#' @details
 #' This function is for datasets where there are grouping variables as row names
 #' that don't have a value associated with them because they are just the group
 #' under which other items sit. Put these grouping items in a column in
@@ -501,7 +538,7 @@ get_col_with_row_headers_name <- function(possibilities, pattern) {
 #'
 #' Turn data that look like this:
 #'
-#' |     from     | numeric |
+#' |   __item__   | __value)__ |
 #' |--------------|---------|
 #' | Education    |         |
 #' |    primary   |    1    |
@@ -511,11 +548,12 @@ get_col_with_row_headers_name <- function(possibilities, pattern) {
 #'
 #' Into this:
 #'
-#' |     from     | row_header | numeric |
+#' | __item__   | __group__ | __value__ |
 #' |--------------|------------|---------|
 #' |    primary   | Education  |   1     |
 #' |    secondary | Education  |   3     |
 #' |    roads     | Transport  |   5     |
+#' @md
 #'
 #' @param dat dataframe or tibble. Post being imported by xlsx_cells and
 #' unpivotted. Must include a column called 'row'.
@@ -591,7 +629,7 @@ add_row_headers_column <- function(
 
   possibilities <- setdiff(names(dat), xlsx_cells_names)
   message("Getting the name of the column containing row headers.")
-  from <- get_col_with_row_headers_name(possibilities, from_pattern)
+  from <- get_row_headers_colname(possibilities, from_pattern)
 
   if (headers_col == from & ! nested_col %in% names(dat)) {
     message("creating column '", nested_col, "' from '", from, "'.")
@@ -660,15 +698,16 @@ add_row_headers_column <- function(
 #' @title Add single value (metadata) variables as columns
 #'
 #' @description Include any variables given in dots (...) as a column in dat.
-#' Each variable must be of length 1.
+#' Each variable must be of length 1. The name of the column will be taken
+#' as the name of the variable.
 #'
+#' @details
 #' This function has a similar effect to add_single_value_columns, in that
 #' it add columns to the data where the value of each column is the same on
 #' every row. However, add_single_value_columns takes the column name and value
-#' as separate vectors. add_single_value_columns is more appropriate to use if
-#' you only want more control over which datasets are given the column in
-#' question (by using settings). add_metadata_columns is more appropriate if
-#' you want all columns to be added to all datasets, even if they are NA.
+#' as separate vectors. add_single_value_columns can be controlled by user
+#' settings. add_metadata_columns is not, so will add a column and fill it with
+#' NA if there is no vale for the variable in question.
 #'
 #' @param dat dataframe to which the ... params should be added as columns.
 #' @param ... variable names, each of which contains a single value.
@@ -774,7 +813,7 @@ add_metadata_columns <- function(dat, ...) {
 #'      )
 #' split_year_and_vintage(dat, "year.*vintage")
 #' }
-#'
+#' @export
 split_year_and_vintage <- function(dat, pattern) {
 
   if (is.na(pattern)) {
@@ -877,12 +916,13 @@ add_subtable_names <- function(dat, subtable_names) {
 }
 
 
-#' @title split a date formatted column into columns for day, month, and year
+#' @title Split a date formatted column into columns for day, month, and year
 #'
-#' @description Where a column can be unambiguously converted to a POSIXt object,
-#' split the column out into day, month, and year columns. If it cannot be
-#' converted, return the original data and an error message.
+#' @description Where a column can be unambiguously converted to a POSIXt
+#' object, split the column out into day, month, and year columns. If it cannot
+#' be converted, an error is raised.
 #'
+#' @details
 #' The information in neonscience.org/resources/learning-hub/tutorials/
 #' dc-convert-date-time-posix-r was used to create code that extracts year and
 #' day.

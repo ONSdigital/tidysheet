@@ -418,8 +418,8 @@ replace_blanks <- function(dat, to_columns = NA, from_columns = NA) {
 #' @title Remove line breaks from character strings.
 #'
 #' @description Remove line breaks from character values. Line breaks include
-#' \r and \n. Extra spaces are also removed. This function acts on the contents 
-#' of all character columns, but not on column names.
+#' \\r and \\n. Extra spaces are also removed. This function acts on the 
+#' contents of all character columns, but not on column names.
 #'
 #' @param dat dataframe.
 #'

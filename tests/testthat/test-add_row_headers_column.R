@@ -109,7 +109,7 @@ test_that("add_row_headers_column works as expected when direction is 'up'", {
 })
 
 
-test_that("add_row_headers_column throws a warning when from_pattern isn't matched by any column names, and uses the first left header by default", {
+test_that("add_row_headers_column throws a warning when from_pattern isn't matched by any column names, and uses the first column by default", {
 
   expected <- dat %>%
     rename(description_2 = service) %>%
@@ -122,7 +122,7 @@ test_that("add_row_headers_column throws a warning when from_pattern isn't match
         NA, NA
       )
     ),
-    "The first left header column will be used by default: 'service'"
+    "The first descriptor column will be used by default: 'service'"
   )
 
   expect_equal(result, expected)
