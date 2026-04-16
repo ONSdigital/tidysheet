@@ -1,10 +1,11 @@
-#' @title get vintage (budget, provisional, or final)
+#' @title Get vintage (budget, provisional, or final)
 #'
 #' @description Get a single vintage (i.e. budget, provisional, or final) for
 #' the dataset. Vintage can be found in different places depending on the
 #' supplier and dataset. These options have an order of preference. The source
 #' of vintage considered to be the most reliable is returned.
 #'
+#' @details
 #' Note that 'budget' is used to describe both 'forecast' and 'estimated return'
 #' data.
 #'
