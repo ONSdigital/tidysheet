@@ -561,4 +561,3 @@ void_wrong_frequency_targets <- function (dat, column, expected_freq) {
     return(dat)
   }
 }
-

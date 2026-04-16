@@ -1,7 +1,10 @@
 #' @title Split xlsx_cells data into a list of tables
 #'
 #' @description Split a dataframe imported using tidyxl::xlsx_cells into a
-#' list of tables. The dataframe can be split horizontally or vertically or
+#' list of tables. 
+#' 
+#' @details
+#' The dataframe can be split horizontally or vertically or
 #' any combination of those. Splits are done iteratively, with each split
 #' resulting in two new tables. The number of times the table is split is
 #' equal to the number of elements passed in the variables.
@@ -61,6 +64,7 @@
 #'     )
 #' get_tables_as_list(dat, c("col", "row"), c(1, 2), c("table c", "table b"))
 #' }
+#' @export
 get_tables_as_list <- function(
     dat, directions, table_ids, patterns, pattern_instances, pattern_offsets,
     keep = NA
@@ -138,19 +142,21 @@ get_tables_as_list <- function(
   return(used_tables_removed)
 }
 
-#' @title split an xlsx_cells dataframe into a list of dataframes.
+#' @title split an xlsx_cells dataframe into a list of two dataframes
 #'
 #' @description Split one of the dataframes in a list of dataframes in two. The
 #' split is done either by row or by column (specified by direction), where
 #' the first match to pattern is found in the first row (if direction is row) or
 #' column of the 2nd of the new dataframes.
+#' 
+#' @details
+#' Where this is the dataframe:
 #'
-#' e.g. where this is the dataframe:
-#'
-#'      Col 1 > col 2 > col 3 > col 4 > col 5
-#' row 1      >   A   >       >       >  B
-#' row 2   C1 >   1   >       >  D1   >  3
-#' row 3   C2 >   2   >       >  D2   >  4
+#' |           | __col 1__ | __col 2__ | __col 3 __ | __col 4__ | __col 5__ |
+#' |-----------|-----------|------------|-----------|-----------|-----------|
+#' | row 1     |   A       |            |           |  B        |           |
+#' | row 2     |   C1      |   1        |           |  D1       |  3        |
+#' | row 3     |   C2      |   2        |           |  D2       |  4        |
 #'
 #' Split would be by column because the tables are side-by-side not one above
 #' the other.
@@ -186,7 +192,6 @@ get_tables_as_list <- function(
 #' )
 #' split_tables(list(dat), "table 2", "col", 1)
 #' }
-#'@export
 split_tables <- function(
     dat, pattern, instance, offset_by, direction, table_id
     ) {
@@ -271,7 +276,6 @@ split_tables <- function(
 #' )
 #' get_split_loc(dat, '(?i)education', 'col')
 #' }
-#' @export
 get_split_loc <- function(dat, pattern, instance, offset_by, direction) {
 
   if (direction == "row") {
@@ -289,7 +293,7 @@ get_split_loc <- function(dat, pattern, instance, offset_by, direction) {
 }
 
 
-#' @title Add two new tables to the list by splitting an existing table.
+#' @title Add two new tables to the list by splitting an existing table
 #'
 #' @description Split one of the tables in a list of tables in two, based on a
 #' provided split location and whether it should be split by row or column. Add
@@ -316,7 +320,6 @@ get_split_loc <- function(dat, pattern, instance, offset_by, direction) {
 #'
 #' create_table_list(dat, 1, 3, 'col')
 #' }
-#' @export
 create_table_list <- function(dat, table_id, split_loc, direction) {
 
   from_table <- dat[[table_id]]
@@ -344,7 +347,7 @@ create_table_list <- function(dat, table_id, split_loc, direction) {
 }
 
 
-#' @title Clean up list of tables so that each cell is only represented once.
+#' @title Clean up list of tables so that each cell is only represented once
 #'
 #' @description Remove tables from the list of tables that are no longer
 #' required. For example, table 1 will always be removed because table 1 is
