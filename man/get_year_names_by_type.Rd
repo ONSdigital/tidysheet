@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_year_column.R
 \name{get_year_names_by_type}
 \alias{get_year_names_by_type}
-\title{get the column names and year types of columns containing years}
+\title{Get the column names and year types of columns containing years}
 \usage{
 get_year_names_by_type(dat, columns)
 }

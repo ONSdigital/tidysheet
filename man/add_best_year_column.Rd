@@ -28,7 +28,10 @@ year.
 }
 \description{
 From possible_cols select the column name to use as the 'year'
-column and add this to the data. If a column called 'year' already exists in
+column and add this to the data.
+}
+\details{
+If a column called 'year' already exists in
 the data it will be overwritten.
 
 If there is more than one potential year column the order of preference is

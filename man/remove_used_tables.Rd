@@ -2,7 +2,7 @@
 % Please edit documentation in R/split_tables.R
 \name{remove_used_tables}
 \alias{remove_used_tables}
-\title{Clean up list of tables so that each cell is only represented once.}
+\title{Clean up list of tables so that each cell is only represented once}
 \usage{
 remove_used_tables(dat, used_tables, keep = NA)
 }

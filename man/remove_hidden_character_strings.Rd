@@ -2,7 +2,7 @@
 % Please edit documentation in R/remove_from_input.R
 \name{remove_hidden_character_strings}
 \alias{remove_hidden_character_strings}
-\title{Remove hidden character strings in the first header row.}
+\title{Remove hidden character strings in the first header row}
 \usage{
 remove_hidden_character_strings(dat, filepath, remove_cell = NA)
 }

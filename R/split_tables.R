@@ -163,6 +163,8 @@ get_tables_as_list <- function(
 #' pattern could be "D", because this is first found in the first column of the
 #' second table (the table to the right).
 #'
+#' @md 
+#' 
 #' @param dat list of dataframes originally created from a single dataframe
 #' imported using tidyxl::xlsx_cells().
 #' @param pattern character string. Regular expressions that first

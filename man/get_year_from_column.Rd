@@ -21,6 +21,15 @@ already a column in dat an error is raised.
 Find the column containing year using a regular expression,
 get the year from that column and put it in a new column called 'year'.
 }
+\details{
+'year' can contain either financial year, or calendar year,
+but not both. By default, if any of the years found in the specified column
+are financial (YYYY-YY), only financial years are put in the new column.
+Calendar years are used if no financial years are found anywhere in the
+column. Preference of calendar or financial year is controlled with \code{prefer}.
+If a string contains more than one year (of the same type), only the first is
+put in 'year'.
+}
 \examples{
 \dontrun{
 dat_mixed <- data.frame(

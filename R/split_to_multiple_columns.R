@@ -1,15 +1,17 @@
 #' @title Split the contents of one column over multiple columns
 #'
 #' @description Sometimes we may want to split a single character column into
-#' multiple columns. e.g. The layout of a dataset may change so that it has only
+#' multiple columns. 
+#' 
+#' @details The layout of a dataset may change so that it has only
 #' one row of headers that contains all the information that was once in
-#' multiple headers. Using this function to create the output as it would
-#' have been when the input had multiple headers means we do not have to change
-#' the standard_names in RDSA and the mappers in SAP.
-#'
-#' This function replaces split_original_header. Unlike split_original_header
-#' it can split over any number of columns.
-#'
+#' multiple headers. Use this function to create the output as it would
+#' have been when the input had multiple headers. This may be required as a 
+#' quick fix if the output has to remain stable. However, it is recommended to 
+#' not be used as a long term fix - the datset with fewer columns is to be 
+#' preferred as it easier and less error prone to join columns than to split 
+#' them.
+#' 
 #' Not every split_point has to be present in every string to be split - if
 #' a pattern does not exist in a given string, the previous value is used (see
 #' example below). In other words, if the split is not consistent across all
@@ -25,7 +27,7 @@
 #' If no splits patterns are found for a given item, the whole of the from
 #' column will be given in every to column.
 #'
-#' #' Note: The patterns stated MUST appear in all strings in the order they are
+#' Note: The patterns stated MUST appear in all strings in the order they are
 #' given so should be as specific as possible. For example, given the string
 #' 'A: B- C' if the split points are given as '-' then ':', the string will be
 #'  split only once, at the '-' giving 'A: B' and 'C'.
@@ -249,7 +251,6 @@ split_to_multiple_columns <- function(dat, from, to, split_point_descriptions) {
 #' )
 #' flag_existing_split_points(dat, split_patterns, "col_to_split")
 #' }
-#' @export
 flag_existing_split_points <- function(dat, split_patterns, from) {
 
   dat <- mutate(dat, tmp_remaining = !!sym(from))
@@ -322,7 +323,6 @@ flag_existing_split_points <- function(dat, split_patterns, from) {
 #'
 #' get_split_order(dat)
 #' }
-#' @export
 get_split_order <- function(dat) {
 
   split_count <- ncol(select(dat, starts_with("tmp_use_split_point_")))
@@ -352,7 +352,7 @@ get_split_order <- function(dat) {
   return (dat)
 }
 
-#' @title Flag strings where the pattern is found at the start of the string.
+#' @title Flag strings where the pattern is found at the start of the string
 #'
 #' @description If the first split pattern that is found in the 'from' column is
 #' right at the start of the string, we need to act like that pattern is not
@@ -412,7 +412,6 @@ get_split_order <- function(dat) {
 #'
 #' update_start_of_string(dat, split_patterns, "col_to_split")
 #' }
-#' @export
 update_start_of_string <- function(dat, split_patterns, from) {
 
   # paste "^" at the start of every split point pattern that doesn't already
@@ -518,7 +517,6 @@ update_start_of_string <- function(dat, split_patterns, from) {
 #'
 #' flag_consecutive_matching_splits(dat, patterns, split_point_descriptions)
 #' }
-#' @export
 flag_consecutive_matching_splits <- function(
     dat, split_patterns, split_point_descriptions
     ) {
@@ -624,7 +622,6 @@ flag_consecutive_matching_splits <- function(
 #'
 #' do_the_splits(dat, split_patterns, 'col_to_split')
 #' }
-#' @export
 do_the_splits <- function(dat, split_patterns, from) {
 
   split_count <- length(split_patterns)
@@ -726,7 +723,6 @@ do_the_splits <- function(dat, split_patterns, from) {
 #'    use_split_point, current_split
 #'    )
 #' }
-#' @export
 get_new_string <- function(dat, split_patterns,
                              current_string_col, prev_string_col,
                              use_split_point, current_split) {
@@ -808,7 +804,6 @@ get_new_string <- function(dat, split_patterns,
 #'
 #' update_remaining(dat, 3, "tmp_string_1", 1)
 #' }
-#' @export
 update_remaining <- function(dat, split_count, current_string_col, index) {
 
 
@@ -919,7 +914,6 @@ update_remaining <- function(dat, split_count, current_string_col, index) {
 #' dat2, "Note", "tmp_matches_next_pattern_3","tmp_whitespace_3"
 #' )
 #' }
-#' @export
 remove_repeated_pattern_from_remaining <- function(
     dat, split_point, matches_next_pattern, whitespace
 ) {
@@ -962,7 +956,6 @@ remove_repeated_pattern_from_remaining <- function(
 #'
 #' trim_separators_from_new_cols(dat)
 #' }
-#' @export
 trim_separators_from_new_cols <- function(dat) {
 
   string_col_locs <- which(startsWith(names(dat), "tmp_string_"))
@@ -1002,7 +995,6 @@ trim_separators_from_new_cols <- function(dat) {
 #' example_vector <- c("these - ", "hyphens-", " and colons :", ":now   gone- ")
 #' trim_separators(example_vector, "-|:")
 #' }
-#' @export
 trim_separators <- function(string, separators) {
 
   for(i in 1:length(separators)) {
@@ -1024,7 +1016,6 @@ trim_separators <- function(string, separators) {
 #'
 #' @param dat Dataframe containing columns with the prefixes:
 #'  "use_split_point_", "split_", "matches_next_pattern_", or "whitespace_"
-#' @export
 remove_unwanted_split_columns <- function(dat){
 
   col_prefixes_to_remove <- c(
@@ -1053,7 +1044,6 @@ remove_unwanted_split_columns <- function(dat){
 #' to <- c("letter", "number")
 #' rename_split_columns(dat, to)
 #' }
-#' @export
 rename_split_columns <- function(dat, to) {
 
   if (!any(startsWith(names(dat), "tmp_string"))) {

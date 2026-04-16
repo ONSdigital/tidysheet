@@ -18,7 +18,10 @@ dataframe dat with a column called year containing the same as
 }
 \description{
 Where financial years are not in the standard format of
-YYYY-YY, convert them to this format. Accepted input formats are:
+YYYY-YY, convert them to this format.
+}
+\details{
+Accepted input formats are:
 YYYY_YY or YYYY_YYYY and any number of spaces either side of the underscore,
 YYYY-YY or YYYY-YYYY and any number of spaces either side of the dash,
 YYYYtoYY, and YYYY_to_YY.

@@ -51,7 +51,10 @@ dat split into a list of tables.
 }
 \description{
 Split a dataframe imported using tidyxl::xlsx_cells into a
-list of tables. The dataframe can be split horizontally or vertically or
+list of tables.
+}
+\details{
+The dataframe can be split horizontally or vertically or
 any combination of those. Splits are done iteratively, with each split
 resulting in two new tables. The number of times the table is split is
 equal to the number of elements passed in the variables.

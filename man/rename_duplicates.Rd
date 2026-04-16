@@ -2,7 +2,7 @@
 % Please edit documentation in R/rename_duplicates.R
 \name{rename_duplicates}
 \alias{rename_duplicates}
-\title{Add a prefix to a duplicated entry.}
+\title{Add a prefix to a duplicated entry}
 \usage{
 rename_duplicates(
   dat,
@@ -51,23 +51,23 @@ equal to the number of repeats found.
 If there are values that cannot be uniquely identified by their
 descriptors, add a prefix to one of character strings in the specified
 column.
-
-Any number of the repeats can be renamed e.g. if the raw data
-contains two columns called total, the user may choose to rename only one
-of them (and can choose which using index). Alternatively,
+}
+\details{
+Any number of repeats can be renamed e.g. if the data has two descriptors
+called 'total', the user may choose to rename only one
+of them (and can choose which using 'index'). Alternatively,
 they could choose to rename both. See params.
 
-Only one set of repeats can be handled: If there are two lots of
+Only one \emph{set} of repeats can be handled: If there are two lots of
 duplicated names in the data e.g. two columns called 'total' and 3 called
 'subtotal', the function currently only allows one of those to be handled -
 the column name of interest is identified by pattern.
 
-If there is more than one row of headers, this function can currently only
-be used to rename duplicates in the header closest to the data. To get around
-this you could combine the headers into a single column first.
+To get around this you could combine the columns into a single column.
 
-Note: Whilst the entry that is renamed is a column in the raw data it is an
-entry in a column in dat due to earlier un-pivotting.
+Note: The duplication in the raw data may be repeated column names in the
+same row as each other. However, by this stage the data will have been
+unpivotted, so they will appear as duplicated entries in a column.
 }
 \examples{
 \dontrun{

@@ -19,10 +19,13 @@ which has been chosen. The chosen column will be 'year' if that exists, or
 the first of the years with the maximum number of valid years.
 }
 \description{
-Get the columns string that is in the same position as the
-maximum count value. Designed to select the name of the column that holds the
-most valid years, where columns gives the names of the columns holding valid
-years, and counts gives the number of valid years found in each of those
+Get the 'columns' string that is in the same position as the
+maximum count value.
+}
+\details{
+Designed to select the name of the column that holds the
+most valid years, where 'columns' gives the names of the columns holding
+valid years, and counts gives the number of valid years found in each of those
 columns, though it could be used in other contexts.
 }
 \examples{

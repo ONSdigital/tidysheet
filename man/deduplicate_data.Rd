@@ -23,7 +23,8 @@ Remove repeated rows from a dataset based on the content of
 columns that were not originally in the xlsx_cells data. i.e. these rows
 look like duplicates in the Excel data but not the xlsx_cells data (which
 has one row per cell).
-
+}
+\details{
 Columns specified in ignore_cols are excluded from comparison with other
 rows.
 

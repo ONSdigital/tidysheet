@@ -2,7 +2,7 @@
 % Please edit documentation in R/split_tables.R
 \name{create_table_list}
 \alias{create_table_list}
-\title{Add two new tables to the list by splitting an existing table.}
+\title{Add two new tables to the list by splitting an existing table}
 \usage{
 create_table_list(dat, table_id, split_loc, direction)
 }

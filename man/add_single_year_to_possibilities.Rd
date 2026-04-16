@@ -51,6 +51,4 @@ add_single_year_to_possibilities(possible_cols, TRUE, "2021/22", TRUE)
 possible_cols <- c("financial" = NA, "calendar" = NA, "mixed" = NA)
 add_single_year_to_possibilities(possible_cols, TRUE, "2021/22", FALSE)
 }
-
-
 }

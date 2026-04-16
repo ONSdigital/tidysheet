@@ -36,6 +36,6 @@ some of which will have been used as part of tidying the data, but others
 are not used by this pipeline.
 }
 \details{
-For more information see documentation for remove_is_blank_rows,
+For more information and examples see documentation for remove_is_blank_rows,
 drop_rows_with_values, deduplicate_data, and remove_unwanted_cols.
 }

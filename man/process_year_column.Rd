@@ -54,7 +54,6 @@ did not already exist 'year' and 'year_type' are added as new columns,
 otherwise they are overwritten with standardised text.
 }
 \description{
-Process the 'year' column.
 Potential year columns are identified either by their matching a provided
 pattern OR by matching '(?i)year' if pattern is not provided. Where there is
 no year column, it will be generated from a provided single year if

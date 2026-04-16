@@ -36,5 +36,4 @@ dat <- data.frame(
     )
 drop_rows_with_values(dat, c("b", "a"), c("bad", "ang"))
 }
-
 }

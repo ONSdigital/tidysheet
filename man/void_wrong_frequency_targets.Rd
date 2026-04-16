@@ -2,7 +2,7 @@
 % Please edit documentation in R/rename_duplicates.R
 \name{void_wrong_frequency_targets}
 \alias{void_wrong_frequency_targets}
-\title{Avoid adding a prefix when there is an unexpected number of repeats.}
+\title{Avoid adding a prefix when there is an unexpected number of repeats}
 \usage{
 void_wrong_frequency_targets(dat, column, expected_freq)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/split_tables.R
 \name{split_tables}
 \alias{split_tables}
-\title{split an xlsx_cells dataframe into a list of dataframes.}
+\title{split an xlsx_cells dataframe into a list of two dataframes}
 \usage{
 split_tables(dat, pattern, instance, offset_by, direction, table_id)
 }
@@ -37,15 +37,15 @@ Split one of the dataframes in a list of dataframes in two. The
 split is done either by row or by column (specified by direction), where
 the first match to pattern is found in the first row (if direction is row) or
 column of the 2nd of the new dataframes.
+}
+\details{
+Where this is the dataframe:\tabular{llllll}{
+    \tab \strong{col 1} \tab \strong{col 2} \tab __col 3 __ \tab \strong{col 4} \tab \strong{col 5} \cr
+   row 1 \tab A \tab  \tab  \tab B \tab  \cr
+   row 2 \tab C1 \tab 1 \tab  \tab D1 \tab 3 \cr
+   row 3 \tab C2 \tab 2 \tab  \tab D2 \tab 4 \cr
+}
 
-e.g. where this is the dataframe:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{ Col 1 > col 2 > col 3 > col 4 > col 5
-}\if{html}{\out{</div>}}
-
-row 1      >   A   >       >       >  B
-row 2   C1 >   1   >       >  D1   >  3
-row 3   C2 >   2   >       >  D2   >  4
 
 Split would be by column because the tables are side-by-side not one above
 the other.
