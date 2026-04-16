@@ -18,6 +18,7 @@
 #' remove_hidden_strings_bool.
 #'
 #' @returns dataframe (dat) with unwanted information removed
+#' @export
 remove_from_input <- function(
     dat, cells_to_remove = NA, input_filepath = NA, hidden_strings = NA
 ) {
@@ -87,7 +88,7 @@ remove_unwanted_cells <- function(dat, cells = NA) {
 }
 
 
-#' @title Remove hidden character strings in the first header row.
+#' @title Remove hidden character strings in the first header row
 #'
 #' @description Remove cells whose text is the same colour as the background.
 #' This function was created because in pub sec scot gov HRA 2021-22 there are
