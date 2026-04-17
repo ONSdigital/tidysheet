@@ -23,7 +23,8 @@ dat as a tibble with the same layout as the raw data.
 Where the raw data are already in a tidy format with one numeric value per
 row, a single row of column headers, and a single data type in each column,
 this function is used to take the data out of xlsx_cells format.
-
+}
+\details{
 Note that if there are ANY character strings in the 'value' column, that
 column will be treated as a character column not numeric. It is assumed
 that if data really are in a tidy format, this will not occur. However a fix

@@ -19,14 +19,17 @@ explicit.}
 }
 \description{
 Sometimes we may want to split a single character column into
-multiple columns. e.g. The layout of a dataset may change so that it has only
+multiple columns.
+}
+\details{
+The layout of a dataset may change so that it has only
 one row of headers that contains all the information that was once in
-multiple headers. Using this function to create the output as it would
-have been when the input had multiple headers means we do not have to change
-the standard_names in RDSA and the mappers in SAP.
-
-This function replaces split_original_header. Unlike split_original_header
-it can split over any number of columns.
+multiple headers. Use this function to create the output as it would
+have been when the input had multiple headers. This may be required as a
+quick fix if the output has to remain stable. However, it is recommended to
+not be used as a long term fix - the datset with fewer columns is to be
+preferred as it easier and less error prone to join columns than to split
+them.
 
 Not every split_point has to be present in every string to be split - if
 a pattern does not exist in a given string, the previous value is used (see
@@ -43,7 +46,7 @@ in.
 If no splits patterns are found for a given item, the whole of the from
 column will be given in every to column.
 
-#' Note: The patterns stated MUST appear in all strings in the order they are
+Note: The patterns stated MUST appear in all strings in the order they are
 given so should be as specific as possible. For example, given the string
 'A: B- C' if the split points are given as '-' then ':', the string will be
 split only once, at the '-' giving 'A: B' and 'C'.

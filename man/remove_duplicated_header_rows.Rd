@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{remove_duplicated_header_rows}
 \alias{remove_duplicated_header_rows}
-\title{Only keep the first of multiple rows of matching headers.}
+\title{Only keep the first of multiple rows of matching headers}
 \usage{
 remove_duplicated_header_rows(dat, first_header_row, header_row_count)
 }

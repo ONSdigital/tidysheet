@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{join_left_and_right_unpivotted_data}
 \alias{join_left_and_right_unpivotted_data}
-\title{Join the main value data to the left block of row descriptor columns.}
+\title{Join the main value data to the left block of row descriptor columns}
 \usage{
 join_left_and_right_unpivotted_data(
   left,

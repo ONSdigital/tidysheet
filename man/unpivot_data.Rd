@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{unpivot_data}
 \alias{unpivot_data}
-\title{take non-tidy data out of xlsx_cells layout}
+\title{Take non-tidy data out of xlsx_cells layout}
 \usage{
 unpivot_data(
   dat,

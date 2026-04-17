@@ -2,7 +2,7 @@
 % Please edit documentation in R/split_to_multiple_columns.R
 \name{update_start_of_string}
 \alias{update_start_of_string}
-\title{Flag strings where the pattern is found at the start of the string.}
+\title{Flag strings where the pattern is found at the start of the string}
 \usage{
 update_start_of_string(dat, split_patterns, from)
 }

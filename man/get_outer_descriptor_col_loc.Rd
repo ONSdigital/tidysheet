@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{get_outer_descriptor_col_loc}
 \alias{get_outer_descriptor_col_loc}
-\title{Get the column number of an outer right descriptor column.}
+\title{Get the column number of an outer right descriptor column}
 \usage{
 get_outer_descriptor_col_loc(
   dat,

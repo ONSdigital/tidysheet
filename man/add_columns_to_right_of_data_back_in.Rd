@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{add_columns_to_right_of_data_back_in}
 \alias{add_columns_to_right_of_data_back_in}
-\title{Join data to the right of the table to the rest of the data by row.}
+\title{Join data to the right of the table to the rest of the data by row}
 \usage{
 add_columns_to_right_of_data_back_in(
   whole,

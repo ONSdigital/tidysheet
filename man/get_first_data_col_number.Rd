@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{get_first_data_col_number}
 \alias{get_first_data_col_number}
-\title{get the number of the first column with numeric data}
+\title{Get the number of the first column with numeric data}
 \usage{
 get_first_data_col_number(dat, locs, min_consecutives = 2, offset = 0)
 }

@@ -17,7 +17,7 @@ test_that("Example 1 is processed as expected", {
   split_points: ALT_colon_newline, ALT_newline_poundsign
   }"
 
-  arg_values <- c("--args", filepath, "example 1", NA, settings, "1")
+  arg_values <- c("--args", filepath, "example 1$", NA, settings, "1")
 
   expected <- tibble (
     sheet = "example 1",
@@ -516,8 +516,57 @@ test_that("Example 9 is processed as expected", {
   expect_equal(result, expected)
 })
 
-# settings <- "{header_identifier: ^A$, columns_to_create: description_1,
-# columns_to_remove_patterns: code, single_year_of_data: true"
-# arg_values <- c("--args", filepath, "Sheet1", NA, settings, "1")
-# result <- tidy_sheet(arg_values, to_csv = FALSE)
+
+test_that("Example 10 with all types of descriptors is processed as expected", {
+
+  settings <- "{
+  header_identifier: ^A$,
+  columns_to_create: description_1, description_2,
+  name_for_group_row_column: item_1,
+  name_for_nested_row_column: item_2,
+  col_with_row_headers_pattern: item.*1,
+  name_for_total_column: item_3,
+  col_with_totals_pattern: item.*1,
+  column_to_right_of_data_name_pattern: (?i)notes,
+  single_year_of_data: true
+  }"
+
+  arg_values <- c("--args", filepath, "10", NA, settings, "1")
+
+  expected <- tibble (
+    sheet = "example 10",
+    notes = c(rep("a", 3), rep(NA, 3), rep("a", 3), rep(NA, 9)),
+    address = c("B6", "C6", "D6", "B7", "C7", "D7", "B9", "C9", "D9",
+                "B10", "C10", "D10", "B12", "C12", "D12",  "B13", "C13", "D13"),
+    value = c(1:9, 12, 15, 18, 10:12, 10:12),
+    non_numeric_value = as.character(NA),
+    item_2 = rep(
+      c("1st", "2nd", "1st", "Total set 1", "1st", "Total set 2"),
+      each = 3),
+    description_1 = rep(c("A", "A", "B"), times = 6),
+    description_2 = rep(c("C", "D", "E"), times = 6),
+    item_3 = c(rep("set 1", 12), rep("set 2", 6)),
+    item_1 = rep(c("F", "G", "H"), each = 6),
+    title = "Example 10 descriptors given in every possible location for a single table - 2023-24",
+    table_title = as.character(NA),
+    units = as.character(NA),
+    vintage = as.character(NA),
+    source = "testdata",
+    dataset = as.character(NA),
+    year = "2023-24",
+    year_type = "financial",
+    year_notes = NA,
+    fy_start = "2023"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(tidy_sheet(arg_values, to_csv = FALSE))
+    ) %>%
+    select(-supplier)
+
+  expect_equal(result, expected)
+
+})
+
+
 

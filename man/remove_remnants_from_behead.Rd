@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{remove_remnants_from_behead}
 \alias{remove_remnants_from_behead}
-\title{Remove info from above the top row of data.}
+\title{Remove info from above the top row of data}
 \usage{
 remove_remnants_from_behead(dat, first_data_row)
 }

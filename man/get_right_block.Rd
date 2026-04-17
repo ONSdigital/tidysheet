@@ -2,7 +2,7 @@
 % Please edit documentation in R/unpivot_data.R
 \name{get_right_block}
 \alias{get_right_block}
-\title{Only retain rows that relate to numeric columns in the Excel data.}
+\title{Only retain rows that relate to numeric columns in the Excel data}
 \usage{
 get_right_block(dat, first_right_header_col, excluded)
 }
