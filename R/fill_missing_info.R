@@ -8,6 +8,11 @@
 #' (split_date_to_columns, and split_year_and_vintage), but most of that is
 #' done in add_time_period_columns.
 #'
+#' Whilst vintage is added as a column if vintage_with_year_column is specified,
+#' it will not at this point be refined e.g 'forecast' will not be converted to
+#' 'budget' by this function. To do so replace_string variables need to be
+#' specified, and are called y functions later in tidy_sheet.
+#'
 #' For more details see documentation for rename_reserved_colnames, fill_blanks,
 #' add_single_value_columns, add_totals_as_column, add_subtable_names,
 #' add_row_headers_column, split_date_to_columns, split_year_and_vintage, and
@@ -474,7 +479,7 @@ add_totals_as_column <- function(
 #' add_totals_as_column: if there is no match, the first possible column name
 #' is returned. The messages are also specific to add_row_headers_pattern
 #'
-#' See get_matching_colnames and get_colnames_from_pattern for more general 
+#' See get_matching_colnames and get_colnames_from_pattern for more general
 #' functions with a similar purpose.
 #'
 #' @param possibilities character string vector. The names of possible columns.
