@@ -8,7 +8,7 @@
 #' (split_date_to_columns, and split_year_and_vintage), but most of that is
 #' done in add_time_period_columns.
 #'
-#' Whilst vintage is added as a column if vintage_with_year_col_pattern is 
+#' Whilst vintage is added as a column if vintage_with_year_col_pattern is
 #'specified, it will not at this point be refined e.g 'forecast' will not be
 #' converted to 'budget' by this function. To do so replace_string variables
 #' need to be specified, and are called y functions later in tidy_sheet.
@@ -41,9 +41,6 @@
 #' to populate with table_dropdown_value.
 #' @param table_dropdown_value character_string. The value found in the dropdown
 #' cell above the table.
-#' @param table_title_column character string. The name of the column in
-#' which to put the names of the groups that have a total. In pub sec this
-#' variable is specified using name_for_total_column.
 #' @param name_for_total_column character string. The name of the column in
 #' which to put the names of the groups that have a total.
 #' @param col_with_totals_pattern character string. Regular expression matching
@@ -105,7 +102,7 @@ fill_missing_info <- function(
     dat, xlsx_cells_names, fill_columns_column_names, fill_columns_fill_dirs,
     single_value_names, single_value_values, main_dropdown_name,
     main_dropdown_value, table_dropdown_name, table_dropdown_value,
-    table_title_column, name_for_total_column, col_with_totals_pattern,
+    name_for_total_column, col_with_totals_pattern,
     total_column_fill_dir, subtable_names, name_for_group_row_column,
     name_for_nested_row_column, col_with_row_headers_pattern,
     row_header_fill_dir, group_row_na_identifier, POSIX_column,

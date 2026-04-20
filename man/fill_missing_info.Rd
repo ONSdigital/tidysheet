@@ -15,7 +15,6 @@ fill_missing_info(
   main_dropdown_value,
   table_dropdown_name,
   table_dropdown_value,
-  table_title_column,
   name_for_total_column,
   col_with_totals_pattern,
   total_column_fill_dir,
@@ -70,10 +69,6 @@ to populate with table_dropdown_value.}
 \item{table_dropdown_value}{character_string. The value found in the dropdown
 cell above the table.}
 
-\item{table_title_column}{character string. The name of the column in
-which to put the names of the groups that have a total. In pub sec this
-variable is specified using name_for_total_column.}
-
 \item{name_for_total_column}{character string. The name of the column in
 which to put the names of the groups that have a total.}
 
@@ -123,10 +118,11 @@ associated with an otherwise blank row.}
 \item{POSIX_column}{character string. The exact name of the column containing
 the date.}
 
-\item{vintage_with_year_col_pattern}{character string. A single regular expression
-to match a column containing both the year and the vintage. Year can be
-financial or calendar. Accepted vintages are budget, provisional, forecast,
-final, and actual (not case sensitive), though these could be expanded upon.}
+\item{vintage_with_year_col_pattern}{character string. A single regular
+expression to match a column containing both the year and the vintage. Year
+can be financial or calendar. Accepted vintages are budget, provisional,
+forecast, final, and actual (not case sensitive), though these could be
+expanded upon.}
 
 \item{title}{character string. The title of the sheet.}
 
@@ -156,6 +152,11 @@ un-pivotted data (i.e. a standard data frame rather than xlsx_cells data).
 This function includes some functions that deal with time periods
 (split_date_to_columns, and split_year_and_vintage), but most of that is
 done in add_time_period_columns.
+
+Whilst vintage is added as a column if vintage_with_year_col_pattern is
+specified, it will not at this point be refined e.g 'forecast' will not be
+converted to 'budget' by this function. To do so replace_string variables
+need to be specified, and are called y functions later in tidy_sheet.
 
 For more details see documentation for rename_reserved_colnames, fill_blanks,
 add_single_value_columns, add_totals_as_column, add_subtable_names,

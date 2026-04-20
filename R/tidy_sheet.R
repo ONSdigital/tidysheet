@@ -296,8 +296,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       single_value_names, single_value_values,
       dropdown_name, main_dropdown_value, table_dropdown_name,
       table_dropdown_value,
-      table_title_column, name_for_total_column, col_with_totals_pattern,
-      total_column_fill_dir,
+      name_for_total_column, col_with_totals_pattern, total_column_fill_dir,
       subtable_names,
       name_for_group_row_column, name_for_nested_row_column,
       col_with_row_headers_pattern, row_header_fill_dir, group_row_na_identifier,
@@ -329,8 +328,8 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
 
     # --- join columns
     columns_concatenated <- combine_columns(
-      NA_rows_removed, columns_to_combine_patterns, columns_to_combine_combined_names,
-      columns_to_combine_counts
+      NA_rows_removed, columns_to_combine_patterns,
+      columns_to_combine_combined_names, columns_to_combine_counts
     )
 
     # --- rename entries where the column name was duplicated
