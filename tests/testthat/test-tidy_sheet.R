@@ -247,7 +247,7 @@ test_that("Example 5 is processed as expected", {
   value_patterns_to_drop: (?i)per.*cent,
   exclude_from_reserved_word_check: col_patterns_with_values_to_drop,
   columns_to_remove_patterns: (?i)comparable,
-  vintage_with_year_column: vintage_and_year,
+  vintage_with_year_col_pattern: vintage_and_year,
   year_col_pattern: ^year$,
   columns_to_rename_patterns: (?i)^group,
   columns_to_rename_names: description_1
@@ -417,7 +417,7 @@ test_that("Example 8 is processed as expected", {
   columns_to_create: description_1,
   left_headers: vintage_and_year,
   tolerance: 0.3,
-  vintage_with_year_column: vintage_and_year,
+  vintage_with_year_col_pattern: vintage_and_year,
   year_col_pattern: ^year$,
   replace_string_col: vintage,
   replace_string_from_col_patterns: actual,

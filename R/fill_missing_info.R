@@ -8,10 +8,10 @@
 #' (split_date_to_columns, and split_year_and_vintage), but most of that is
 #' done in add_time_period_columns.
 #'
-#' Whilst vintage is added as a column if vintage_with_year_column is specified,
-#' it will not at this point be refined e.g 'forecast' will not be converted to
-#' 'budget' by this function. To do so replace_string variables need to be
-#' specified, and are called y functions later in tidy_sheet.
+#' Whilst vintage is added as a column if vintage_with_year_col_pattern is 
+#'specified, it will not at this point be refined e.g 'forecast' will not be
+#' converted to 'budget' by this function. To do so replace_string variables
+#' need to be specified, and are called y functions later in tidy_sheet.
 #'
 #' For more details see documentation for rename_reserved_colnames, fill_blanks,
 #' add_single_value_columns, add_totals_as_column, add_subtable_names,
@@ -83,10 +83,11 @@
 #' associated with an otherwise blank row.
 #' @param POSIX_column character string. The exact name of the column containing
 #' the date.
-#' @param vintage_with_year_column character string. A single regular expression
-#' to match a column containing both the year and the vintage. Year can be
-#' financial or calendar. Accepted vintages are budget, provisional, forecast,
-#' final, and actual (not case sensitive), though these could be expanded upon.
+#' @param vintage_with_year_col_pattern character string. A single regular
+#' expression to match a column containing both the year and the vintage. Year
+#' can be financial or calendar. Accepted vintages are budget, provisional,
+#' forecast, final, and actual (not case sensitive), though these could be
+#' expanded upon.
 #' @param title character string. The title of the sheet.
 #' @param table_title character string. The title of the table.
 #' @param units character string. The units of the table.
@@ -108,7 +109,7 @@ fill_missing_info <- function(
     total_column_fill_dir, subtable_names, name_for_group_row_column,
     name_for_nested_row_column, col_with_row_headers_pattern,
     row_header_fill_dir, group_row_na_identifier, POSIX_column,
-    vintage_with_year_column, title, table_title, units, vintage, supplier,
+    vintage_with_year_col_pattern, title, table_title, units, vintage, supplier,
     source_group, dataset
     ) {
 
@@ -147,7 +148,9 @@ fill_missing_info <- function(
 
   date_split <- split_date_to_columns(row_headers_as_column, POSIX_column)
 
-  vintage_split <- split_year_and_vintage(date_split, vintage_with_year_column)
+  vintage_split <- split_year_and_vintage(
+    date_split, vintage_with_year_col_pattern
+    )
 
   metadata_added <- add_metadata_columns(
     vintage_split, title, table_title, units, vintage, supplier,
@@ -832,7 +835,7 @@ split_year_and_vintage <- function(dat, pattern) {
 
   if (length(column) == 0) {
     stop(
-      "vintage_with_year_column is specified as '", pattern, "' ",
+      "vintage_with_year_col_pattern is specified as '", pattern, "' ",
       "in the settings but no matching column has been found. ",
       "Year and vintage will not be split into separate columns. If this ",
       "causes issues please contact a developer."
@@ -840,7 +843,7 @@ split_year_and_vintage <- function(dat, pattern) {
   } else if (length(column) > 1) {
     stop(
       "multiple matching column names have been found for ",
-      "vintage_with_year_column in the sttings ('", pattern, "'). ",
+      "vintage_with_year_col_pattern in the sttings ('", pattern, "'). ",
       "Year and vintage will not be split into separate columns. If this ",
       "causes issues please contact a developer."
     )

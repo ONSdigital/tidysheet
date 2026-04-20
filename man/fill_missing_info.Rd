@@ -26,7 +26,7 @@ fill_missing_info(
   row_header_fill_dir,
   group_row_na_identifier,
   POSIX_column,
-  vintage_with_year_column,
+  vintage_with_year_col_pattern,
   title,
   table_title,
   units,
@@ -123,7 +123,7 @@ associated with an otherwise blank row.}
 \item{POSIX_column}{character string. The exact name of the column containing
 the date.}
 
-\item{vintage_with_year_column}{character string. A single regular expression
+\item{vintage_with_year_col_pattern}{character string. A single regular expression
 to match a column containing both the year and the vintage. Year can be
 financial or calendar. Accepted vintages are budget, provisional, forecast,
 final, and actual (not case sensitive), though these could be expanded upon.}

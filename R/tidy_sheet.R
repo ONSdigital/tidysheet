@@ -302,7 +302,7 @@ tidy_sheet <- function(arg_values, to_csv = TRUE) {
       name_for_group_row_column, name_for_nested_row_column,
       col_with_row_headers_pattern, row_header_fill_dir, group_row_na_identifier,
       POSIX_column,
-      vintage_with_year_column,
+      vintage_with_year_col_pattern,
       title, table_title, units, vintage, supplier, source_group, dataset
       )
 
@@ -398,7 +398,7 @@ get_variable_names <- function() {
     "subtitle_horizontal_index",
     "table_header_identifier", "table_header_identifier_instance",
     "table_header_row_offset",
-    "single_vintage", "vintage_with_year_column",
+    "single_vintage", "vintage_with_year_col_pattern",
     "extend_row_pattern", "extend_row_order", "extend_row_with",
     "metadata_cells_to_remove_patterns",
     "populated_rows_to_check_for_metadata_to_remove",
@@ -467,7 +467,7 @@ get_pattern_names <- function() {
     "year_col_pattern", "columns_to_rename_patterns",
     "col_patterns_to_drop_NA_rows", "columns_to_combine_patterns",
     "col_patterns_with_values_to_drop", "value_patterns_to_drop",
-    "tab_pattern_front_page"
+    "tab_pattern_front_page", "vintage_with_year_col_pattern"
   )
   return(pattern_names)
 }
