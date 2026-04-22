@@ -43,34 +43,40 @@
 #' tidy_sheet(arg_values, FALSE)
 #' }
 #' @export
-tidy_sheet <- function(arg_values, to_csv = TRUE) {
+tidy_sheet <- function(
+    input_filepath, tab_regex, output_filepath, sheet_structure, file_part,
+    to_csv = TRUE
+    ) {
 
-  arg_names <- c(
-    "input_filepath", "tab_regex", "output_filepath",
-    "sheet_structure_json", "file_part"
-  )
-
-  # Not sure how we are going to call tidy_sheet in the new system
-  # when tidy_sheet is called from python using subprocess --args will be the
-  # first arg_value. We can strip this out for cases where tidy_sheet is called
-  # from R.
-  if (arg_values[1] == "--args") {
-    arg_values <- arg_values[2:length(arg_values)]
-  }
-
-  # Join the argument names to their values passed from subprocess
-  message("Assigning values from Python to variables:")
-  for (i in seq_along(arg_names)) {
-    assign(arg_names[i], arg_values[i])
-    message(" - ", arg_names[i], ": ", arg_values[i])
-  }
+  # # TODO: Add this back in to be used if called from python
+  # arg_names <- c(
+  #   "input_filepath", "tab_regex", "output_filepath",
+  #   "sheet_structure", "file_part"
+  # )
+  #
+  # arg_values
+  #
+  # # Not sure how we are going to call tidy_sheet in the new system
+  # # when tidy_sheet is called from python using subprocess --args will be the
+  # # first arg_value. We can strip this out for cases where tidy_sheet is called
+  # # from R.
+  # if (arg_values[1] == "--args") {
+  #   arg_values <- arg_values[2:length(arg_values)]
+  # }
+  #
+  # # Join the argument names to their values passed from subprocess
+  # message("Assigning values from Python to variables:")
+  # for (i in seq_along(arg_names)) {
+  #   assign(arg_names[i], arg_values[i])
+  #   message(" - ", arg_names[i], ": ", arg_values[i])
+  # }
 
   variable_names <- get_variable_names()
 
   # json from Python comes into R as a string rather than as a dictionary that
   # has keys and values We first need to un-flatten it, to reinstate the
   # key:value structure.
-  dict_full <- string_to_dict(sheet_structure_json)
+  dict_full <- string_to_dict(sheet_structure)
   dict <- remove_invalid_args(dict_full, variable_names)
 
   # we do not yet have access to the values of variables in the dict as

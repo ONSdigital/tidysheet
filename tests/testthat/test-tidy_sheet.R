@@ -17,8 +17,6 @@ test_that("Example 1 is processed as expected", {
   split_points: ALT_colon_newline, ALT_newline_poundsign
   }"
 
-  arg_values <- c("--args", filepath, "example 1$", NA, settings, "1")
-
   expected <- tibble (
     sheet = "example 1",
     code = c(rep("ga1", 4), rep("ga2", 4), rep("ga3", 4), rep("ga4", 4),
@@ -55,8 +53,10 @@ test_that("Example 1 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
-  ) %>%
+    suppressMessages(
+      tidy_sheet(filepath, "example 1$", NA, settings, "1", to_csv = FALSE)
+      )
+    ) %>%
     select(-supplier)
 
   expect_equal(result, expected)
@@ -83,8 +83,6 @@ test_that("Example 2 is processed as expected", {
   columns_to_rename_names: description_1, description_1,
   single_vintage: final
   }"
-
-  arg_values <- c("--args", filepath, "example 2", NA, settings, "1")
 
   expected <- tibble (
     sheet = "example 2",
@@ -118,7 +116,9 @@ test_that("Example 2 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(
+      tidy_sheet(filepath, "example 2", NA, settings, "1", to_csv = FALSE)
+    )
   ) %>%
     select(-supplier)
 
@@ -150,8 +150,6 @@ test_that("Example 3 is processed as expected", {
   columns_to_rename_names: description_1, table, -next-, table, -next-, table,
   }"
 
-  arg_values <- c("--args", filepath, "example 3", NA, settings, "1")
-
   expected <- tibble (
     sheet = "example 3",
     vintage = c("final", "budget", rep("final", 5)),
@@ -172,7 +170,9 @@ test_that("Example 3 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(
+      tidy_sheet(filepath, "example 3", NA, settings, "1", to_csv = FALSE)
+    )
   ) %>%
     select(-supplier)
 
@@ -196,7 +196,6 @@ test_that("Example 4 is processed as expected", {
   single_year_of_data: true
   }"
 
-  arg_values <- c("--args", filepath, "example 4", NA, settings, "1")
 
   expected <- tibble (
     sheet = "example 4",
@@ -226,7 +225,9 @@ test_that("Example 4 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(
+      tidy_sheet(filepath, "example 4", NA, settings, "1", to_csv = FALSE)
+    )
   ) %>%
     select(-supplier)
 
@@ -253,7 +254,6 @@ test_that("Example 5 is processed as expected", {
   columns_to_rename_names: description_1
   }"
 
-  arg_values <- c("--args", filepath, "example 5", NA, settings, "1")
 
   expected <- tibble (
     sheet = "example 5",
@@ -279,7 +279,9 @@ test_that("Example 5 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(tidy_sheet(
+      filepath, "example 5", NA, settings, "1", to_csv = FALSE
+      ))
   ) %>%
     select(-supplier)
 
@@ -310,8 +312,6 @@ test_that("Example 6 is processed as expected", {
   col_patterns_to_drop_NA_rows: ^value$,
   }"
 
-  arg_values <- c("--args", filepath, "example 6", NA, settings, "1")
-
   expected <- tibble (
     sheet = "example 6",
     address = c("B9", "C9", "B11", "C11", "B15", "C15", "B16", "C16"),
@@ -334,7 +334,9 @@ test_that("Example 6 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(
+      tidy_sheet(filepath, "example 6", NA, settings, "1", to_csv = FALSE)
+    )
   ) %>%
     select(-supplier)
 
@@ -362,8 +364,6 @@ test_that("Example 7 is processed as expected", {
   quarter_col_pattern: ^quarter$,
   col_patterns_to_drop_NA_rows: ^numeric$,
   }"
-
-  arg_values <- c("--args", filepath, "example 7", NA, settings, "1")
 
   expected <- tibble (
     sheet = "example 7",
@@ -402,7 +402,9 @@ test_that("Example 7 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(
+      tidy_sheet(filepath, "example 7", NA, settings, "1", to_csv = FALSE)
+    )
   ) %>%
     select(-supplier)
 
@@ -423,8 +425,6 @@ test_that("Example 8 is processed as expected", {
   replace_string_from_col_patterns: actual,
   replace_string_to: final
   }"
-
-  arg_values <- c("--args", filepath, "example 8", NA, settings, "1")
 
   expected <- tibble (
     sheet = "example 8",
@@ -449,7 +449,9 @@ test_that("Example 8 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(
+      tidy_sheet(filepath, "example 8", NA, settings, "1", to_csv = FALSE)
+    )
   ) %>%
     select(-supplier)
 
@@ -476,8 +478,6 @@ test_that("Example 9 is processed as expected", {
   col_pattern_to_replace_blanks_with: (?i)country,
   single_year_of_data: true
   }"
-
-  arg_values <- c("--args", filepath, "example 9", NA, settings, "1")
 
   expected_description_note <- "description_1 was 'description A - measure 1 previous financial year' in the raw data. It was given a prefix because there was more than one instance in the raw data with that name."
   expected <- tibble (
@@ -509,7 +509,9 @@ test_that("Example 9 is processed as expected", {
   )
 
   result <- suppressWarnings(
-    suppressMessages(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressMessages(
+      tidy_sheet(filepath, "example 9", NA, settings, "1", to_csv = FALSE)
+    )
   ) %>%
     select(-supplier)
 
@@ -530,8 +532,6 @@ test_that("Example 10 with all types of descriptors is processed as expected", {
   column_to_right_of_data_name_pattern: (?i)notes,
   single_year_of_data: true
   }"
-
-  arg_values <- c("--args", filepath, "10", NA, settings, "1")
 
   expected <- tibble (
     sheet = "example 10",
@@ -560,7 +560,9 @@ test_that("Example 10 with all types of descriptors is processed as expected", {
   )
 
   result <- suppressMessages(
-    suppressWarnings(tidy_sheet(arg_values, to_csv = FALSE))
+    suppressWarnings(
+      tidy_sheet(filepath, "10", NA, settings, "1", to_csv = FALSE)
+      )
     ) %>%
     select(-supplier)
 
