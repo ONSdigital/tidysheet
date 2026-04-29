@@ -2,16 +2,31 @@
 % Please edit documentation in R/tidy_sheet.R
 \name{tidy_sheet}
 \alias{tidy_sheet}
-\title{Runner for public sector preprocessing}
+\title{Runner for tidying messy Excel data.}
 \usage{
-tidy_sheet(arg_values, to_csv = TRUE)
+tidy_sheet(
+  input_filepath,
+  tab_regex,
+  output_filepath,
+  settings,
+  file_part = 1,
+  to_csv = TRUE
+)
 }
 \arguments{
-\item{arg_values}{character string vector. The values for the following
-(order is important):
-"--args" (optional), input filepath, regular expression matching the
-sheet name, output filepath, settings (see example), file part (integer,
-nearly always 1).}
+\item{input_filepath}{character string. Path to the xlsx/xlsm source data.}
+
+\item{tab_regex}{character string. Regular expression to match the sheet name.}
+
+\item{output_filepath}{character string. Path to save the output csv to.}
+
+\item{settings}{flattened dictionary e.g. from json.dumps (see example).
+Must contain only the relevant variables (settings) for the specific
+dataset. The key is the name of the variable, and the value is the value.
+Where a setting does not have a value in the settings it is assigned NA.}
+
+\item{file_part}{integer. Defaults to 1. If a dataset is in two files, each
+with the same layout, the one that comes second will have file_part = 2.}
 
 \item{to_csv}{boolean. Default is TRUE. If FALSE the output is returned
 rather than being saved to csv.}
@@ -24,14 +39,13 @@ the output as columns including year, year_type, supplier, source, dataset,
 title, units, and vintage.
 }
 \description{
-Runner script for pre-processing xlsx data for public sector
-input data at the ONS.
-
-settings is a flattened dictionary (a json.dumps string from Python) that
-contains only the relevant variables (settings) for the specific
-dataset: The key is the name of the variable, and the value is the
-value. Where a setting does not have a value in the sheet_structure
-it is assigned NA.
+Runner script for pre-processing xlsx data so that it is in a
+tidy layout, with years formatted to be YYYY or YYYY-YY, vintage added as
+budget, provisinal, or final, metadata added as columns, and options to add
+or remove columns, and edit specified text.
+}
+\details{
+See the Wiki at https://github.com/ONSdigital/tidysheet for settings details.
 
 filepath must only contain a single year. Where the data are for
 a single year/financial year, the year in filepath should be the year the
@@ -40,16 +54,10 @@ must be the correct format (financial or calendar year).
 }
 \examples{
 \dontrun{
-# If picking up args from the command line:
-arg_values <- commandArgs(trailingOnly = TRUE)
-
-# Without using the command line, this would look like e.g.:
-arg_values <- c(
+tidy_sheet(
     "D:/some_file-2023_24.xlsx", "(?i)sheet1", "D:/some_file-2023_24.csv",
     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2}",
-    "1"
+    "1", FALSE
     )
-serializeJSON(arg_values)
-tidy_sheet(arg_values, FALSE)
 }
 }

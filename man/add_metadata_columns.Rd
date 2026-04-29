@@ -25,7 +25,7 @@ it add columns to the data where the value of each column is the same on
 every row. However, add_single_value_columns takes the column name and value
 as separate vectors. add_single_value_columns can be controlled by user
 settings. add_metadata_columns is not, so will add a column and fill it with
-NA if there is no vale for the variable in question.
+NA if there is no value for the variable in question.
 }
 \examples{
 \dontrun{
