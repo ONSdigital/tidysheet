@@ -1,13 +1,13 @@
 #' @title Rename columns with reserved names
 #'
 #' @description Column names that match a string listed in reserved_names are
-#' given a postscript. 
-#' 
-#' @details This function is used to guard against overwriting existing columns 
+#' given a postscript.
+#'
+#' @details This function is used to guard against overwriting existing columns
 #' with information we have pulled from outside of the main table: If there is
-#' a column with the same name as a reserved names it will be given a 
+#' a column with the same name as a reserved names it will be given a
 #' postscript. For example, If there is a column in the raw data called
-#' 'source', because 'cource' is a column we add to all datasets,
+#' 'source', because 'source' is a column we add to all datasets,
 #' our 'source' column in the raw data will become 'source_1'.
 #'
 #' @param dat dataframe.
@@ -42,8 +42,8 @@ rename_reserved_colnames <- function(dat, reserved_names) {
 #'
 #' @description Use regular expressions to identify which columns to rename,
 #' and rename them.
-#' 
-#' @details This renaming is controlled by the settings - if no columns require 
+#'
+#' @details This renaming is controlled by the settings - if no columns require
 #' renaming, the settings do not need to be supplied.
 #'
 #' @param dat dataframe
@@ -143,11 +143,11 @@ rename_columns <- function(dat, exclude_names, patterns, new_names){
 #'
 #' @description
 #' Standardise column names so that the numeric column gets renamed 'value' and
-#' the character column gets renamed 'non_numeric_value'. 
-#' 
+#' the character column gets renamed 'non_numeric_value'.
+#'
 #' @details The non-numeric_value column will only be populated if there are
-#' character values in a column that should be numeric in the raw data. For 
-#' example if 's' is used to indicate suppressed values in numeric columns, 
+#' character values in a column that should be numeric in the raw data. For
+#' example if 's' is used to indicate suppressed values in numeric columns,
 #' it will end up in the non_numeric_value column.
 #'
 #' @param dat (tibble)

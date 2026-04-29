@@ -569,6 +569,3 @@ test_that("Example 10 with all types of descriptors is processed as expected", {
   expect_equal(result, expected)
 
 })
-
-
-

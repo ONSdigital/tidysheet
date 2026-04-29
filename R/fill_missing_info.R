@@ -713,7 +713,7 @@ add_row_headers_column <- function(
 #' every row. However, add_single_value_columns takes the column name and value
 #' as separate vectors. add_single_value_columns can be controlled by user
 #' settings. add_metadata_columns is not, so will add a column and fill it with
-#' NA if there is no vale for the variable in question.
+#' NA if there is no value for the variable in question.
 #'
 #' @param dat dataframe to which the ... params should be added as columns.
 #' @param ... variable names, each of which contains a single value.
