@@ -1,24 +1,12 @@
-#' @title Runner for public sector preprocessing
+#' @title Runner for tidy_sheet via python
 #'
-#' @description Runner script for pre-processing xlsx data for public sector
-#' input data at the ONS.
-#'
-#' settings is a flattened dictionary (a json.dumps string from Python) that
-#' contains only the relevant variables (settings) for the specific
-#' dataset: The key is the name of the variable, and the value is the
-#' value. Where a setting does not have a value in the sheet_structure
-#' it is assigned NA.
-#'
-#' filepath must only contain a single year. Where the data are for
-#' a single year/financial year, the year in filepath should be the year the
-#' data refer to (i.e. not the publication date). The year given in the filepath
-#' must be the correct format (financial or calendar year).
+#' @description Wrapper allowing tidy_sheet to be run in Python via
+#' subprocess.run()
 #'
 #' @param arg_values character string vector. The values for the following
-#' (order is important):
-#' "--args" (optional), input filepath, regular expression matching the
-#' sheet name, output filepath, settings (see example), file part (integer,
-#' nearly always 1).
+#' (order is important): "--args" (optional), input_filepath, sheet_name,
+#' output_filepath, settings, file_part. See example and the param descriptions
+#' in tidy_sheet for details.
 #' @param to_csv boolean. Default is TRUE. If FALSE the output is returned
 #' rather than being saved to csv.
 #'
@@ -43,40 +31,86 @@
 #' tidy_sheet(arg_values, FALSE)
 #' }
 #' @export
+tidy_sheet_via_subprocess <- function(arg_values, to_csv = TRUE) {
+
+  arg_names <- c(
+    "input_filepath", "tab_regex", "output_filepath",
+    "settings", "file_part"
+  )
+
+  # when tidy_sheet is called from python using subprocess --args will be the
+  # first arg_value, but this may not be the case for other calls.
+  if (arg_values[1] == "--args") {
+    arg_values <- arg_values[2:length(arg_values)]
+  }
+
+  # Join the argument names to their values passed from subprocess
+  message("Assigning values from Python to variables:")
+  for (i in seq_along(arg_names)) {
+    assign(arg_names[i], arg_values[i])
+    message(" - ", arg_names[i], ": ", arg_values[i])
+  }
+
+  tidy_sheet(
+    input_filepath, tab_regex, output_filepath, settings, file_part, to_csv
+    )
+
+}
+
+
+#' @title Runner for tidying messy Excel data.
+#'
+#' @description Runner script for pre-processing xlsx data so that it is in a
+#' tidy layout, with years formatted to be YYYY or YYYY-YY, vintage added as
+#' budget, provisinal, or final, metadata added as columns, and options to add
+#' or remove columns, and edit specified text.
+#'
+#' @details
+#' See the Wiki at https://github.com/ONSdigital/tidysheet for settings details.
+#'
+#' filepath must only contain a single year. Where the data are for
+#' a single year/financial year, the year in filepath should be the year the
+#' data refer to (i.e. not the publication date). The year given in the filepath
+#' must be the correct format (financial or calendar year).
+#'
+#' @param input_filepath character string. Path to the xlsx/xlsm source data.
+#' @param tab_regex character string. Regular expression to match the sheet name.
+#' @param output_filepath character string. Path to save the output csv to.
+#' @param settings flattened dictionary e.g. from json.dumps (see example).
+#' Must contain only the relevant variables (settings) for the specific
+#' dataset. The key is the name of the variable, and the value is the value.
+#' Where a setting does not have a value in the settings it is assigned NA.
+#' @param file_part integer. Defaults to 1. If a dataset is in two files, each
+#' with the same layout, the one that comes second will have file_part = 2.
+#' @param to_csv boolean. Default is TRUE. If FALSE the output is returned
+#' rather than being saved to csv.
+#'
+#' @returns saved csv file. File is saved to the specified output_filepath,
+#' and contains tidy data. Data has only one numeric value per row, with all
+#' other columns holding descriptive data for that value. Metadata are added to
+#' the output as columns including year, year_type, supplier, source, dataset,
+#' title, units, and vintage.
+#'
+#' @examples
+#' \dontrun{
+#' tidy_sheet(
+#'     "D:/some_file-2023_24.xlsx", "(?i)sheet1", "D:/some_file-2023_24.csv",
+#'     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2}",
+#'     "1", FALSE
+#'     )
+#' }
+#' @export
 tidy_sheet <- function(
-    input_filepath, tab_regex, output_filepath, sheet_structure, file_part,
+    input_filepath, tab_regex, output_filepath, settings, file_part = 1,
     to_csv = TRUE
     ) {
-
-  # # TODO: Add this back in to be used if called from python
-  # arg_names <- c(
-  #   "input_filepath", "tab_regex", "output_filepath",
-  #   "sheet_structure", "file_part"
-  # )
-  #
-  # arg_values
-  #
-  # # Not sure how we are going to call tidy_sheet in the new system
-  # # when tidy_sheet is called from python using subprocess --args will be the
-  # # first arg_value. We can strip this out for cases where tidy_sheet is called
-  # # from R.
-  # if (arg_values[1] == "--args") {
-  #   arg_values <- arg_values[2:length(arg_values)]
-  # }
-  #
-  # # Join the argument names to their values passed from subprocess
-  # message("Assigning values from Python to variables:")
-  # for (i in seq_along(arg_names)) {
-  #   assign(arg_names[i], arg_values[i])
-  #   message(" - ", arg_names[i], ": ", arg_values[i])
-  # }
 
   variable_names <- get_variable_names()
 
   # json from Python comes into R as a string rather than as a dictionary that
   # has keys and values We first need to un-flatten it, to reinstate the
   # key:value structure.
-  dict_full <- string_to_dict(sheet_structure)
+  dict_full <- string_to_dict(settings)
   dict <- remove_invalid_args(dict_full, variable_names)
 
   # we do not yet have access to the values of variables in the dict as
