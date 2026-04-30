@@ -192,13 +192,13 @@ make_quarter_patterns <- function() {
 #'
 #' @description Create regular expressions that can be used to identify the
 #' rows related to the months Jan to Mar (Q1 of a calendar year).
-#' 
-#' @details 
-#' This function creates a regular expression that matches the months and 
+#'
+#' @details
+#' This function creates a regular expression that matches the months and
 #' quarters belonging to the months Jan to Mar. The part of the pattern relating
-#' to quarter values is therefore different depending on whether Q1 in the data 
+#' to quarter values is therefore different depending on whether Q1 in the data
 #' refers to Jan to Mar, or Apr to Jun.
-#' 
+#'
 #' @param period Must be 'all', 'quarter', or 'month'. Default is 'all'.
 #' @param q1_jan_to_mar bool, default is TRUE. If FALSE, it is assumed that
 #' Q4 is jan to mar, and Q1 is the start of the financial year.
@@ -247,32 +247,32 @@ make_calendar_q1_month_and_quarter_patterns <- function(
 #' @title Get and compare year from above the data to a set year
 #'
 #' @description This function is required for data that relate to a single year.
-#' Year is unlikely to be given as a column in such datasets so we need to get 
+#' Year is unlikely to be given as a column in such datasets so we need to get
 #' the year from the information above the data instead (either at the top of
 #' sheet or directly above the table if there are multiple tables in the sheet).
 #' In public sector we can also get year from the file name. This function gets
 #' the year from above the data, compares in to the year in the file name, and
 #' returns the preferred year. If a mismatch is found, this is flagged.
-#' 
+#'
 #' @details
-#' This function finds years in the info above the data (dat) that are of the 
+#' This function finds years in the info above the data (dat) that are of the
 #' same type (calendar/financial) as the year in the file name. It compares them
 #' to the year in the file name, and if they are different, it selects one based
 #' on `use_filename_year`.
 #'
 #' If multiple unique years are found and one of them matches the file name, the
 #' year from the file name is returned.
-#' 
-#' If multiple unique years are found, none of them match the file name, and 
-#' use_filename_year is FALSE, the first of either the year at the top of the 
-#' sheet or the first of the year above the table is used and the mismatch is 
-#' flagged. By default the year above the table is preferred to the year at the 
+#'
+#' If multiple unique years are found, none of them match the file name, and
+#' use_filename_year is FALSE, the first of either the year at the top of the
+#' sheet or the first of the year above the table is used and the mismatch is
+#' flagged. By default the year above the table is preferred to the year at the
 #' top of the sheet if both exist. However this can be changed by setting
 #' prefer_sheet_year to TRUE.
-#' 
-#' If no years are found above the data, or if use_filename_year is TRUE, the 
+#'
+#' If no years are found above the data, or if use_filename_year is TRUE, the
 #' filename year is used.
-#' 
+#'
 #' Mismatches are flagged rather than raising a warning because the user only
 #' needs to be given the warning if the variable is actually used. For example,
 #' if year is already a column in the data the returned variable will not be
@@ -539,7 +539,7 @@ refine_metadata_year <- function(years, preferred) {
 #'
 #' @description
 #' Select between two provided year vectors. One will be taken from the metadata
-#' at the top of the sheet, the other from the metadata directly above the 
+#' at the top of the sheet, the other from the metadata directly above the
 #' table.
 #'
 #' If they are the same, just return one. If one is NA, return the other. If
@@ -686,9 +686,9 @@ choose_from_multiple_years <- function(years) {
 #'
 #' If `type` = 'single' year will be restricted to either calendar or financial
 #' years (whichever is set by prefer).
-#' 
-#' This function is used in multiple places in tidysheet. It differs from 
-#' extract_all_years in that it adds a column to a dataframe, returning the 
+#'
+#' This function is used in multiple places in tidysheet. It differs from
+#' extract_all_years in that it adds a column to a dataframe, returning the
 #' first year of the preferred type for each row. In contrast, extract_all_years
 #' returns a vector of all years found regardless of row.
 #'
@@ -784,14 +784,24 @@ get_year <- function (
 
   selected <- all %>%
     mutate(
-      !!sym(new_col) := case_when(
-        prefer == "financial" & type == "single" ~ financial,
-        prefer == "calendar" & type == "single" ~ calendar,
-        prefer == "financial" & type == "both" ~ financial_preferred,
-        prefer == "calendar" & type == "both" ~ calendar_preferred,
-        type == "either" & any_financial_years ~ financial,
-        type == "either" & any_financial_years == FALSE ~ calendar,
-      )
+      !!sym(new_col) :=
+        if (prefer == "financial" & type == "single") {
+          financial
+        } else if (prefer == "calendar" & type == "single") {
+          calendar
+        } else if (prefer == "financial" & type == "both") {
+          financial_preferred
+        } else if (prefer == "calendar" & type == "both") {
+          calendar_preferred
+        } else if (prefer == "calendar" & type == "both") {
+          calendar_preferred
+        } else if (type == "either" & any_financial_years) {
+          financial
+        } else if (type == "either" & any_financial_years == FALSE) {
+          calendar
+        } else {
+          financial # use as default, though all cases should be covered above
+        }
     ) %>%
     select(-c(calendar, financial, financial_preferred, calendar_preferred))
 
@@ -904,9 +914,9 @@ check_for_multiple_years <- function(
 #'
 #' @details This function differs from get_year in that it returns a vector of
 #' all unique years regardless of the row in which the year was found. In
-#' contrast, get_year returns the first year of the preferred type 
-#' (financial/ calendar) for each row. 
-#' 
+#' contrast, get_year returns the first year of the preferred type
+#' (financial/ calendar) for each row.
+#'
 #' @param dat numeric or character string. Accepts vector, matrices and
 #' dataframe data.
 #' @param type character string. Either 'both' (default), 'financial', or
@@ -964,7 +974,7 @@ extract_all_years <- function(dat, type = "both") {
 
 #' @title Get the year type for each row of a dataframe, or for a single year
 #'
-#' @description Get an unambiguous year type (financial or calendar). If more 
+#' @description Get an unambiguous year type (financial or calendar). If more
 #' than one year type is found NA is returned.
 #'
 #' @param dat character string, integer, or dataframe. If character string or

@@ -97,3 +97,4 @@ test_that("split_year_and_vintage copes with multiple vintages in one cell" , {
   result <- suppressMessages(split_year_and_vintage(dat, "year.*vintage"))
   expect_equal(data.frame(result), data.frame(expected))
 })
+
