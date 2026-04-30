@@ -1,6 +1,4 @@
 # tidysheet
-## Warning: this project is still in development and is not fully functionally tested
-
 tidysheet takes messy Excel data and converts it to tidy data with a single 
 value per row, and gives users the ability to control the number and content of 
 descriptor columns. It is resilient to minor changes in schema and the location of 
@@ -14,6 +12,13 @@ for what these settings look like, and how you can run it from R or Python.
 
 Full documentation on all settings are given in the [Wiki](https://github.com/ONSdigital/tidysheet_public/wiki) (still in progress).
 
+## R version
+Tidysheet has been written in R 4.4.1. It passes unit tests in R 4.5.1, but it may 
+need further work to ensure that stringr will not raise errors. In R 4.5.1 unlike
+4.4.1 If the pattern is held in a column and you use stringr functions within in a 
+mutate, there must not be any chance of NAs in the pattern column. This was not
+explicitly written into unit tests because it was not an issue in 4.4.1.
+ 
 ## Installation
 To run the code via local python you will first need to install the package locally by running the 
 following in R:
