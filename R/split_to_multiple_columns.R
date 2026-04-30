@@ -1,17 +1,17 @@
 #' @title Split the contents of one column over multiple columns
 #'
 #' @description Sometimes we may want to split a single character column into
-#' multiple columns. 
-#' 
+#' multiple columns.
+#'
 #' @details The layout of a dataset may change so that it has only
 #' one row of headers that contains all the information that was once in
 #' multiple headers. Use this function to create the output as it would
-#' have been when the input had multiple headers. This may be required as a 
-#' quick fix if the output has to remain stable. However, it is recommended to 
-#' not be used as a long term fix - the datset with fewer columns is to be 
-#' preferred as it easier and less error prone to join columns than to split 
+#' have been when the input had multiple headers. This may be required as a
+#' quick fix if the output has to remain stable. However, it is recommended to
+#' not be used as a long term fix - the datset with fewer columns is to be
+#' preferred as it easier and less error prone to join columns than to split
 #' them.
-#' 
+#'
 #' Not every split_point has to be present in every string to be split - if
 #' a pattern does not exist in a given string, the previous value is used (see
 #' example below). In other words, if the split is not consistent across all
@@ -82,7 +82,8 @@
 #' from <- "col_to_split"
 #' to <- c("description_1", "description_2", "description_3", "units")
 #' split_point_descriptions <- c(
-#' "newline_whitespace_=1", "newline_whitespace_=2", "newline_whitespace_=3"
+#' "ALT_newline_whitespace_=1", "ALT_newline_whitespace_=2",
+#' "ALT_newline_whitespace_=3"
 #' )
 #'
 #' dat <- data.frame(
@@ -107,7 +108,9 @@
 #' #----------------------------------------------------------------------------
 #' # Example 2
 #'
-#' split_point_descriptions <- c("newline", "newline", "=Note", "=Note")
+#' split_point_descriptions <- c(
+#'     "ALT_newline", "ALT_newline", "ALT_=Note", "ALT_=Note"
+#'     )
 #' #split_patterns <- c("\n", "\n", "Note", "Note")
 #' dat <- data.frame(
 #'          col_to_split = c("split \n this \n here",
@@ -181,7 +184,6 @@ split_to_multiple_columns <- function(dat, from, to, split_point_descriptions) {
   # the true start of the pattern description is used later on.
   split_point_descriptions <- str_remove(split_point_descriptions, "ALT_")
 
-
   split_point_presence <- flag_existing_split_points(dat, split_patterns, from)
 
   splits_to_use <- get_split_order(split_point_presence)
@@ -189,7 +191,7 @@ split_to_multiple_columns <- function(dat, from, to, split_point_descriptions) {
   # If no splits have been found anywhere send a message that the data may have
   # changed, and just rename the column to split with the first name in
   # `to` (e.g. COR_TAB4 in test files)
-  if (all(is.na(splits_to_use$tmp_split_1))) {
+  if (sum(splits_to_use$tmp_use_split_point_1) == 0) {
     warning(
       "No split pattern has been found in the column to split ('", from,
       "'). Only the first name in `to` (header_split_to) will be used ('",
@@ -241,6 +243,11 @@ split_to_multiple_columns <- function(dat, from, to, split_point_descriptions) {
 #' column should be split. Each pattern is only used once.
 #' @param from string. The name of the column containing the strings to be split.
 #'
+#' @returns dataframe with a tmp_use_split_point boolean column for each
+#' split_pattern (column name appended with a number). An extra final
+#' tmp_use_split_point  column is added that is not related to a split pattern,
+#' but is instead a  mechanism to avoid NAs in columns that will be added later.
+#'
 #' @examples
 #' \dontrun{
 #' split_patterns <- c( "(\n)\\s*1\\.", "(\n)\\s*2\\.", "(\n)\\s*3\\.")
@@ -276,7 +283,8 @@ flag_existing_split_points <- function(dat, split_patterns, from) {
       )) %>%
       mutate(
         tmp_remaining = case_when(
-          !!sym(new_col) == TRUE ~ str_split_fixed(tmp_remaining, split_patterns[i], 2)[, 2],
+          !!sym(new_col) == TRUE ~
+            str_split_fixed(tmp_remaining, split_patterns[i], 2)[, 2],
           !!sym(new_col) == FALSE ~ tmp_remaining
         )
       ) %>%
@@ -284,7 +292,11 @@ flag_existing_split_points <- function(dat, split_patterns, from) {
 
   }
 
-  cleaned_dat <- select(dat, -tmp_remaining)
+  extra_col <- paste0("tmp_use_split_point_", length(split_patterns) + 1)
+
+  extra_column_added <- mutate(dat, !!sym(extra_col) := FALSE)
+
+  cleaned_dat <- select(extra_column_added, -tmp_remaining)
 
   return (cleaned_dat)
 
@@ -325,7 +337,9 @@ flag_existing_split_points <- function(dat, split_patterns, from) {
 #' }
 get_split_order <- function(dat) {
 
-  split_count <- ncol(select(dat, starts_with("tmp_use_split_point_")))
+  # -1 is added to the count because of the extra tmp_use_split_point_ added
+  # in flag_existing_split_points to avoid NA errors with stringr functions.
+  split_count <- ncol(select(dat, starts_with("tmp_use_split_point_"))) - 1
 
   dat <- mutate(dat, tmp_use_split_point_0 = TRUE)
 
@@ -333,7 +347,7 @@ get_split_order <- function(dat) {
     new_col <- paste0("tmp_split_", i)
 
     dat <- dat %>%
-      mutate(!!sym(new_col) := NA)
+      mutate(!!sym(new_col) := split_count + 1)
 
     for (j in i:split_count) {
 
@@ -342,7 +356,8 @@ get_split_order <- function(dat) {
       dat <- dat %>%
         mutate(!!sym(new_col) :=
                  case_when(
-                   is.na(!!sym(new_col)) & !!sym(use_split_point) == TRUE ~ j,
+                   !!sym(new_col) == split_count + 1
+                   & !!sym(use_split_point) == TRUE ~ j,
                    TRUE ~ !!sym(new_col)
                  )
         )
@@ -427,9 +442,11 @@ update_start_of_string <- function(dat, split_patterns, from) {
     }
   }
 
+  patterns <- c(patterns_for_start, "fake_pattern_to avoid_issues_with_stringr")
+
   match_at_start_flagged <- dat %>%
     mutate(tmp_pattern_at_start = case_when(
-      str_detect(!!sym(from), patterns_for_start[tmp_split_1]) ~ TRUE,
+      str_detect(!!sym(from), patterns[tmp_split_1]) ~ TRUE,
       TRUE ~ FALSE
     ))
 
@@ -628,7 +645,9 @@ do_the_splits <- function(dat, split_patterns, from) {
 
   splits <- dat %>%
     mutate(tmp_remaining = !!sym(from),
-           !!sym(paste0("tmp_split_", split_count+1)) := NA)
+           !!sym(paste0("tmp_split_", split_count + 1)) := split_count + 1)
+
+  patterns <- c(split_patterns, "fake_pattern_to avoid_issues_with_stringr")
 
   for (i in 1:split_count) {
 
@@ -645,7 +664,7 @@ do_the_splits <- function(dat, split_patterns, from) {
     }
 
     new_strings <- get_new_string(
-      splits, split_patterns, current_string_col, prev_string_col,
+      splits, patterns, current_string_col, prev_string_col,
       use_split_point, current_split
     )
 

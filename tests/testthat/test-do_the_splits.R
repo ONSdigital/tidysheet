@@ -16,9 +16,10 @@ test_that("do_the_splits splits strings in the order provided ", {
     tmp_use_split_point_1 = c(TRUE, FALSE),
     tmp_use_split_point_2 = c(TRUE, TRUE),
     tmp_use_split_point_3 = c(TRUE, FALSE),
+    tmp_use_split_point_4 = c(FALSE, FALSE),
     tmp_split_1 = c(1, 2),
     tmp_split_2 = c(2, 2),
-    tmp_split_3 = c(3, NA),
+    tmp_split_3 = c(3, 4),
     tmp_matches_next_pattern_1 = c(FALSE, TRUE),
     tmp_matches_next_pattern_2 = c(FALSE, FALSE),
     tmp_matches_next_pattern_3 = c(FALSE, FALSE),
@@ -29,8 +30,8 @@ test_that("do_the_splits splits strings in the order provided ", {
   )
 
   expected <- dat %>%
-    mutate(tmp_split_4 = NA,
-           tmp_action_to_take = c("split", "remaining"),
+    mutate(tmp_split_4 = 4,
+           tmp_action_to_take = "split",
            tmp_string_1 = "split",
            tmp_string_2 = c("1.this ", "split"),
            tmp_string_3 = c("2.one ", "2.one"),

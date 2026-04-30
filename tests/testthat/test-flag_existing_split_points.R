@@ -1,4 +1,5 @@
-test_that("flag_existing_split_points correctly adds a boolean column for each split_point, stating whether pattern was found", {
+test_that("flag_existing_split_points correctly adds a boolean column for each
+split_point, stating whether pattern was found", {
 
   split_patterns <- c( "(\n)\\s*1\\.", "(\n)\\s*2\\.", "(\n)\\s*3\\.")
 
@@ -13,7 +14,8 @@ test_that("flag_existing_split_points correctly adds a boolean column for each s
   expected_all <- dat_all %>%
     mutate(tmp_use_split_point_1 = c(TRUE, FALSE, FALSE),
            tmp_use_split_point_2 = c(TRUE, TRUE, FALSE),
-           tmp_use_split_point_3 = c(TRUE, FALSE, FALSE)
+           tmp_use_split_point_3 = c(TRUE, FALSE, FALSE),
+           tmp_use_split_point_4 = FALSE
     )
 
   result_all <- flag_existing_split_points(dat_all, split_patterns, "col_to_split")
@@ -66,3 +68,4 @@ test_that("flag_existing_split_points raises an error if from column is numeric"
     "Column 'col_to_split' is expected to contain string data but it contains numeric data"
   )
 })
+

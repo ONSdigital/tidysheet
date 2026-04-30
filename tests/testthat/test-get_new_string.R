@@ -17,19 +17,20 @@ test_that("get_new_string creates a column containing the newly split off string
     tmp_use_split_point_0 = TRUE,
     tmp_use_split_point_1 = c(TRUE, FALSE, FALSE, TRUE),
     tmp_use_split_point_2 = c(TRUE, FALSE, TRUE, FALSE),
-    tmp_split_1 = c(1, NA, 2, 1),
-    tmp_split_2 = c(2, NA, 2, NA),
-    tmp_split_3 = NA,
+    tmp_use_split_point_3 = FALSE,
+    tmp_split_1 = c(1, 3, 2, 1),
+    tmp_split_2 = c(2, 3, 2, 3),
+    tmp_split_3 = 3,
     value = c(1:4)
   )
 
   expected_1 <- dat %>%
-    mutate(tmp_action_to_take = c("split", "remaining", "split", "split"),
+    mutate(tmp_action_to_take = "split",
            tmp_string_1 = c("all ", "no splits", "only the ", "only the "))
 
   result_1 <- get_new_string(
     dat,
-    split_patterns = c("(\n)\\s*1\\.", "(\n)\\s*2\\."),
+    split_patterns = c("(\n)\\s*1\\.", "(\n)\\s*2\\.", "fake_pattern"),
     current_string_col = "tmp_string_1",
     prev_string_col = "tmp_remaining",
     use_split_point = "tmp_use_split_point_0",
@@ -59,12 +60,12 @@ test_that("get_new_string creates a column containing the newly split off string
       ))
 
   expected_2 <- dat_2 %>%
-    mutate(tmp_action_to_take = c("split", "remaining", "copy forward", "remaining"),
+    mutate(tmp_action_to_take = c("split", "copy forward", "copy forward", "split"),
            tmp_string_2 = c("\n 1.split points ", "no splits", "only the ", "\n 1.first split"))
 
   result_2 <- get_new_string(
     dat_2,
-    split_patterns = c("(\n)\\s*1\\.", "(\n)\\s*2\\."),
+    split_patterns = c("(\n)\\s*1\\.", "(\n)\\s*2\\.", "fake_pattern"),
     current_string_col = "tmp_string_2",
     prev_string_col = "tmp_string_1",
     use_split_point = "tmp_use_split_point_1",
@@ -95,12 +96,15 @@ test_that("get_new_string creates a column containing the newly split off string
     )
 
   expected_3 <- dat_3 %>%
-    mutate(tmp_action_to_take = "remaining",
-           tmp_string_3 = c("2.present", "no splits", "2.second split", "1.first split"))
+    mutate(
+      tmp_action_to_take = c("split", "copy forward", "split", "copy forward"),
+      tmp_string_3 = c(
+        "2.present", "no splits", "2.second split", "\n 1.first split"
+      ))
 
   result_3 <- get_new_string(
     dat_3,
-    split_patterns = c("(\n)\\s*1\\.", "(\n)\\s*2\\."),
+    split_patterns = c("(\n)\\s*1\\.", "(\n)\\s*2\\.", "fake_pattern"),
     current_string_col = "tmp_string_3",
     prev_string_col = "tmp_string_2",
     use_split_point = "tmp_use_split_point_2",
@@ -110,10 +114,12 @@ test_that("get_new_string creates a column containing the newly split off string
   expect_equal(expected_3, result_3)
 })
 
+
 test_that("get_new_string raises expected errors and warnings", {
   dat <- data.frame(
     tmp_remaining = "all \n 1.split points \n 2.present",
     tmp_use_split_point_0 = TRUE,
+    tmp_use_split_point_1 = FALSE,
     tmp_split_1 = 1,
     value = 100
   )

@@ -14,6 +14,12 @@ column should be split. Each pattern is only used once.}
 
 \item{from}{string. The name of the column containing the strings to be split.}
 }
+\value{
+dataframe with a tmp_use_split_point boolean column for each
+split_pattern (column name appended with a number). An extra final
+tmp_use_split_point  column is added that is not related to a split pattern,
+but is instead a  mechanism to avoid NAs in columns that will be added later.
+}
 \description{
 For each split point add a column e.g. 'use_split_point_1' that
 states whether that split point (in this case the first) was found in the

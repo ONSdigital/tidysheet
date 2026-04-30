@@ -94,7 +94,8 @@ If split_points are '\n1.','\n2.', '\n3.', missing parts are handled thus:
 from <- "col_to_split"
 to <- c("description_1", "description_2", "description_3", "units")
 split_point_descriptions <- c(
-"newline_whitespace_=1", "newline_whitespace_=2", "newline_whitespace_=3"
+"ALT_newline_whitespace_=1", "ALT_newline_whitespace_=2",
+"ALT_newline_whitespace_=3"
 )
 
 dat <- data.frame(
@@ -119,7 +120,9 @@ split_to_multiple_columns(dat,
 #----------------------------------------------------------------------------
 # Example 2
 
-split_point_descriptions <- c("newline", "newline", "=Note", "=Note")
+split_point_descriptions <- c(
+    "ALT_newline", "ALT_newline", "ALT_=Note", "ALT_=Note"
+    )
 #split_patterns <- c("\n", "\n", "Note", "Note")
 dat <- data.frame(
          col_to_split = c("split \n this \n here",

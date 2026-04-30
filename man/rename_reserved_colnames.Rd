@@ -25,7 +25,7 @@ This function is used to guard against overwriting existing columns
 with information we have pulled from outside of the main table: If there is
 a column with the same name as a reserved names it will be given a
 postscript. For example, If there is a column in the raw data called
-'source', because 'cource' is a column we add to all datasets,
+'source', because 'source' is a column we add to all datasets,
 our 'source' column in the raw data will become 'source_1'.
 }
 \examples{

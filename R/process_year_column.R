@@ -310,11 +310,11 @@ get_year_names_by_type <- function(dat, columns) {
 #' @title Get the column name that has the highest count value
 #'
 #' @description Get the 'columns' string that is in the same position as the
-#' maximum count value. 
-#' 
+#' maximum count value.
+#'
 #' @details
 #' Designed to select the name of the column that holds the
-#' most valid years, where 'columns' gives the names of the columns holding 
+#' most valid years, where 'columns' gives the names of the columns holding
 #' valid years, and counts gives the number of valid years found in each of those
 #' columns, though it could be used in other contexts.
 #'
@@ -462,8 +462,8 @@ add_single_year_to_possibilities <- function(
 #' @title Select the best option for the year column and add it to the data
 #'
 #' @description From possible_cols select the column name to use as the 'year'
-#' column and add this to the data. 
-#' 
+#' column and add this to the data.
+#'
 #' @details
 #' If a column called 'year' already exists in
 #' the data it will be overwritten.
@@ -553,9 +553,9 @@ add_best_year_column <- function(dat, possible_cols, single_year) {
 #' @title Standardise year column so that financial years are yyyy-yy
 #'
 #' @description Where financial years are not in the standard format of
-#' YYYY-YY, convert them to this format. 
-#' 
-#' @details 
+#' YYYY-YY, convert them to this format.
+#'
+#' @details
 #' Accepted input formats are:
 #' YYYY_YY or YYYY_YYYY and any number of spaces either side of the underscore,
 #' YYYY-YY or YYYY-YYYY and any number of spaces either side of the dash,
@@ -694,6 +694,11 @@ clear_invalid_year_and_type <- function(dat, year_to_na) {
 
   patterns <- make_year_patterns()
 
+  # In R4.5.1 (unlike 4.4.1) str_extract_all does not accept NA as a pattern.
+  # Adding 'none' to the patterns and a corresponding value to year_type_temp
+  # when year_type is NA circumvents this issue.
+  patterns['none'] <- "no_pattern_available"
+
   # Because this function is carried out on beheaded data, if there are e.g.
   # notes under the data in the year column, but nothing in the value columns
   # for those rows, these rows will be flagged as is_blank=TRUE. Where this is
@@ -701,14 +706,19 @@ clear_invalid_year_and_type <- function(dat, year_to_na) {
   # We therefore flag both no_years and no_years_inc_blank so that we can
   # control when a warning is given.
   invalid_flagged  <- dat %>%
-    mutate(matches = str_extract_all(year, patterns[as.character(year_type)])) %>%
+    mutate(
+      year_type_temp = ifelse(is.na(year_type), "none", year_type),
+      matches =
+        str_extract_all(year, patterns[as.character(year_type_temp)])
+      )%>%
     rowwise() %>%
     mutate(multi = length(matches) > 1,
            multi_not_blank = length(matches) > 1 & is_blank == FALSE,
            no_years = is.na(year_type),
-           no_years_not_blank = is.na(year_type) & is_blank == FALSE) %>%
+           no_years_not_blank = is.na(year_type) & is_blank == FALSE,
+           matches = ifelse(is.na(year_type), NA, matches)) %>%
     ungroup() %>%
-    select(-matches)
+    select(-c(matches, year_type_temp))
 
   year_NA_count <- sum(is.na(dat$year))
   none_count <- sum(invalid_flagged$no_years)
