@@ -1,0 +1,512 @@
+#' @title Runner for tidy_sheet via python
+#'
+#' @description Wrapper allowing tidy_sheet to be run in Python via
+#' subprocess.run()
+#'
+#' @param arg_values character string vector. The values for the following
+#' (order is important): "--args" (optional), input_filepath, sheet_name,
+#' output_filepath, settings, file_part. See example and the param descriptions
+#' in tidy_sheet for details.
+#' @param to_csv boolean. Default is TRUE. If FALSE the output is returned
+#' rather than being saved to csv.
+#'
+#' @returns saved csv file. File is saved to the specified output_filepath,
+#' and contains tidy data. Data has only one numeric value per row, with all
+#' other columns holding descriptive data for that value. Metadata are added to
+#' the output as columns including year, year_type, supplier, source, dataset,
+#' title, units, and vintage.
+#'
+#' @examples
+#' \dontrun{
+#' # If picking up args from the command line:
+#' arg_values <- commandArgs(trailingOnly = TRUE)
+#'
+#' # Without using the command line, this would look like e.g.:
+#' arg_values <- c(
+#'     "D:/some_file-2023_24.xlsx", "(?i)sheet1", "D:/some_file-2023_24.csv",
+#'     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2}",
+#'     "1"
+#'     )
+#' serializeJSON(arg_values)
+#' tidy_sheet(arg_values, FALSE)
+#' }
+#' @export
+tidy_sheet_via_subprocess <- function(arg_values, to_csv = TRUE) {
+
+  arg_names <- c(
+    "input_filepath", "tab_regex", "output_filepath",
+    "settings", "file_part"
+  )
+
+  # when tidy_sheet is called from python using subprocess --args will be the
+  # first arg_value, but this may not be the case for other calls.
+  if (arg_values[1] == "--args") {
+    arg_values <- arg_values[2:length(arg_values)]
+  }
+
+  # Join the argument names to their values passed from subprocess
+  message("Assigning values from Python to variables:")
+  for (i in seq_along(arg_names)) {
+    assign(arg_names[i], arg_values[i])
+    message(" - ", arg_names[i], ": ", arg_values[i])
+  }
+
+  tidy_sheet(
+    input_filepath, tab_regex, output_filepath, settings, file_part, to_csv
+    )
+
+}
+
+
+#' @title Runner for tidying messy Excel data.
+#'
+#' @description Runner script for pre-processing xlsx data so that it is in a
+#' tidy layout, with years formatted to be YYYY or YYYY-YY, vintage added as
+#' budget, provisinal, or final, metadata added as columns, and options to add
+#' or remove columns, and edit specified text.
+#'
+#' @details
+#' See the Wiki at https://github.com/ONSdigital/tidysheet for settings details.
+#'
+#' filepath must only contain a single year. Where the data are for
+#' a single year/financial year, the year in filepath should be the year the
+#' data refer to (i.e. not the publication date). The year given in the filepath
+#' must be the correct format (financial or calendar year).
+#'
+#' @param input_filepath character string. Path to the xlsx/xlsm source data.
+#' @param tab_regex character string. Regular expression to match the sheet name.
+#' @param output_filepath character string. Path to save the output csv to.
+#' @param settings flattened dictionary e.g. from json.dumps (see example).
+#' Must contain only the relevant variables (settings) for the specific
+#' dataset. The key is the name of the variable, and the value is the value.
+#' Where a setting does not have a value in the settings it is assigned NA.
+#' @param file_part integer. Defaults to 1. If a dataset is in two files, each
+#' with the same layout, the one that comes second will have file_part = 2.
+#' @param to_csv boolean. Default is TRUE. If FALSE the output is returned
+#' rather than being saved to csv.
+#'
+#' @returns saved csv file. File is saved to the specified output_filepath,
+#' and contains tidy data. Data has only one numeric value per row, with all
+#' other columns holding descriptive data for that value. Metadata are added to
+#' the output as columns including year, year_type, supplier, source, dataset,
+#' title, units, and vintage.
+#'
+#' @examples
+#' \dontrun{
+#' tidy_sheet(
+#'     "D:/some_file-2023_24.xlsx", "(?i)sheet1", "D:/some_file-2023_24.csv",
+#'     "{header_identifier: (?i)proportion, columns_to_create: desc1, desc2}",
+#'     "1", FALSE
+#'     )
+#' }
+#' @export
+tidy_sheet <- function(
+    input_filepath, tab_regex, output_filepath, settings, file_part = 1,
+    to_csv = TRUE
+    ) {
+
+  variable_names <- get_variable_names()
+
+  # json from Python comes into R as a string rather than as a dictionary that
+  # has keys and values We first need to un-flatten it, to reinstate the
+  # key:value structure.
+  dict_full <- string_to_dict(settings)
+  dict <- remove_invalid_args(dict_full, variable_names)
+
+  # we do not yet have access to the values of variables in the dict as
+  # it is passed to R as a dictionary. Variables that are not
+  # present in the dict are assigned NA.
+  for (variable in variable_names) {
+    values <- get_dict_item(variable, dict)
+    assign(variable, values)
+    if (all(!is.na(values))) {
+      message(" - ", variable, " : ", paste0(values, collapse = ", "))
+    }
+  }
+
+  # Each variable in dict is only specified once, so where there are
+  # multiple files to a dataset each variable may contain multiple arguments
+  # with one set of arguments for each file (eg MHCLG/DLUHC revenue expenditure
+  # bugdet which is now published in two parts, but historically was one file).
+  # In such cases, the multifile_arg separator value separates the args for each
+  # file, and file_part states which args to keep.
+  if (is.na(file_part)) {file_part <- 1}
+  message("Splitting arguments by file part.")
+  dict_split_by_file <- split_args_by_separator(dict, multifile_arg_separator)
+  file_dict <- select_relevant_args(dict_split_by_file, file_part)
+
+  # We need to re-assign the values to variable names now that only the args for
+  # the relevant file remain
+  message("Assigning values to variables for relevant file part.")
+  for (variable in variable_names) {
+    values <- get_dict_item(variable, file_dict)
+    original_values <- get_dict_item(variable, dict)
+    assign(variable, values)
+    if (all(!is.na(values)) & length(values) != length(original_values)) {
+      message(" - ", variable, " : ", paste0(values, collapse = ", "))
+    }
+  }
+
+  # Sometimes regular expressions wont pass through python via subprocess.run
+  # because they get read as instructions. In such cases we need to write a
+  # description that can be converted to a regular expression. However, if a
+  # regular expression can be used it should be. As we don't know which patterns
+  # need to be converted, we check them all, and just convert the ones that need
+  # to be.
+  pattern_names <- get_pattern_names()
+  for (variable in pattern_names) {
+    original_values <- get(variable)
+    values <- build_regex(get(variable))
+    if (all(original_values %in% values) == FALSE) {
+      assign(variable, values)
+      message(
+        "Pattern '",  paste0(original_values, collapse = "', '"),
+        "' translated to regular expression: '",
+        paste0(values, collapse = "', '"), "'.")
+    }
+  }
+
+  if (is.na(header_identifier)) {
+    stop("A pattern is required for identifying the first header row.")
+  }
+
+  ### Get information from the filename as that has been standardised already---
+  directory <- dirname(input_filepath)
+  supplier <- basename(dirname(directory))
+  source_group <- basename(directory)
+  filepath_split <- str_split(input_filepath, "-")[[1]]
+  dataset <- filepath_split[length(filepath_split) - 1]
+  year_from_filename <- get_year(input_filepath)
+
+  ### Import the data and get all required info from above the tables.----------
+  source_data <- get_data(input_filepath, tab_regex)
+  front_sheet <- get_data(input_filepath, tab_pattern_front_page)
+  release_number <- get_release_number(front_sheet$character)
+
+  # remove cells--------------------------------------------------------------
+  cells_removed <- remove_from_input(
+    source_data, cells_to_remove,
+    input_filepath, hidden_character_strings_to_remove
+    )
+
+  # separate the info above the table from the main table and get metadata------
+  full_sheet <- split_data_from_metadata(
+    cells_removed, header_identifier, header_identifier_instance,
+    header_row_offset
+  )
+  main_table <- full_sheet[['data']]
+  info_at_top_of_sheet <- full_sheet[['metadata']]
+
+  sheet_metadata <- get_metadata(
+    info_at_top_of_sheet, dropdown_pattern = dropdown_pattern
+    )
+
+  # title is assumed to be in the first populated cell
+  title <- sheet_metadata[['title']]
+  sheet_units <- sheet_metadata[['units']]
+  main_dropdown_value <- sheet_metadata[['dropdown']]
+  sheet_year <- sheet_metadata[['year']]
+
+  ##############################################################################
+  # everything from here relates to individual tables
+
+  table_list <- get_tables_as_list(
+    main_table, table_split_dirs, tables_to_split, table_split_patterns,
+    table_split_pattern_instances, table_split_pattern_offsets,
+    tables_to_process
+  )
+
+  if (length(table_list) < length(tables_to_process)) {
+    stop("Fewer tables found than the number of tables set to be processed.")
+  }
+
+  # go through tables individually, storing processed tables in all_tables------
+  all_tables <- NULL
+
+  dict_split_by_table <- split_args_by_separator(
+    file_dict, multitable_arg_separator
+  )
+
+  for (i in 1:length(table_list)) {
+
+    if (length(table_list) > 1) {
+      message("Processing table ", i, ".")
+    } else {
+      message("Processing single table.")
+    }
+
+    table_dict <- select_relevant_args(dict_split_by_table, i)
+
+    free_from_reserved_words <- check_reserved_words(
+      table_dict, c("table_split_dirs", exclude_from_reserved_word_check)
+    )
+
+    if (length(all.equal(table_dict, dict_split_by_table)) > 1){
+      message(
+        "Assigning values for table from the nesting dict to variables: "
+      )
+      for (variable in variable_names) {
+        values <- get_dict_item(variable, table_dict)
+        original_values <- get_dict_item(variable, file_dict)
+        assign(variable, get_dict_item(variable, table_dict))
+        if (all(!is.na(values))) {
+          message(" - ", variable, " : ", paste0(values, collapse = ", "))
+        }
+      }
+    }
+
+    # build regex from patterns again, as it will only build the regex if all
+    # elements of a variable start with ALT_, which, up till this point,
+    # would not have been the case for any variables containing the multitable
+    # arg separator.
+    for (variable in pattern_names) {
+      original_values <- get(variable)
+      values <- build_regex(get(variable))
+      if (all(original_values %in% values) == FALSE) {
+        assign(variable, values)
+        message(
+          "Pattern '",  paste0(original_values, collapse = "', '"),
+          "' translated to regular expression: '",
+          paste0(values, collapse = "', '"), "'.")
+      }
+    }
+
+    single_table <- table_list[[i]]
+
+    subtable_names <- get_subtitles(
+      single_table, subtable_title_column, subtable_title_patterns,
+      subtitle_offset, subtitle_horizontal_index
+    )
+
+    all_table_data <- split_data_from_metadata(
+      single_table, table_header_identifier,
+      table_header_identifier_instance, table_header_row_offset
+    )
+
+    main_table <- all_table_data[['data']]
+    info_above_table <- all_table_data[['metadata']]
+    table_first_header_row <- all_table_data[['split_row']]
+
+    # get info from above the table
+    table_metadata <- get_metadata(
+      info_at_top_of_sheet, dropdown_pattern = table_dropdown_pattern,
+      single_vintage = single_vintage, release_number = release_number,
+      table_dat = info_above_table, sheet_title = title,
+      sheet_units = sheet_units
+      )
+
+    units <- table_metadata[["units"]]
+    table_dropdown_value <- table_metadata[["dropdown"]]
+    table_title <- table_metadata[["title"]]
+    table_year <- table_metadata[["year"]]
+    vintage <- table_metadata[["vintage"]]
+
+    year_for_column <- get_year_for_use_in_data(
+      sheet_year, table_year, year_from_filename,
+      use_year_from_filename_over_year_above_data,
+      use_sheet_year_over_table_year, suppress_year_above_table_warning
+    )
+
+    table_data_cleaned <- clean_xlsx_cells_table_data(
+      main_table,
+      extend_row_pattern, extend_row_order, extend_row_with,
+      metadata_cells_to_remove_patterns,
+      populated_rows_to_check_for_metadata_to_remove,
+      combine_start_row_identifier, combine_end_row_identifier,
+      columns_to_remove_patterns, columns_to_remove_offset,
+      columns_to_create, table_first_header_row
+      )
+
+    unpivotted <- unpivot_data(
+      table_data_cleaned,
+      columns_to_create,
+      table_first_header_row,
+      tolerance,
+      left_headers,
+      minimum_number_of_consecutive_columns, right_block_offset,
+      header_to_split, header_split_to, split_points,
+      column_to_right_of_data_name_pattern,
+      tidy_data,
+      tidy_notes_name
+    )
+
+    missing_info_added <- fill_missing_info(
+      unpivotted, names(source_data),
+      fill_columns_column_names, fill_columns_fill_dirs,
+      single_value_names, single_value_values,
+      dropdown_name, main_dropdown_value, table_dropdown_name,
+      table_dropdown_value,
+      name_for_total_column, col_with_totals_pattern, total_column_fill_dir,
+      subtable_names,
+      name_for_group_row_column, name_for_nested_row_column,
+      col_with_row_headers_pattern, row_header_fill_dir, group_row_na_identifier,
+      POSIX_column,
+      vintage_with_year_col_pattern,
+      title, table_title, units, vintage, supplier, source_group, dataset
+      )
+
+    wording_edited <- edit_wording(
+      missing_info_added, replace_string_col, replace_string_from_col_patterns,
+      replace_string_to, replace_string_keep_original,
+      descriptors_to_standardise_year_in, year_for_column$year,
+      col_pattern_with_blanks_to_replace, col_pattern_to_replace_blanks_with
+      )
+
+    time_periods_added <- add_time_period_columns(
+      wording_edited, quarter_from_col_pattern, quarter_col_name,
+      year_from_pattern, fy_from_fy_end, fy_start_from_fy_end, fy_end_pattern,
+      calendar_year_to_fy_start, q1_is_jan_to_mar, quarter_col_pattern,
+      month_col_pattern,
+      year_col_pattern, single_year_of_data, year_for_column,
+      single_year_overrides_all, multi_year_range_is_not_valid
+      )
+
+    # --- initial removal of rows that might not be identifiable once columns are joined
+    NA_rows_removed <- drop_rows_with_NA(
+      time_periods_added, col_patterns_to_drop_NA_rows
+    )
+
+    # --- join columns
+    columns_concatenated <- combine_columns(
+      NA_rows_removed, columns_to_combine_patterns,
+      columns_to_combine_combined_names, columns_to_combine_counts
+    )
+
+    # --- rename entries where the column name was duplicated
+    # the names of the columns created by un-pivotting:
+    cols_to_group_by <- setdiff(names(columns_concatenated), names(source_data))
+    duplicates_renamed <- rename_duplicates(
+      columns_concatenated, cols_to_group_by, rename_duplicate_in_col,
+      rename_duplicate_pattern, rename_duplicate_index, rename_duplicate_prefix,
+      rename_duplicate_expected_freq
+    )
+
+    columns_and_rows_removed <- remove_from_output(
+      duplicates_renamed, col_patterns_with_values_to_drop,
+      value_patterns_to_drop, names(source_data)
+    )
+
+    columns_renamed <- rename_columns(
+      columns_and_rows_removed, exclude_names = names(source_data),
+      patterns = columns_to_rename_patterns, new_names = columns_to_rename_names
+    ) %>%
+      rename_value_columns() %>%
+      # source referred to as source_group originally as source() is a function
+      rename(source = source_group)
+
+    names(columns_renamed) <- tolower(str_squish(names(columns_renamed)))
+
+    check_for_duplicate_names(columns_renamed)
+
+    all_tables <- bind_rows(all_tables, columns_renamed)
+  }
+
+  if (to_csv) {
+    write.csv(all_tables, output_filepath, row.names = FALSE,
+              fileEncoding = "UTF-8")
+    message("File saved as ", output_filepath)
+  } else {
+    return(all_tables)
+  }
+
+}
+
+
+#' @title Get the names of all possible arguments
+#'
+#' @description So that we can assign NA to any unspecified arguments, this
+#' function provides a full list of all arguments.
+#'
+#' @returns character string vector of all arg names.
+get_variable_names <- function() {
+
+  arg_names <- c(
+    "cells_to_remove",
+    "hidden_character_strings_to_remove",
+    "header_identifier", "header_identifier_instance", "header_row_offset",
+    "use_year_from_filename_over_year_above_data",
+    "use_sheet_year_over_table_year",
+    "suppress_year_above_table_warning",
+    "dropdown_pattern", "dropdown_name", "table_dropdown_pattern",
+    "table_dropdown_name",
+    "table_split_dirs", "tables_to_split", "table_split_patterns",
+    "table_split_pattern_instances", "table_split_pattern_offsets",
+    "tables_to_process", "multitable_arg_separator",
+    "exclude_from_reserved_word_check",
+    "subtable_title_column", "subtable_title_patterns", "subtitle_offset",
+    "subtitle_horizontal_index",
+    "table_header_identifier", "table_header_identifier_instance",
+    "table_header_row_offset",
+    "single_vintage", "vintage_with_year_col_pattern",
+    "extend_row_pattern", "extend_row_order", "extend_row_with",
+    "metadata_cells_to_remove_patterns",
+    "populated_rows_to_check_for_metadata_to_remove",
+    "combine_start_row_identifier", "combine_end_row_identifier",
+    "columns_to_remove_patterns", "columns_to_remove_offset",
+    "columns_to_create", "tolerance",
+    "left_headers", "header_to_split", "header_split_to", "split_points",
+    "column_to_right_of_data_name_pattern",
+    "fill_columns_column_names", "fill_columns_fill_dirs",
+    "single_value_names", "single_value_values",
+    "name_for_total_column", "col_with_totals_pattern",
+    "total_column_fill_dir",
+    "name_for_group_row_column", "name_for_nested_row_column",
+    "col_with_row_headers_pattern", "row_header_fill_dir",
+    "group_row_na_identifier", "POSIX_column",
+    "replace_string_col", "replace_string_from_col_patterns",
+    "replace_string_to",
+    "replace_string_keep_original",
+    "descriptors_to_standardise_year_in",
+    "col_pattern_with_blanks_to_replace", "col_pattern_to_replace_blanks_with",
+    "rename_duplicate_in_col", "rename_duplicate_pattern",
+    "rename_duplicate_index", "rename_duplicate_prefix",
+    "rename_duplicate_expected_freq",
+    "quarter_from_col_pattern", "quarter_col_name",
+    "year_from_pattern", "fy_from_fy_end", "fy_start_from_fy_end",
+    "fy_end_pattern",
+    "calendar_year_to_fy_start", "q1_is_jan_to_mar", "quarter_col_pattern",
+    "month_col_pattern", "year_col_pattern", "single_year_of_data",
+    "year_for_column", "single_year_overrides_all",
+    "multi_year_range_is_not_valid",
+    "columns_to_rename_patterns", "columns_to_rename_names",
+    "col_patterns_to_drop_NA_rows",
+    "columns_to_combine_patterns", "columns_to_combine_combined_names",
+    "columns_to_combine_counts",
+    "col_patterns_with_values_to_drop", "value_patterns_to_drop",
+    "multifile_arg_separator", "tab_pattern_front_page",
+    "tidy_data", "tidy_notes_name",
+    "minimum_number_of_consecutive_columns", "right_block_offset"
+  )
+
+  return(arg_names)
+}
+
+
+#' @title Get the names of variables that can be regular expressions
+#'
+#' @description So that we can convert pattern strings to regular expressions
+#' for the correct variables (see build_regex).
+#' Note that split_points is intentionally not included because the pattern
+#' descriptions used to build the regular expression are themselves required
+#' in the split_to_multiple_columns functions.
+#'
+#' @returns character string vector of variable names.
+get_pattern_names <- function() {
+  pattern_names <- c(
+    "header_identifier", "dropdown_pattern", "table_dropdown_pattern",
+    "table_split_patterns", "subtable_title_patterns",
+    "table_header_identifier","extend_row_pattern",
+    "metadata_cells_to_remove_patterns", "columns_to_remove_patterns",
+    "column_to_right_of_data_name_pattern",
+    "col_with_totals_pattern", "col_with_row_headers_pattern",
+    "replace_string_from_col_patterns", "col_pattern_with_blanks_to_replace",
+    "col_pattern_to_replace_blanks_with", "rename_duplicate_pattern",
+    "quarter_from_col_pattern", "year_from_pattern",
+    "fy_end_pattern", "quarter_col_pattern", "month_col_pattern",
+    "year_col_pattern", "columns_to_rename_patterns",
+    "col_patterns_to_drop_NA_rows", "columns_to_combine_patterns",
+    "col_patterns_with_values_to_drop", "value_patterns_to_drop",
+    "tab_pattern_front_page", "vintage_with_year_col_pattern"
+  )
+  return(pattern_names)
+}

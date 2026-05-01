@@ -1,0 +1,1096 @@
+#' @title Build regex patterns for years between 1900 and 2099
+#'
+#' @description Create regular expression patterns that match calendar and
+#' financial years from the 20th and 21st centuries. Will not match years that
+#' are either immediately preceded or followed by a dash. Acceptable financial
+#' year formats are:
+#' YYYY-YY, YYYY/YY, YYYY_YY, YYYY to YY, YYYYtoYY,
+#' YYYY-YYYY, YYY/YYYY, YYYY_YYYY, YYYY to YYYY, YYYYtoYYYY.
+#' Acceptable calendar year format is: YYYY.
+#'
+#' @returns named vector with calendar and financial patterns Different year
+#' types can be accessed by subsetting for 'calendar', 'financial',
+#' 'long_form_financial', 'short_form_financial', and 'fy_separators'.
+#'
+#' @examples
+#' \dontrun{
+#' patterns <- make_year_patterns()
+#' }
+#' @export
+make_year_patterns <- function () {
+
+  century <- "19|20"
+
+  not_preceded_by_number_or_letter <- "(?<![0-9A-Za-z])"
+
+  two_numbers <- "\\d{2}"
+  followed_by_two_numbers <- "(?=\\d{2})"
+  followed_by_four_numbers <- "(?=\\d{4})"
+  four_numbers <- paste0("(", century, "\\d{2})",  collapse = "")
+  two_or_four_numbers <- paste0("((", century, "\\d{2})|", "\\d{2})",  collapse = "")
+
+  not_followed_by_number_or_letter <- "(?![0-9A-Za-z])"
+  not_followed_by_number_or_letter_except_q <- "(?![0-9A-PR-Za-pr-z])"
+  not_followed_by_dash <- "(?![-])"
+
+  dash <- "\\s{0,3}-\\s{0,3}"
+  underscore <- "\\s{0,3}_\\s{0,3}"
+  slash <- "\\s{0,3}\\/\\s{0,3}"
+  to <- "\\s{0,3}to\\s{0,3}"
+  to_with_underscores <- "\\s{0,3}_\\s{0,3}to\\s{0,3}_\\s{0,3}"
+  to_with_dashes <- "\\s{0,3}-\\s{0,3}to\\s{0,3}-\\s{0,3}"
+
+
+  fy_separators <- paste0(
+    "((",
+    dash, ")|(", underscore, ")|(", slash, ")|(",
+    to, "|", to_with_underscores, ")|(", to_with_dashes,
+    "))"
+  )
+
+  not_preceded_by_year_and_separator <- paste0(
+    "(?<![0-9]{4}", dash, ")(?<![0-9]{4}", underscore, ")(?<![0-9]{4}", slash,
+    ")(?<![0-9]{4}",  to, ")(?<![0-9]{4}",  to_with_underscores,
+    ")(?<![0-9]{4}", to_with_dashes, ")"
+  )
+
+  yyyy <- "[1-2][0-9]{3}"
+  yy <- "[0-9]{2}"
+
+  non_number_or_string_end <- "([^0-9]|$)"
+
+  not_followed_by_separator_and_yyyy <- paste0(
+    "(?!",
+    dash, yyyy, non_number_or_string_end, ")(?!",
+    underscore, yyyy, non_number_or_string_end, ")(?!",
+    slash, yyyy, non_number_or_string_end, ")(?!",
+    to, yyyy, non_number_or_string_end, ")(?!",
+    to_with_underscores, yyyy, non_number_or_string_end, ")(?!",
+    to_with_dashes, yyyy, non_number_or_string_end,
+    ")"
+  )
+
+  not_followed_by_separator_and_yy <- paste0(
+    "(?!",
+    dash, yy, non_number_or_string_end, ")(?!",
+    underscore, yy, non_number_or_string_end, ")(?!",
+    slash, yy, non_number_or_string_end, ")(?!",
+    to, yy, non_number_or_string_end, ")(?!",
+    to_with_underscores, yy, non_number_or_string_end, ")(?!",
+    to_with_dashes, yy, non_number_or_string_end,
+    ")"
+  )
+
+  or_space <- "|(\\s{0,3})"
+
+  calendar_pattern <- paste(
+    c(not_preceded_by_year_and_separator,
+      not_preceded_by_number_or_letter,
+      "(", century, ")",
+      followed_by_two_numbers, two_numbers,
+      not_followed_by_number_or_letter_except_q,
+      not_followed_by_separator_and_yyyy,
+      not_followed_by_separator_and_yy
+    ),
+    collapse = ""
+  )
+
+  financial_pattern <- paste(
+    c(not_preceded_by_number_or_letter, "(", century, ")",
+      followed_by_two_numbers, two_numbers, "(", fy_separators, or_space, ")",
+      two_or_four_numbers,
+      not_followed_by_number_or_letter, not_followed_by_dash),
+    collapse = ""
+  )
+
+  long_form_financial <- paste(
+    c(not_preceded_by_number_or_letter, "(", century, ")",
+      followed_by_two_numbers, two_numbers, "(", fy_separators, or_space, ")",
+      followed_by_four_numbers, four_numbers,
+      not_followed_by_number_or_letter, not_followed_by_dash),
+    collapse = ""
+  )
+
+  short_form_financial <- paste(
+    c(not_preceded_by_number_or_letter, "(", century, ")",
+      two_numbers, fy_separators, two_numbers,
+      not_followed_by_number_or_letter, not_followed_by_dash),
+    collapse = ""
+  )
+
+  year_patterns <- c(
+    "calendar" = calendar_pattern,
+    "financial" = financial_pattern,
+    "long_form_financial" = long_form_financial,
+    "short_form_financial" = short_form_financial,
+    "fy_separators" = fy_separators
+  )
+
+  return(year_patterns)
+}
+
+
+#' @title Build regex patterns for quarters 1 through 4
+#'
+#' @description Create regular expression patterns that match quarters. NOTE:
+#' The pattern has been designed for use where no other individual numbers
+#' between 1 and 4 are expected e.g. the returned pattern would correctly
+#' identify quarters in a vector containing year and quarter (e.g. 2024 Q1), but
+#' not in a descriptive paragraph e.g. ('This is the 1st release of Q2 data'
+#' would return both 1 and 2).
+#'
+#' @returns named vector. Currentluy only one pattern is created: 'single' which
+#' can be used to identify single quarters. No pattern is yet returned for
+#' quarter ranges such as Q1-Q3, but this could be a future addition (hence the
+#' return of a named vector rather than a single value).
+#'
+#' @examples
+#' \dontrun{
+#' dat <- c("Q1", "1", ".1", "quarter 1", "q1",
+#'            "1-3", "1 - 3", "q1-Q3", "q1 - Q3", "Q1to3", "Q1   to Q3", "13",
+#'           "12-3", "Q1 note 2")
+#' patterns <- make_quarter_patterns()['single']
+#' str_extract_all(dat, patterns)
+#' }
+#' @export
+
+make_quarter_patterns <- function() {
+
+  not_preceded_by_a_number <- "(?<![0-9])"
+  not_preceded_by_dash <- "(?<!(?i)\\-\\s{0,3})"
+  not_preceded_by_dash_q <- "(?<!(?i)\\-\\s{0,3}q)\\s{0,3}"
+  not_preceded_by_to <- "(?<!(?i)to\\s{0,3})"
+  not_preceded_by_to_q <- "(?<!(?i)to\\s{0,3}q\\s{0,3})"
+  quarters <- "([1-4])"
+  not_followed_by_a_number <- "(?![0-9])"
+  not_followed_by_a_dash <- "(?![\\-])"
+  not_followed_by_a_spaced_dash <- "(?![\\s*][\\-][\\s*])"
+  not_followed_by_to <- "(?!\\s*to\\s*)"
+
+  single_quarter <- paste0(
+    not_preceded_by_a_number,
+    not_preceded_by_dash,
+    not_preceded_by_dash_q,
+    not_preceded_by_to,
+    not_preceded_by_to_q,
+    quarters,
+    not_followed_by_a_number,
+    not_followed_by_a_dash,
+    not_followed_by_a_spaced_dash,
+    not_followed_by_to
+    )
+
+  # future development could create a pattern for quarter ranges that would
+  # match c("1-3", "1 - 3", "q1-Q3", "q1 - Q3", "Q1to3", "Q1   to Q3") but not
+  # c("Q1", "1", ".1", "quarter 1", "q1", "12-13")
+
+  return(c('single' = single_quarter))
+}
+
+
+#' @title Make regex patterns for months and quarters in Q1 of a calendar year
+#'
+#' @description Create regular expressions that can be used to identify the
+#' rows related to the months Jan to Mar (Q1 of a calendar year).
+#'
+#' @details
+#' This function creates a regular expression that matches the months and
+#' quarters belonging to the months Jan to Mar. The part of the pattern relating
+#' to quarter values is therefore different depending on whether Q1 in the data
+#' refers to Jan to Mar, or Apr to Jun.
+#'
+#' @param period Must be 'all', 'quarter', or 'month'. Default is 'all'.
+#' @param q1_jan_to_mar bool, default is TRUE. If FALSE, it is assumed that
+#' Q4 is jan to mar, and Q1 is the start of the financial year.
+#'
+#' @return a regular expression pattern for the selected period(s)
+#'
+#' @examples
+#' \dontrun{
+#' make_calendar_q1_month_and_quarter_patterns(q1_jan_to_mar=FALSE)
+#' }
+make_calendar_q1_month_and_quarter_patterns <- function(
+    period = "all", q1_jan_to_mar = TRUE
+) {
+
+  if (!period %in% c("all", "quarter", "month")) {
+    stop("period must be 'all', 'quarter' or 'month', not '", period, "'.")
+  }
+
+  if (is.na(q1_jan_to_mar) | q1_jan_to_mar=="NA") {q1_jan_to_mar <- TRUE}
+
+  if (q1_jan_to_mar) {
+    end_year_quarter_patterns <- "((?i)q1(?!-)|1(?!-))" # not followed by hyphen
+  } else {
+    end_year_quarter_patterns <- "((?<!-)(?i)q4|4)" # not preceded by hyphen
+  }
+
+  end_year_quarter_month_patterns <- "((?i)jan(?s).*\\w)"
+  end_year_month_patterns <- "((?i)jan|feb|mar)"
+
+  end_year_all_quarter_patterns <- paste0(end_year_quarter_patterns, "|",
+                                          end_year_quarter_month_patterns)
+  end_year_items_pattern <- paste0(end_year_quarter_patterns, "|",
+                                   end_year_quarter_month_patterns, "|",
+                                   end_year_month_patterns)
+  if (period == "all") {
+    return (end_year_items_pattern)
+  } else if (period == "quarter") {
+    return (end_year_all_quarter_patterns)
+  } else {
+    return (end_year_month_patterns)
+  }
+
+}
+
+
+#' @title Get and compare year from above the data to a set year
+#'
+#' @description This function is required for data that relate to a single year.
+#' Year is unlikely to be given as a column in such datasets so we need to get
+#' the year from the information above the data instead (either at the top of
+#' sheet or directly above the table if there are multiple tables in the sheet).
+#' In public sector we can also get year from the file name. This function gets
+#' the year from above the data, compares in to the year in the file name, and
+#' returns the preferred year. If a mismatch is found, this is flagged.
+#'
+#' @details
+#' This function finds years in the info above the data (dat) that are of the
+#' same type (calendar/financial) as the year in the file name. It compares them
+#' to the year in the file name, and if they are different, it selects one based
+#' on `use_filename_year`.
+#'
+#' If multiple unique years are found and one of them matches the file name, the
+#' year from the file name is returned.
+#'
+#' If multiple unique years are found, none of them match the file name, and
+#' use_filename_year is FALSE, the first of either the year at the top of the
+#' sheet or the first of the year above the table is used and the mismatch is
+#' flagged. By default the year above the table is preferred to the year at the
+#' top of the sheet if both exist. However this can be changed by setting
+#' prefer_sheet_year to TRUE.
+#'
+#' If no years are found above the data, or if use_filename_year is TRUE, the
+#' filename year is used.
+#'
+#' Mismatches are flagged rather than raising a warning because the user only
+#' needs to be given the warning if the variable is actually used. For example,
+#' if year is already a column in the data the returned variable will not be
+#' used and it does not matter if multiple years are mentioned in the metadata.
+#'
+#' @param sheet_year character string vector. Years found at the top of the
+#' sheet above the first header row.
+#' @param table_year character string vector. Years found above an individual
+#' table before the table's first header row.
+#' @param filename_year character string.
+#' @param use_filename_year boolean. Default is FALSE. If FALSE and there is a
+#' mismatch, the year found above the table will be returned.If TRUE and no year
+#' that is found in the information above the table matches the filename year,
+#' the filename year will be returned.  In pub sec this variable is specified
+#' by use_year_from_filename_over_year_above_data.
+#' @param prefer_sheet_year boolean. Default is FALSE. Only used when there is a
+#' mismatch between the year(s) given at the top of the sheet and the years
+#' found above a table. If either are NA, this variable is not used. If FALSE,
+#' the year from above the table is used. If TRUE, the year from the top of the
+#' sheet is used. In pub sec this variable is specified by
+#' use_sheet_year_over_table_year.
+#' @param suppress_warning boolean. Default is FALSE. If TRUE, warnings about
+#' mismatching years between the filename and the information above the data
+#' will be turned off. In pub sec this variable is specified by
+#' suppress_year_above_table_warning. It is required because there are some
+#' cases where we expect a mismatch and giving a warning would be confusing to
+#' users.
+#'
+#' @returns list of 'year' and 'warn': 'year' is a character string, 'warn' is
+#' boolean. If TRUE, a mismatch was found between the filename year and the year
+#' found above the data. This is given as a boolean output rather than raising
+#' a warning, because the warning is only relevant if the year output is added
+#' to the data as a column. If 'warn' is TRUE a warning is raised if and when
+#' 'year' is added as a column to the data.
+#'
+#' @examples
+#' \dontrun{
+#' filename <- "D:/data-2024_25.xlsx"
+#' get_year_for_use_in_data(
+#'     "2024-25", "2025-26", use_filename_year = FALSE
+#'     )
+#' get_year_for_use_in_data(
+#'     "Title 2026", "2024_25", use_filename_year = TRUE
+#'     )
+#' }
+#' @export
+get_year_for_use_in_data <- function(
+    sheet_year, table_year, filename_year=NA, use_filename_year = FALSE,
+    prefer_sheet_year = FALSE, suppress_warning = FALSE
+){
+
+  message(
+    "Getting year for use in the data if year is not already in the data as ",
+    "a column."
+  )
+
+  if (length(unique(filename_year)) > 1) {
+    warning(
+      "More than one year found in the filename: '",
+      paste0(filename_year, collapse = "', '"), "'. Year selection is based ",
+      "on the assumption that the year in the filename is likely to apply ",
+      "to all data if there is no year column in the source data. As such, ",
+      "the years from the file name will be ignored for this data."
+      )
+    filename_year <- NA
+    multiple_filename_years <- TRUE
+  } else {
+    filename_year <- unique(filename_year)
+    multiple_filename_years <- FALSE
+  }
+
+  use_filename_year <- replace_na(use_filename_year, FALSE)
+  prefer_sheet_year <- replace_na(prefer_sheet_year, FALSE)
+  suppress_warning <- replace_na(suppress_warning, FALSE)
+
+  filename_year_standardised <- standardise_year(filename_year)
+  filename_year_type <- get_year_type(filename_year)
+
+  if (
+    all(is.na(filename_year_standardised), multiple_filename_years == FALSE)
+    ) {
+    warning("No year found in the file name. Please contact a developer.")
+  }
+
+  sheet_standardised <- refine_metadata_year(sheet_year, filename_year_type)
+  table_standardised <- refine_metadata_year(table_year, filename_year_type)
+
+  year_above_data <- select_year_from_sheet_or_table(
+    sheet_standardised, table_standardised, prefer_sheet_year
+  )
+
+  if (all(is.na(year_above_data), is.na(filename_year_standardised))) {
+    message(
+      "No years found in the character string information above the data ",
+      "or in the filename."
+    )
+    return(list("year" = NA, "warn" = FALSE))
+
+  } else if (all(is.na(filename_year_standardised))) {
+    message(
+      "No years found in the filename. Returning year from above the data"
+    )
+    year_info <- choose_from_multiple_years(year_above_data)
+
+    if (suppress_warning) { year_info[["warn"]] <- FALSE }
+    return(year_info)
+
+  } else if (all(is.na(year_above_data))) {
+    message(
+      "No years found in the character string information above the data. ",
+      "Returning year from filename."
+    )
+    return(list("year" = filename_year_standardised, "warn" = FALSE))
+  }
+
+  all_years_match <- all(
+    year_above_data == filename_year_standardised, na.rm = TRUE
+  )
+  any_years_match <- any(
+    year_above_data == filename_year_standardised, na.rm = TRUE
+  )
+
+  if (all_years_match) {
+    message(
+      "Year from file name matches the year from info above the data: ",
+      year_above_data, "."
+    )
+    year <- filename_year_standardised
+    year_warning_if_used_in_column <- FALSE
+
+  } else if (all(any_years_match, use_filename_year)) {
+
+    message(
+      "Not all years found above the data match the year in the filename, ",
+      "but the year in the filename was amongst the years found, so is ",
+      "assumed to be correct."
+    )
+    year <- filename_year_standardised
+    year_warning_if_used_in_column <- TRUE
+
+  } else if (all(any_years_match, !use_filename_year)) {
+
+    message(
+      "Not all years found above the data match the year in the filename. ",
+      "The year in the filename was amongst the years found, but ",
+      "use_filename_year is set to the default of FALSE so the first of the ",
+      "other options has been returned. If no warning about this is given ",
+      "when year column is created, or if the year column in the data is ",
+      "correct no further action needs to be taken."
+    )
+    possibilities <- year_above_data[
+      year_above_data != filename_year_standardised
+    ]
+    year <- possibilities[1]
+    year_warning_if_used_in_column <- TRUE
+
+  } else if (use_filename_year) {
+    message(
+      "No years found above the data match the filename year. The year in ",
+      "the filename will be returned. If no warning about this is given ",
+      "when year column is created, or if the year column in the data is ",
+      "correct no further action needs to be taken. However if it is wrong a ",
+      "developer may need to edit use_year_from_filename_over_year_above_data."
+    )
+    year <- filename_year_standardised
+    year_warning_if_used_in_column <- TRUE
+
+  } else if (length(year_above_data) == 1) {
+    message(
+      "Returning year found above the data. This does not match the ",
+      "year in the file name. However, if no warning about this is given ",
+      "when year column is created, or if the year column in the data is ",
+      "correct no further action needs to be taken."
+    )
+    year <- year_above_data
+    year_warning_if_used_in_column <- TRUE
+
+  } else if (length(year_above_data) > 1) {
+    message(
+      "More than one year found in the information above the data. None of ",
+      "these match the year in the file name."
+    )
+    year_info <- choose_from_multiple_years(year_above_data)
+    year <- year_info[["year"]]
+    year_warning_if_used_in_column <- year_info[["warn"]]
+
+  } else {
+    stop("No conditions have been met, please contact a developer for a fix.")
+  }
+
+  if (suppress_warning) {
+    year_warning_if_used_in_column <- FALSE
+  }
+
+  return (list("year" = year, "warn" = year_warning_if_used_in_column))
+}
+
+
+#' @title Refine year taken from sheet or table metadata
+#'
+#' @description
+#' Get the year(s) that match(es) the preferred year type, standardise
+#' them, and sort by chronological order.
+#'
+#' @details
+#' Used by get_year_for_use_in_data.
+#'
+#' The preferred year type is the type of year given in the filename. If a year
+#' is given in the file name, and the year type of the year provided does not
+#' match it, then NA is returned
+#'
+#' Note: If there is no year in the filename, the financial year is preferred,
+#' but the calendar year is still returned if not financial year is available
+#' (this is handled in get_year).
+#'
+#' @param years vector of character strings, each of which is a year in either
+#' calendar or financial year format.
+#' @param preferred characters string. Financial or calendar.
+#'
+#' @returns character string vector of years or NA (see details). Years are
+#' returned in chronological order.
+#'
+#' @examples
+#' \dontrun{
+#' refine_metadata_year(c("2022-23", "2021-22", "2022"), "financial")
+#' refine_metadata_year(c("2022-23", "2021-22", "2022"), NA)
+#' refine_metadata_year(c("2022-23", "2021-22", "2022"), "calendar")
+#' }
+#'
+refine_metadata_year <- function(years, preferred) {
+
+  if (all(is.na(years))) {
+    return(years)
+  }
+
+  message("Refining year(s) found in information above tables.")
+
+  preferred_year <- get_year(
+    years, prefer = preferred, type = "single"
+  )
+
+  if (any(length(preferred_year) == 0, is.na(preferred_year))) {
+    warning(
+      "The year from above the data is not of the same type (", preferred,
+      ") as determined by the year in the file name, it will therefore not be ",
+      "considered for use in the year column."
+    )
+    return(NA)
+
+  } else if (length(preferred_year) > 1) {
+    message(
+      "More than one year found: '",
+      paste0(preferred_year, collapse = "', "), "'."
+    )
+  }
+
+  standardised <- standardise_year(preferred_year)
+
+  return(sort(standardised))
+}
+
+
+#' @title Select the year from either the sheet or table metadata
+#'
+#' @description
+#' Select between two provided year vectors. One will be taken from the metadata
+#' at the top of the sheet, the other from the metadata directly above the
+#' table.
+#'
+#' If they are the same, just return one. If one is NA, return the other. If
+#' they are different return the one stated by the prefer_sheet_year setting.
+#'
+#' @details
+#' Used by get_year_for_use_in_data. Usually only one of sheet_year and
+#' table_year will exist, unless there are multiple tables in a sheet, and each
+#' has the year the data relates to in the table title. In such as case, this
+#' function will by default return the table title year rather that the year at
+#' the top of the sheet. In pub sec, if there is no year column in the source
+#' data, the year from get_year_for_use_in_data will be put in the output year
+#' column.
+#'
+#' If the year given in the information at the top of the sheet relates to all
+#' tables, but some other year is mentioned above an individual table, the
+#' prefer_sheet_year setting allows users to specify that the year at the top
+#' of the sheet should be used instead.
+#'
+#' @param sheet_year character vector of years taken from the top of the sheet.
+#' @param table_year character vector of years taken from above the table.
+#' @param prefer_sheet_year boolean default is FALSE. If TRUE, and there is a
+#' year given in the information above the sheet, instead of returning the year
+#' from above the table, the year from the top of the sheet will be used.
+#'
+#' @returns single character vector of years.
+#'
+#' @examples
+#' \dontrun{
+#' select_year_from_sheet_or_table(c("2022-23", "2026-27"), "2024-25")
+#' }
+#'
+select_year_from_sheet_or_table <- function(
+    sheet_year, table_year, prefer_sheet_year = FALSE
+){
+
+  if (is.na(prefer_sheet_year)) { prefer_sheet_year <- FALSE }
+
+  all_years_over_data_match <- all(sheet_year == table_year, na.rm = FALSE)
+  all_years_over_data_match <- replace_na(all_years_over_data_match, FALSE)
+  sheet_is_na <- all(is.na(sheet_year))
+  table_is_na <- all(is.na(table_year))
+  table_and_sheet_are_na <- all(sheet_is_na, table_is_na)
+
+  if (table_and_sheet_are_na) {
+    year <- NA
+  } else if (any(all_years_over_data_match, table_is_na)) {
+    year <- sheet_year
+  } else if (sheet_is_na) {
+    year <- table_year
+  } else if (prefer_sheet_year) {
+    message(
+      "Year at the top of the sheet (", paste(sheet_year, collapse = ","),
+      ") does not match year above the table (",
+      paste(table_year, collapse = ","), "). Choosing sheet year (can be ",
+      "changed using the prefer_sheet_year setting)."
+      )
+    year <- sheet_year
+  } else {
+    message(
+      "Year at the top of the sheet (", paste(sheet_year, collapse = ","),
+      ") does not match year above the table (",
+      paste(table_year, collapse = ","), "). Choosing table year (can be ",
+      "changed using the prefer_sheet_year setting)."
+    )
+    year <- table_year
+  }
+
+  return (year)
+}
+
+
+#' @title Select the first year if multiple unique years are given
+#'
+#' @description
+#' Select the first year if multiple years are given and flag that a warning
+#' is required. If only one year is provided, set the warning flag to FALSE.
+#'
+#' @details
+#' This is used by the get_year_for_use_in_data function, which returns both a
+#' year and a flag for if a warning of multiple options is needed. A flag is
+#' created rather than just raising a warning because the user only needs to
+#' be given the warning if the variable is actually used. For example, if year
+#' is already a column in the data the returned variable will not be used and
+#' it does not matter if multiple years are mentioned in the metadata.
+#'
+#' Whilst the output of this is currently very simple, this function could be
+#' expanded in the future to include a setting that the user can control to say
+#' whether to return e.g. the last element instead of the first. At the moment
+#' doing so would be overcomplicating it as the issue has not yet arisen.
+#'
+#' @param years character vector.
+#'
+#' @returns named list with a character vector of length 1 for 'year' and a
+#' corresponding boolean vector for 'warn'.
+#'
+#' @examples
+#' \dontrun{
+#' choose_from_multiple_years(c("2021-22", "2022-23"))
+#' choose_from_multiple_years("2021-22")
+#' choose_from_multiple_years(NA)
+#' }
+choose_from_multiple_years <- function(years) {
+
+  years <- years[!is.na(years)]
+
+  if (length(years) == 0) {
+    return (NA)
+  }
+
+  if (length(unique(years)) == 1) {
+
+    year <- unique(years)
+    warn <- FALSE
+
+  } else if (length(unique(years)) > 1) {
+    message(
+      "There is more than one year. The first will be used: ",
+      unique(years)[1]
+    )
+    warn <- TRUE
+  } else {
+    warn <- FALSE
+  }
+
+  year_info <- list("year" = years[1], "warn" = warn)
+
+  return(year_info)
+}
+
+
+#' @title Get first financial or calendar year from each entry in a given column
+#'
+#' @description Get the first year from a specified column or vector and put it
+#' in a new column called 'year' (can be changed using new_col arg).
+#'
+#' @details
+#' If a string contains more than one year (of the same type), only the first is
+#' put in 'year'.
+#'
+#' If `prefer` and `type` are not specified, financial years will be returned
+#' where available, but where no financial year is found, calendar year will be
+#' returned.
+#'
+#' If `type` = 'single' year will be restricted to either calendar or financial
+#' years (whichever is set by prefer).
+#'
+#' This function is used in multiple places in tidysheet. It differs from
+#' extract_all_years in that it adds a column to a dataframe, returning the
+#' first year of the preferred type for each row. In contrast, extract_all_years
+#' returns a vector of all years found regardless of row.
+#'
+#' @param dat dataframe or vector. If a dataframe, it must contain a column with
+#' the name from `from`.
+#' @param from character string or NA. The name of the column containing year
+#' information if dat is a dataframe, otherwise NA.
+#' @param new_col character string. The name of the column the new information
+#' will be stored in. Default is 'year'
+#' @param prefer character string. Either 'financial' (default), or 'calendar'.
+#' If type is 'both' and both a calendar year and a financial year are found in
+#' a single entry, this determines which is chosen. If type is 'single', prefer
+#' determines whether year represents calendar year or financial year. If only
+#' years of a different type to prefer are provided, and type is single, no
+#' years are returned.
+#' @param type character string. Either 'both' (default), or 'single'. If
+#' 'single', the new year column will contain only calendar years or only
+#' financial years (depending on prefer). If 'both', the year column can
+#' contain both types.
+#'
+#' @returns dat with a new column called yearif dat is a dataframe, or a vector
+#' of years if input is a vector.
+#'
+#' @examples
+#' \dontrun{
+#' dat_fy <- data.frame(
+#'   "year_and_vintage" = c("2019-20, 2020-21 budget", "this is 2020",
+#'                          "2020-21 provisional", "2020 2021")
+#'   )
+#' dat_calendar_only <- data.frame(
+#'   "year_and_vintage" = c("2019 budget", "this is 2020",
+#'                          "2020 provisional", "2020 2021")
+#'   )
+#' dat_mixed <- data.frame(
+#'   "year_and_vintage" = c("2019 and 2020-21 ", "this is 2020-21",
+#'                          "2020 provisional", "2020 2021")
+#'   )
+#' get_year(dat_fy, "year_and_vintage")
+#' get_year(dat_calendar_only, "year_and_vintage")
+#' get_year(dat_mixed, "year_and_vintage")
+#' get_year(c("a 2020", "c 1985"))
+#' }
+#' @export
+get_year <- function (
+    dat, from = NA, new_col = "year", prefer = "financial", type = "both"
+    ) {
+
+  if (is.na(prefer)) {
+    # If prefer is not provided, it is later assumed that financial is preferred,
+    # and we change type to 'either' so that calendar year is still returned if
+    # financial year is not present. type 'both' is not changed to either,
+    # because if 'both' has been specified, both should be returned if they are
+    # available.
+    prefer <- "financial"
+    type <- ifelse(type == "single", "either", type)
+  }
+
+  if (! type %in% c("single", "either", "both")) {
+    stop(
+      "type must be one of 'single', 'either', or 'both'. It is: '",
+      type, "'."
+    )
+  }
+
+  if (!is.data.frame(dat) & !is_tibble(dat) & !is.vector(dat)) {
+    stop("dat must be a dataframe, tibble, or vector.")
+  }
+
+  if (!is.vector(dat) & is.na(from)){
+    stop("from must be supplied unless dat is a vector.")
+  }
+
+  if (is.vector(dat)) {
+    dataframe <- data.frame(vector = dat)
+    from <- 'vector'
+  } else {
+    dataframe <- dat
+  }
+
+  patterns <- make_year_patterns()
+
+  all <- dataframe %>%
+    mutate(
+      calendar = str_extract(!!sym(from), patterns["calendar"]),
+      financial = str_extract(!!sym(from), patterns["financial"])
+    ) %>%
+    mutate(
+      financial_preferred = ifelse(is.na(financial), calendar, financial),
+      calendar_preferred = ifelse(is.na(calendar), financial, calendar)
+      )
+
+  any_financial_years <- any(!is.na(all$financial))
+
+  selected <- all %>%
+    mutate(
+      !!sym(new_col) :=
+        if (prefer == "financial" & type == "single") {
+          financial
+        } else if (prefer == "calendar" & type == "single") {
+          calendar
+        } else if (prefer == "financial" & type == "both") {
+          financial_preferred
+        } else if (prefer == "calendar" & type == "both") {
+          calendar_preferred
+        } else if (prefer == "calendar" & type == "both") {
+          calendar_preferred
+        } else if (type == "either" & any_financial_years) {
+          financial
+        } else if (type == "either" & any_financial_years == FALSE) {
+          calendar
+        } else {
+          financial # use as default, though all cases should be covered above
+        }
+    ) %>%
+    select(-c(calendar, financial, financial_preferred, calendar_preferred))
+
+  any_questionable_years <- check_for_multiple_years(
+    dataframe, from, prefer, type
+    )
+
+  if (any_questionable_years) {
+    warning(
+      "Multiple different years were found for some rows. Please check that ",
+      "column '", new_col, "' contains the expected values."
+      )
+  }
+
+  if (is.vector(dat)) {
+    as_vector <- pull(selected, !!sym(new_col))
+    selected <- as_vector[!is.na(as_vector)]
+  }
+
+  return(selected)
+}
+
+#' @title Check if there are multiple different years in any one entry.
+#'
+#' @description Check if there are multiple different years in any single entry
+#' of specified column. Used by get_year.
+#'
+#' @details
+#' If `type` is not specified, both financial and calendar years will be
+#' checked - so if an entry contains both a financial year and a calendar year,
+#' these will be classed as different years and TRUE will be returned.
+#'
+#' If `type` = 'single' only multiple values of the preferred year (calendar or
+#' financial) will be looked for, unless no values of that type are found, in
+#' which case multiple values of the non-preferred year will be checked for.
+#'
+#' @param dat dataframe that contains a column with the name from `from`.
+#' @param from character string. The name of the column containing year
+#' information.
+#' @param prefer character string. Either 'financial' (default), or 'calendar'.
+#' If type is 'both' and both a calendar year and a financial year are found in
+#' a single entry, this determines which is checked If type is 'single', prefer
+#' determines whether calendar years or financial years are checked for multiple
+#' different values.
+#' @param type character string. Either 'both' (default), or 'single'. If
+#' 'single', a value with both a calendar year and a financial year will not
+#' be classed as having multiple different values.
+#'
+#' @returns boolean. TRUE if any entry contains more than one unique year.
+#'
+#' @examples
+#' \dontrun{
+#' check_for_multiple_years(data.frame(char = c("2024", "2025 2026")), "char")
+#' check_for_multiple_years(data.frame(char = c("2024", "2025")), "char")
+#' check_for_multiple_years(
+#'     data.frame(char = c("2021 2022-23 2023-24")), "char",
+#'     prefer = "financial",
+#'     type = "single"
+#'     )
+#' check_for_multiple_years(
+#'     data.frame(char = c("2021 2022-23 2023-24")), "char",
+#'     prefer = "calendar",
+#'     type = "single"
+#'     )
+#' check_for_multiple_years(
+#'     data.frame(char = c("2021 2022 2023-24")), "char",
+#'     prefer = "calendar",
+#'     type = "single"
+#'     )
+#' }
+check_for_multiple_years <- function(
+    dat, from, prefer = "financial", type = "both"
+    ) {
+
+  patterns <- make_year_patterns()
+  # type can also be either in get_year, but for this function it means the same
+  # as single
+  type <- ifelse(type == "either", "single", type)
+
+  counts <- dat %>%
+    mutate(calendar = str_extract_all(!!sym(from), patterns["calendar"]),
+           financial = str_extract_all(!!sym(from), patterns["financial"])) %>%
+    rowwise() %>%
+    mutate(unique_calendar = length(unique(calendar[!is.na(calendar)])),
+           unique_financial = length(unique(financial[!is.na(financial)])))
+
+  check_of_multiples <- counts %>%
+    mutate(
+      multiples = case_when(
+        prefer == "financial" & type == "single" ~ unique_financial > 1,
+        prefer == "calendar" & type == "single" ~ unique_calendar > 1,
+        type == "both" ~
+          sum(unique_financial, unique_calendar) > 1
+      )
+    ) %>%
+    distinct(multiples)
+
+  any_multiple_years <- sum(check_of_multiples) > 0
+
+  return(any_multiple_years)
+
+}
+
+
+#' @title Identify all years from a vector of character strings
+#'
+#' @description Get all years (from the 20th and 21st centuries).
+#' If no years are found NA is returned. If one or more years are found, unique
+#' years are returned.
+#'
+#' @details This function differs from get_year in that it returns a vector of
+#' all unique years regardless of the row in which the year was found. In
+#' contrast, get_year returns the first year of the preferred type
+#' (financial/ calendar) for each row.
+#'
+#' @param dat numeric or character string. Accepts vector, matrices and
+#' dataframe data.
+#' @param type character string. Either 'both' (default), 'financial', or
+#' 'calendar'.
+#' @returns character string vector, or NA. Returns a vector of all strings
+#' that matched the pattern for the year_type. If no years are identified in
+#' any of the input strings, NA is returned.
+#'
+#' @seealso [get_year()] for getting the first year from each entry of a
+#' dataframe column.
+#'
+#' @examples
+#' \dontrun{
+#' test_dat <- c("a date: 1998-1999", "1995 6", "1993 end", "a1995", "1995a", "a
+#' date:1995, another date: 2012", "not a date: 475", "also not a date: 1234",
+#' "abc 2021-22",  "34200943", "190932")
+#' extract_all_years(test_dat)
+#'
+#' test_dat2 <- data.frame(year_unedited = c("2021q1", "2022"))
+#' test_dat2 %>% mutate(year = extract_all_years(year_unedited, 'calendar'))
+#' }
+#' @export
+extract_all_years <- function(dat, type = "both") {
+
+  message("Getting all year matches.")
+  dat <- unlist(dat)
+
+  patterns <- make_year_patterns()
+
+  calendar_years <- unlist(str_extract_all(dat, patterns['calendar']))
+  financial_years <- unlist(str_extract_all(dat, patterns['financial']))
+
+  if (type == "financial"){
+    years <- financial_years
+  } else if (type == "calendar") {
+    years <- calendar_years
+  } else if (type == "both") {
+    years <- c(financial_years, calendar_years)
+  }
+
+  if (length(years) == 0) {
+    unique_years <- NA
+    message("No year matches found")
+  } else {
+    unique_years <- unique(years[!is.na(years)])
+    message(
+      "Year matches found: '", paste0(unique_years, collapse = "', '"), "'."
+    )
+  }
+
+
+  return(unique_years)
+}
+
+
+#' @title Get the year type for each row of a dataframe, or for a single year
+#'
+#' @description Get an unambiguous year type (financial or calendar). If more
+#' than one year type is found NA is returned.
+#'
+#' @param dat character string, integer, or dataframe. If character string or
+#' integer, one calendar or financial year. If dataframe, a dataframe with a
+#' column named the same as `column`.
+#' @param column character string or NA. defaults to NA as this arg is only used
+#' when dat is a dataframe or tibble.
+#'
+#' @returns character string, stating the year type. If dat is a dataframe a new
+#' column is added called 'year_type' containing 'financial', 'calendar' or NA.
+#' If dat is a vector, a vector is returned.
+#'
+#' @examples
+#' \dontrun{
+#' dat <- data.frame(year = c("2021", "2021-22", "2021 2021-22"))
+#' get_year_type(dat, "year")
+#'
+#' get_year_type("2021-22")
+#' get_year_type("2021")
+#' get_year_type("202123")
+#'
+#' }
+#' @export
+get_year_type <- function(dat, column = NA) {
+
+  if (length(dat) == 0) {
+    return(NA)
+  }
+
+  if (is.vector(dat)) {
+    dataframe <- data.frame(temp_column = dat)
+    column <- "temp_column"
+  } else {
+    dataframe <- dat
+  }
+
+  patterns <- make_year_patterns()
+
+  df_output <- dataframe %>%
+    mutate(temp_calendar = str_detect(!!sym(column), patterns["calendar"]),
+           temp_financial = str_detect(!!sym(column), patterns["financial"]),
+           type = case_when(
+             temp_calendar == TRUE & temp_financial == FALSE ~"calendar",
+             temp_calendar == FALSE & temp_financial == TRUE ~"financial",
+             TRUE ~ NA)) %>%
+    select(-c(temp_calendar, temp_financial))
+
+  if (is.vector(dat)) {
+    type <- pull(df_output, type)
+    return(type)
+  } else {
+    return (df_output)
+  }
+
+}
+
+
+#' @title Get the years before or after the current year
+#'
+#' @description Get the string for the year x years before or after the given
+#' year. Only a single year (calendar or financial) must be given. If multiple
+#' valid years (or no valid years) are provided, NA is returned with a warning.
+#'
+#' @param year character string or integer. Only a single year must be given,
+#' but this can be a financial year (YYYY-YY or YYYY-YYYY) or calendar (YYYY).
+#' @param x integer. The number of years before (negative) ot after (positive)
+#' year that you want to be returned.
+#' @param type character string. Must be "financial" or "calendar"
+#'
+#' @returns calendar string. Theyear that is x years before or after the
+#' provided year.
+#'
+#' @examples
+#' \dontrun{
+#' get_bookend_year("2021-22", -1, "financial")
+#' get_bookend_year("2021-22", 1, "financial")
+#' get_bookend_year("2021", -1, "calendar")
+#' }
+get_bookend_year <- function(year, x, type) {
+
+  if (! type %in% c("financial", "calendar")) {
+    stop("type must be financial or calendar")
+  }
+
+  years <- extract_all_years(year, type)
+
+  if (length(years) > 1) {
+    warning(
+      "More than one ", type, " year provided. Bookend year not calculated."
+      )
+    return (NA)
+  } else if (is.na(years)) {
+    warning(
+      "No ", type, " year provided. Bookend year not calculated."
+    )
+    return (NA)
+  }
+
+  if (x < 0) {
+    message("Creating previous year string")
+  } else if (x > 0) {
+    message("Creating future year string")
+  } else {
+    return (year)
+  }
+
+  start <- as.numeric(substr(year, 1, 4)) + x
+
+  if (type == "financial") {
+    end <- paste0("-", as.numeric(substr(year, nchar(year)-1, nchar(year))) + x)
+  } else {
+    end <- ""
+  }
+  bookend_year <- paste0(as.character(start), as.character(end))
+
+  return(bookend_year)
+
+}
+
