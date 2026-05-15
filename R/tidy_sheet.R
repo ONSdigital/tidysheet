@@ -183,15 +183,17 @@ tidy_sheet <- function(
   front_sheet <- get_data(input_filepath, tab_pattern_front_page)
   release_number <- get_release_number(front_sheet$character)
 
-  # remove cells--------------------------------------------------------------
+  # remove cells and treat cells with only spaces as blanks.--------------------
   cells_removed <- remove_from_input(
     source_data, cells_to_remove,
     input_filepath, hidden_character_strings_to_remove
     )
 
+  blanks_refined <- refine_blanks(cells_removed)
+
   # separate the info above the table from the main table and get metadata------
   full_sheet <- split_data_from_metadata(
-    cells_removed, header_identifier, header_identifier_instance,
+    blanks_refined, header_identifier, header_identifier_instance,
     header_row_offset
   )
   main_table <- full_sheet[['data']]
