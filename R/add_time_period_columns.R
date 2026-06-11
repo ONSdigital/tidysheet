@@ -151,11 +151,19 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
   }
 
   if (quarter_col_name %in% names(dat)) {
+    original_colname <- paste0("_", quarter_col_name)
+
     warning(
       "'", quarter_col_name, "' is already a column in the data. It will be ",
-      "overwritten with information taken from '", quarter_col, "'. To ",
-      "prevent this you may want to edit the setting for quarter_col_name."
+      "renamed '", original_colname, "'. To prevent this you may want to edit ",
+      "the setting for quarter_col_name. You could also use the rename settings"
     )
+
+    dat <- dat %>%
+      mutate(!!sym(original_colname) := !!sym(quarter_col_name))
+
+  } else {
+    original_colname <- quarter_col_name
   }
 
   patterns <- make_quarter_patterns()["single"]
@@ -170,12 +178,16 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
     rowwise() %>%
     mutate(
       multi_q_warning = ifelse(length(found) > 1, TRUE, FALSE),
+      # Only strings that match single quarters are matched, not strings that
+      # match ranges e.g. Q1 to Q4 or Q1-4. Give a warning if ranges might have
+      # existed.
       missing_warning = ifelse(
-        nchar(!!sym(quarter_col)) > 0 & length(found) == 0,TRUE, FALSE)
+        nchar(!!sym(original_colname)) > 0 & length(found) == 0,TRUE, FALSE
+      )
     ) %>%
     ungroup()
 
-  if (sum(check$multi_q_warning) > 0) {
+  if (sum(check$multi_q_warning, na.rm = TRUE) > 0) {
     multi_example <- check[which(check$multi_q_warning), quarter_col][1]
     warning(
       "More than one quarter found in ", sum(check$multi_q_warning),
@@ -185,8 +197,8 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
     )
   }
 
-  if (sum(check$missing_warning) > 0) {
-    missing_example <- check[which(check$missing_warning), quarter_col][1, 1]
+  if (sum(check$missing_warning, na.rm = TRUE) > 0) {
+    missing_example <- check[which(check$missing_warning), original_colname][1, 1]
     warning(
       "No individual quarters found in ", sum(check$missing_warning),
       " entry(ies) e.g. in '", missing_example, "'. In such cases quarter ",
