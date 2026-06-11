@@ -361,7 +361,6 @@ test_that("Example 7 is processed as expected", {
   calendar_year_to_fy_start: true,
   year_from_pattern: year_and_quarter,
   month_col_pattern: month,
-  quarter_col_pattern: ^quarter$,
   col_patterns_to_drop_NA_rows: ^numeric$,
   }"
 
@@ -569,3 +568,4 @@ test_that("Example 10 with all types of descriptors is processed as expected", {
   expect_equal(result, expected)
 
 })
+

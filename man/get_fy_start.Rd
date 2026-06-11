@@ -12,7 +12,7 @@ get_fy_start(
   fy_end_pattern = NA,
   calendar_to_fy_start = FALSE,
   q1_is_jan_to_mar = FALSE,
-  quarter_pattern = NA,
+  quarter_col_name = NA,
   month_pattern = NA
 )
 }
@@ -39,9 +39,8 @@ to financial year start. Default is FALSE.}
 \item{q1_is_jan_to_mar}{boolean. TRUE if Jan to Mar is Q1. FALSE if Apr to
 Jun is Q1. Default is FALSE.}
 
-\item{quarter_pattern}{character string. Regular expression used to
-identify the column that contains only the quarter (e.g. 'Q1' or '1'). Not
-required if quarter_from_pattern is supplied.}
+\item{quarter_col_name}{character string. Exact name of the column that
+contains only the quarter number ('1', '2', '3', '4', or NA).}
 
 \item{month_pattern}{character string. Regular expression used to
 identify the column that contains only the month.}

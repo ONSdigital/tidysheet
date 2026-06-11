@@ -60,7 +60,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' dat <- data.frame(year_col = c("2021", "2022_23 to 2025_26", "2021, 2022"))
+#' dat <- data.frame(
+#'    year_col = c("2021", "2022_23 to 2025_26", "2021, 2022"),
+#'    is_blank = FALSE
+#'    )
 #' process_year_column(dat, "year_col", NA, NA, NA, NA)
 #'
 #' dat <- data.frame(
@@ -76,7 +79,8 @@
 #' dat <- data.frame(
 #'     description = c("A", "B", "C"),
 #'     implementation_year = c(1980, 1992, 2003),
-#'     value = 1:3
+#'     value = 1:3,
+#'     is_blank = FALSE
 #'     )
 #' single_year = list("year" = "2021_22", "warn" = TRUE)
 #' process_year_column(

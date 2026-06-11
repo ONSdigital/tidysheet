@@ -8,13 +8,13 @@
 #' @details
 #' Some functions that deal with time periods (split_date_to_columns,
 #' and split_year_and_vintage) are done prior to this in fill_missing_info.
-#' For more details see the documentation for add_quarter_column, 
+#' For more details see the documentation for add_quarter_column,
 #' get_fy_start, process_year_column, and fill_missing_fy_start.
 #'
 #' @param dat dataframe.
 #' @param quarter_from_col_pattern character string. A regular expression that
-#' matches only the column containing quarter information. Only required
-#' if single quarters (not quarter ranges) are not already in their own column.
+#' only matches the column containing quarter information (e.g. '2025 Q1',
+#' 'quarter 1', or '1').
 #' @param quarter_col_name character string. The name of the column that quarter
 #' will be put in.
 #' @param year_from_pattern character string. Regular expression that matches
@@ -32,9 +32,6 @@
 #' converted to financial year start. Default is FALSE.
 #' @param q1_is_jan_to_mar boolean. TRUE if Jan to Mar is Q1. FALSE if Apr to
 #' Jun is Q1. Default is FALSE.
-#' @param quarter_col_pattern character string. Regular expression used to
-#' identify the column that contains only the quarter (e.g. 'Q1' or '1'). Not
-#' required if quarter_from_pattern is supplied.
 #' @param month_col_pattern character string. Regular expression used to
 #' identify the column that contains only the month.
 #' @param year_col_pattern character string. The name of the year column
@@ -62,12 +59,12 @@
 #' year_type will be NA for invalid year entries.
 #'
 #' @returns dataframe with quarter, fy_start, and year columns.
-#' 
+#'
 #' @export
 add_time_period_columns <- function(
     dat, quarter_from_col_pattern, quarter_col_name, year_from_pattern,
     fy_from_fy_end, fy_start_from_fy_end, fy_end_pattern,
-    calendar_year_to_fy_start, q1_is_jan_to_mar, quarter_col_pattern,
+    calendar_year_to_fy_start, q1_is_jan_to_mar,
     month_col_pattern, year_col_pattern, single_year_of_data, year_for_column,
     single_year_overrides_all, multi_year_range_is_not_valid
 ) {
@@ -77,11 +74,16 @@ add_time_period_columns <- function(
   fy_start_added <- get_fy_start(
     q_added, year_from_pattern, fy_from_fy_end, fy_start_from_fy_end,
     fy_end_pattern, calendar_year_to_fy_start, q1_is_jan_to_mar,
-    quarter_col_pattern, month_col_pattern
+    quarter_col_name, month_col_pattern
+    )
+
+  quarter_corrected <- update_quarter(
+    fy_start_added, calendar_year_to_fy_start, q1_is_jan_to_mar,
+    quarter_col_name
     )
 
   year_col_cleaned <- process_year_column(
-    fy_start_added, year_col_pattern, single_year_of_data, year_for_column,
+    quarter_corrected, year_col_pattern, single_year_of_data, year_for_column,
     single_year_overrides_all, multi_year_range_is_not_valid
   )
 
@@ -144,7 +146,7 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
   if (is.na(quarter_col)) {
     stop(
       "Quarter column not identified - please contact a developer to update ",
-      "the quarter_col_pattern in the settings."
+      "the quarter_from_col_pattern in the settings."
     )
   }
 
@@ -200,6 +202,71 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
 }
 
 
+#' @title Standardise quarter for data on a financial year basis
+#'
+#' @description If Q1 is jan to march, update the quarters accordingly.
+#'
+#' @details As standard Q1 should be Jan to march for data on a calendar year
+#' basis, but Apr - Jun for data on a financial year basis. At least one source
+#' in the public sector project has Q1 as jan to Mar in data used for
+#' financial year analysis. This function allows for correction of the quarter
+#' number in such situations.
+#'
+#' @param dat dataframe
+#' @param financial_year boolean. If NA, defaults to FALSE. If TRUE, and
+#' q1_is_jan_to_mar is TRUE, update the quarters so that Q1 is apr-jun. In pub
+#' sec this is set using calendar_year_to_fy_start.
+#' @param quarter_col_name character string. The name of the quarter column.
+#'
+#' @returns data with apr-jun as quarter 1 if q1_is_jan_to_mar is TRUE and
+#' financial year is TRUE. Otherwise dat is returned unchanged.
+#'
+#' @examples
+#' \dontrun{
+#' dat <- data.frame(
+#'     months = c("jan-mar", "apr-jun", "jul-sep", "oct-dec"),
+#'     quarter = c("1", "2", "3", "4"),
+#'     year = "2024",
+#'     fy_start = c("2023", "2024", "2024", "2024")
+#'     )
+#' update_quarter(dat, TRUE, TRUE, "quarter")
+#' }
+update_quarter <- function(
+    dat, financial_year=FALSE, q1_is_jan_to_mar=FALSE, quarter_col_name=NA
+) {
+
+  if (is.na(financial_year)) { financial_year <- FALSE }
+  if (is.na(q1_is_jan_to_mar)) { q1_is_jan_to_mar <- FALSE }
+
+  if (any(financial_year == FALSE, q1_is_jan_to_mar == FALSE)) {
+    return(dat)
+  } else if (is.na(quarter_col_name)) {
+    stop ("quarter_col_name must be supplied.")
+  }
+
+  message("Updating '", quarter_col_name, "' so that quarter 1 is apr-jun.")
+
+  if (! quarter_col_name %in% names(dat)) {
+    stop(
+      "No column found for quarter_col_name '", quarter_col_name, "'. ",
+      "Please also supply quarter_from_col_pattern to identify which column ",
+      "to get the quarter from."
+      )
+  }
+
+  quarter_update <- dat %>%
+    mutate(
+      !!sym(quarter_col_name) := as.numeric(!!sym(quarter_col_name)),
+      !!sym(quarter_col_name) := ifelse (
+        !!sym(quarter_col_name) == 1, 4, !!sym(quarter_col_name) - 1
+      )
+    )
+
+  return(quarter_update)
+
+}
+
+
 #' @title Fill missing financial year start values.
 #'
 #' @description Fill in missing fy_start values for rows where year_type is
@@ -207,10 +274,10 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
 #'
 #' @details If a row has 'financial' as year_type and fy_start is missing (or
 #' the column does not exist), extract the first four digits from the year
-#' column and use this for fy_start. Note that this requires the year column to 
+#' column and use this for fy_start. Note that this requires the year column to
 #' ONLY contain year.
-#' 
-#' Rows with other year_type values are left unchanged. This function is 
+#'
+#' Rows with other year_type values are left unchanged. This function is
 #' intended for use with datasets that contain both calendar and financial years
 #' but could be used in other scenarios.
 #'

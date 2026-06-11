@@ -14,7 +14,6 @@ add_time_period_columns(
   fy_end_pattern,
   calendar_year_to_fy_start,
   q1_is_jan_to_mar,
-  quarter_col_pattern,
   month_col_pattern,
   year_col_pattern,
   single_year_of_data,
@@ -27,8 +26,8 @@ add_time_period_columns(
 \item{dat}{dataframe.}
 
 \item{quarter_from_col_pattern}{character string. A regular expression that
-matches only the column containing quarter information. Only required
-if single quarters (not quarter ranges) are not already in their own column.}
+matches only the column containing quarter information (e.g. 'Q1',
+'quarter 1', or '1').}
 
 \item{quarter_col_name}{character string. The name of the column that quarter
 will be put in.}
@@ -53,10 +52,6 @@ converted to financial year start. Default is FALSE.}
 
 \item{q1_is_jan_to_mar}{boolean. TRUE if Jan to Mar is Q1. FALSE if Apr to
 Jun is Q1. Default is FALSE.}
-
-\item{quarter_col_pattern}{character string. Regular expression used to
-identify the column that contains only the quarter (e.g. 'Q1' or '1'). Not
-required if quarter_from_pattern is supplied.}
 
 \item{month_col_pattern}{character string. Regular expression used to
 identify the column that contains only the month.}
