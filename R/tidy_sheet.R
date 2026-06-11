@@ -183,15 +183,17 @@ tidy_sheet <- function(
   front_sheet <- get_data(input_filepath, tab_pattern_front_page)
   release_number <- get_release_number(front_sheet$character)
 
-  # remove cells--------------------------------------------------------------
+  # remove cells and treat cells with only spaces as blanks.--------------------
   cells_removed <- remove_from_input(
     source_data, cells_to_remove,
     input_filepath, hidden_character_strings_to_remove
     )
 
+  blanks_refined <- refine_blanks(cells_removed)
+
   # separate the info above the table from the main table and get metadata------
   full_sheet <- split_data_from_metadata(
-    cells_removed, header_identifier, header_identifier_instance,
+    blanks_refined, header_identifier, header_identifier_instance,
     header_row_offset
   )
   main_table <- full_sheet[['data']]
@@ -466,7 +468,7 @@ get_variable_names <- function() {
     "fy_end_pattern",
     "calendar_year_to_fy_start", "q1_is_jan_to_mar", "quarter_col_pattern",
     "month_col_pattern", "year_col_pattern", "single_year_of_data",
-    "year_for_column", "single_year_overrides_all",
+    "single_year_overrides_all",
     "multi_year_range_is_not_valid",
     "columns_to_rename_patterns", "columns_to_rename_names",
     "col_patterns_to_drop_NA_rows",
