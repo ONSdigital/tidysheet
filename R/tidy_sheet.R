@@ -468,7 +468,7 @@ get_variable_names <- function() {
     "fy_end_pattern",
     "calendar_year_to_fy_start", "q1_is_jan_to_mar", "quarter_col_pattern",
     "month_col_pattern", "year_col_pattern", "single_year_of_data",
-    "year_for_column", "single_year_overrides_all",
+    "single_year_overrides_all",
     "multi_year_range_is_not_valid",
     "columns_to_rename_patterns", "columns_to_rename_names",
     "col_patterns_to_drop_NA_rows",
