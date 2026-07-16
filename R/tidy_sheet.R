@@ -183,15 +183,17 @@ tidy_sheet <- function(
   front_sheet <- get_data(input_filepath, tab_pattern_front_page)
   release_number <- get_release_number(front_sheet$character)
 
-  # remove cells--------------------------------------------------------------
+  # remove cells and treat cells with only spaces as blanks.--------------------
   cells_removed <- remove_from_input(
     source_data, cells_to_remove,
     input_filepath, hidden_character_strings_to_remove
     )
 
+  blanks_refined <- refine_blanks(cells_removed)
+
   # separate the info above the table from the main table and get metadata------
   full_sheet <- split_data_from_metadata(
-    cells_removed, header_identifier, header_identifier_instance,
+    blanks_refined, header_identifier, header_identifier_instance,
     header_row_offset
   )
   main_table <- full_sheet[['data']]
@@ -355,8 +357,7 @@ tidy_sheet <- function(
     time_periods_added <- add_time_period_columns(
       wording_edited, quarter_from_col_pattern, quarter_col_name,
       year_from_pattern, fy_from_fy_end, fy_start_from_fy_end, fy_end_pattern,
-      calendar_year_to_fy_start, q1_is_jan_to_mar, quarter_col_pattern,
-      month_col_pattern,
+      calendar_year_to_fy_start, q1_is_jan_to_mar, month_col_pattern,
       year_col_pattern, single_year_of_data, year_for_column,
       single_year_overrides_all, multi_year_range_is_not_valid
       )
@@ -464,9 +465,9 @@ get_variable_names <- function() {
     "quarter_from_col_pattern", "quarter_col_name",
     "year_from_pattern", "fy_from_fy_end", "fy_start_from_fy_end",
     "fy_end_pattern",
-    "calendar_year_to_fy_start", "q1_is_jan_to_mar", "quarter_col_pattern",
+    "calendar_year_to_fy_start", "q1_is_jan_to_mar",
     "month_col_pattern", "year_col_pattern", "single_year_of_data",
-    "year_for_column", "single_year_overrides_all",
+    "single_year_overrides_all",
     "multi_year_range_is_not_valid",
     "columns_to_rename_patterns", "columns_to_rename_names",
     "col_patterns_to_drop_NA_rows",
@@ -502,7 +503,7 @@ get_pattern_names <- function() {
     "replace_string_from_col_patterns", "col_pattern_with_blanks_to_replace",
     "col_pattern_to_replace_blanks_with", "rename_duplicate_pattern",
     "quarter_from_col_pattern", "year_from_pattern",
-    "fy_end_pattern", "quarter_col_pattern", "month_col_pattern",
+    "fy_end_pattern", "month_col_pattern",
     "year_col_pattern", "columns_to_rename_patterns",
     "col_patterns_to_drop_NA_rows", "columns_to_combine_patterns",
     "col_patterns_with_values_to_drop", "value_patterns_to_drop",

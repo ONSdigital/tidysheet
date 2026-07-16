@@ -85,9 +85,10 @@ process_year_column(dat, "year_col", NA, NA, NA, NA)
 
 dat <- data.frame(
     financial_year = c("2021-22 to 2022-23", "2022_2023", "words"),
-    calendar_year = c(2021, 2022, NA)
+    calendar_year = c(2021, 2022, NA),
+    is_blank = FALSE
     )
-process_year_column(dat, NA, NA, NA, NA, TRUE)
+process_year_column(dat, NA, FALSE, NA, NA, TRUE)
 process_year_column(dat, NA, NA, NA, NA, FALSE)
 
 # case where there is no year column, but there is a column that looks like

@@ -361,7 +361,6 @@ test_that("Example 7 is processed as expected", {
   calendar_year_to_fy_start: true,
   year_from_pattern: year_and_quarter,
   month_col_pattern: month,
-  quarter_col_pattern: ^quarter$,
   col_patterns_to_drop_NA_rows: ^numeric$,
   }"
 
@@ -463,7 +462,7 @@ test_that("Example 9 is processed as expected", {
 
   settings <- "{
   header_identifier: (?i)description,
-  header_identifier_instance: 2,
+  header_identifier_instance: 3,
   columns_to_create: description_1a, description_1b,
   left_headers: country, region,
   descriptors_to_standardise_year_in: description_1b,
@@ -482,7 +481,7 @@ test_that("Example 9 is processed as expected", {
   expected_description_note <- "description_1 was 'description A - measure 1 previous financial year' in the raw data. It was given a prefix because there was more than one instance in the raw data with that name."
   expected <- tibble (
     sheet = "example 9",
-    address = c("C8", "D8", "E8", "C9", "D9", "E9"),
+    address = c("C9", "D9", "E9", "C10", "D10", "E10"),
     value = c(1, 3, 5, 2, 4, 6),
     non_numeric_value = as.character(NA),
     country = "England",
@@ -569,3 +568,4 @@ test_that("Example 10 with all types of descriptors is processed as expected", {
   expect_equal(result, expected)
 
 })
+

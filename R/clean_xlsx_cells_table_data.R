@@ -111,16 +111,16 @@ clean_xlsx_cells_table_data <- function(
 #' If the data_type is 'date' and the date column is not NA, update
 #' the data_type column to character and cut information from the date
 #' column into the character column.
-#' 
-#' @details 
+#'
+#' @details
 #' When data are imported using xlsx_cells, each cell is given it's own row
 #' and where the value of the cell is put depends on the data type. Numeric
 #' data are put in the numeric column, character values in the character column
 #' etc. If a cell is specified as a date in Excel it will be put in the date
 #' column. Tidysheet, however, works on the principle that all descriptor
 #' information that should be kept is in the chararacter column. This function
-#' therfore moves information from the date column into the character column. 
-#'  
+#' therfore moves information from the date column into the character column.
+#'
 #' @param dat dataframe imported using tidyxl::xlsx_cells()
 #'
 #' @returns dataframe dat with date strings set to be treated as character
@@ -161,13 +161,13 @@ convert_date_to_char <- function(dat) {
 #' of an xlsx_cells dataframe and extend the found value with information from
 #' either the rows above or below.
 #'
-#' @details This function is used for datasets where the descriptors for a 
-#' value are not unique because they relate to information above or (less 
+#' @details This function is used for datasets where the descriptors for a
+#' value are not unique because they relate to information above or (less
 #' likely) below them. For example the descriptor '...of which HRA' may be
-#' repeated multiple times to indicate that the values in that row are a 
-#' subset of the value above. However, taken on their own they are fairly 
-#' meaningless. 
-#' 
+#' repeated multiple times to indicate that the values in that row are a
+#' subset of the value above. However, taken on their own they are fairly
+#' meaningless.
+#'
 #' NOTE: If the pattern has matches in multiple columns, the change is only made
 #' to the column where it occurs most. If this is not the desired behaviour, the
 #' function will need to be updated - suggest making the change on data after it
@@ -177,8 +177,8 @@ convert_date_to_char <- function(dat) {
 #'
 #' This was written to address an issue in pub sec in the LA Dropdown tab of the
 #' DLUHC (MHCLG) capital payments receipts data (see example).
-#' 
-#' TODO: this function should be re-written to be called _after_ data have 
+#'
+#' TODO: this function should be re-written to be called _after_ data have
 #' been unpivotted. this will allow users to specify which column the changes
 #' should be made in.
 #'
@@ -205,9 +205,10 @@ convert_date_to_char <- function(dat) {
 #' # see Wiki for example with illustration
 #'
 #' dat <- data.frame(
-#'  id = 1:13,
+#'  row = 9:22,
 #'  address = c("A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16",
-#'              "A17", "A18","A19","A20","A21"),
+#'              "A17", "A18","A19","A20","A21", "A22"),
+#'  col = 1,
 #'  character = c("Acquisition of land & existing buildings", "...of which HPA",
 #'                "Another character", "...of which expenditure", "More characters",
 #'                "...of which grants","...of which HRA", "Even more characters",
@@ -216,7 +217,7 @@ convert_date_to_char <- function(dat) {
 #')
 #'
 #' result <- extend_row_value(
-#'     dat, "^\\s*\\.\\.\\.\\s*of\\s*which", "reverse", "below"
+#'     dat, "^\\s*\\.\\.\\.\\s*of\\s*which", "forward", "above"
 #'     )
 #'}
 #'@export
@@ -364,7 +365,7 @@ extend_row_value <- function(
 #'
 #' @description Remove rows from a dataframe imported using tidyxl::xlsx_cells
 #' if they belongs to a row or column in the Excel data that is empty.
-#' 
+#'
 #' @details
 #' If a cell contains a formula the result of which is 0, this is counted as a
 #' blank row by default. If this is not the desired behaviour set
@@ -488,7 +489,7 @@ remove_empty_lines <- function(dat, direction, formula_zero_as_blank=TRUE) {
 #' It should only be used when absolutely necessary as it carries the risk of
 #' removing a cell that is actually wanted. To mitigate this risk only a given
 #' number of non-blank rows are checked for the pattern using n_row.
-#' 
+#'
 #' @param dat A data frame imported using tidyxl::xlsx_cells.
 #' @param patterns vector of character strings. Each must be a regular
 #' expression used to identify the unwanted cells. More than one pattern may be
@@ -727,21 +728,21 @@ combine_rows_by_column <- function(dat, start_pattern=NA, end_pattern=NA){
 #'
 #' @description If one of `patterns` matches a value in a column of the Excel
 #' data remove all data from that column.
-#' 
-#' @details 
+#'
+#' @details
 #' More than one column can be removed by providing more than one pattern.
 #'
 #' If the name of the column to be removed is blank, or if it is unstable (i.e.
 #' writing a pattern to match it is hard/impossible), a pattern that matches a
 #' nearby column can be used along with offset. This requires that you are
 #' confident about the order of the columns.
-#' 
+#'
 #' When data are imported using xlsx_cells, each cell is given it's own row
 #' and where the value of the cell is put depends on the data type. Numeric
 #' data are put in the numeric column, character values in the character column
 #' etc. Row and Col numbers are given as columns in the xlsx_cells data.
-#' This function looks for a match to the pattern in the character column, and 
-#' removes all data that have the same 'row' number. 
+#' This function looks for a match to the pattern in the character column, and
+#' removes all data that have the same 'row' number.
 #'
 #' @param dat dataframe imported using tidyxl::xlsx_cells.
 #' @param patterns vector of character strings that are regular expressions,

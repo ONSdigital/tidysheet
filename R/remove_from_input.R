@@ -152,3 +152,88 @@ remove_hidden_character_strings <- function(dat, filepath, remove_cell=NA) {
   return(dat)
 }
 
+
+#' @title Treat cells with spaces but nothing else as blank cells.
+#'
+#' @description If a cell has only spaces in, xlsx_cells reads it as a
+#' character string. Change this so that they are seen as blank cells.
+#'
+#' @details Without this step, if there is a space in a header row like this:
+#' | final |  |*space*| budget |
+#' |---|--|---|---|
+#' |**2021**|**2022**|**2023**|**2024**|
+#' | 10 | 20 | 30 | 40 |
+#'
+#' Because of that space we get a blank vintage for 2023.
+#'
+#' | year | vintage | value |
+#' |---|---|---|
+#' |2021|final|10|
+#' |2022|final|20|
+#' |2023| |30|
+#' |2024|budget|40|
+#'
+#' By making the cell with the space be seen as blank, the blank vintage entry
+#' for 2023 will be correctly filled in with 'final'.
+#' @md
+#'
+#' @param dat dataframe that has been imported using xlsx_cells.
+#'
+#' @returns dataframe in xlsx_cells format with space only cells shown as blank.
+#'
+#' @examples
+#' \dontrun{
+#' dat <- data.frame(
+#'     data_type = c("character", "character", "numeric", "blank"),
+#'     is_blank = c(FALSE, FALSE, FALSE, TRUE),
+#'     character = c("Final", "  ", NA, NA),
+#'     numeric = c(NA, NA, 1, NA),
+#'     address = c("A1", "A2", "A3", "A4"),
+#'     row = 1,
+#'     col = 1:4
+#'     )
+#' refine_blanks(dat)
+#' }
+#' @export
+refine_blanks <- function(dat) {
+
+  if (! all(c("data_type", "character", "is_blank") %in% names(dat))) {
+    stop(
+      "dat must be a tidyxl::xlsx_cells dataframe with the columns ",
+      "'data_type' 'character', 'is_blank', 'address', 'row' and 'col'."
+      )
+  }
+
+  message("Marking space-only cells as blank cells.")
+
+  check <- dat %>%
+    mutate(spaces_only = str_squish(character) == "") %>%
+    filter(spaces_only == TRUE)
+
+  if (nrow(check) > 0) {
+
+    output <- dat %>%
+      mutate(character = ifelse(str_squish(character) == "", NA, character)) %>%
+      mutate(
+        is_blank = ifelse(
+          is.na(character) & data_type == "character",
+          TRUE, is_blank
+        ),
+        data_type = ifelse(
+          data_type == "character" & is_blank == TRUE,
+          "blank", data_type
+        ))
+
+    message(
+      nrow(check), " cell(s) marked as character now ",
+      "marked as blank. ", length(unique(check$row)), " row(s) and ",
+      length(unique(check$col)), " column(s) affected. The first of ",
+      nrow(check), " is '", check$address[1], "'."
+    )
+
+    return (output)
+
+  } else {
+    return (dat)
+  }
+}
