@@ -35,7 +35,7 @@ test_that("update_quarter throws an error if quarter column name is not provided
 test_that("update_quarter throws an error if quarter column name is not in the data", {
 
   expect_error(
-    result <- update_quarter(dat, TRUE, TRUE, "Q"),
+    result <- suppressMessages(update_quarter(dat, TRUE, TRUE, "Q")),
     "No column found for quarter_col_name "
   )
 
@@ -45,7 +45,7 @@ test_that("update_quarter throws an error if quarter column name is not in the d
 test_that("update_quarter changes 1 to 4, 2, to 1, 3 to 2, and 4 to 3", {
 
   expected <-  data.frame(quarter = c(4, 1, 2, 3), value = 1:4)
-  result <- update_quarter(dat, TRUE, TRUE, "quarter")
+  result <- suppressMessages(update_quarter(dat, TRUE, TRUE, "quarter"))
 
   expect_equal(result, expected)
 
@@ -57,7 +57,7 @@ test_that("update_quarter works if there are NA values in quarter", {
   dat <- add_row(dat, quarter = NA, value = 5)
 
   expected <-  data.frame(quarter = c(4, 1, 2, 3, NA), value = 1:5)
-  result <- update_quarter(dat, TRUE, TRUE, "quarter")
+  result <- suppressMessages(update_quarter(dat, TRUE, TRUE, "quarter"))
 
   expect_equal(result, expected)
 
