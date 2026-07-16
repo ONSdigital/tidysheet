@@ -154,16 +154,16 @@ add_quarter_column <- function(dat, quarter_from_pattern, quarter_col_name) {
     original_colname <- paste0("_", quarter_col_name)
 
     warning(
-      "'", quarter_col_name, "' is already a column in the data. It will be ",
+      "'", quarter_col, "' is already a column in the data. It will be ",
       "renamed '", original_colname, "'. To prevent this you may want to edit ",
       "the setting for quarter_col_name. You could also use the rename settings"
     )
 
     dat <- dat %>%
-      mutate(!!sym(original_colname) := !!sym(quarter_col_name))
+      mutate(!!sym(original_colname) := !!sym(quarter_col))
 
   } else {
-    original_colname <- quarter_col_name
+    original_colname <- quarter_col
   }
 
   patterns <- make_quarter_patterns()["single"]
