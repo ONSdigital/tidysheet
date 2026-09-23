@@ -68,18 +68,7 @@ get_fy_start(
     fy_end_pattern = "fy"
     )
 
-# 2. Only calendar year and quarter are available in a single column.
-dat <- data.frame(
-    year = c("2021 (Q4 jan-mar of 20-21)", "2021 (Q1 apr-jun of 21-22"),
-    value = c(1, 2)
-    )
-get_fy_start(
-    dat, year_from_pattern = "year", get_quarter = TRUE,
-    quarter_from_pattern = "year", quarter_col_name = "quarter",
-    calendar_to_fy_start = TRUE,  q1_is_jan_to_mar = FALSE,
-    )
-
-# 3. Only calendar year and month are available in separate columns.
+# 2. Only calendar year and month are available in separate columns.
 dat <- data.frame(
     year = c("2021", "2021"),
     month = c("jan-mar", "apr-jun"),

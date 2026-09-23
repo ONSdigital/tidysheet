@@ -46,6 +46,9 @@
 #' be created during behead. Used to calculate the number of header rows.
 #' @param first_header_row integer. the number of the first row in which there
 #' are headers.
+#' @param target_all_rows bool. Default is false. If false the
+#' columns_to_remove_patterns are only found if they have a match in the header
+#' rows. If false the pattern is valid in any row.
 #'
 #' @returns dataframe that is ready for un-pivotting.
 #'
@@ -55,9 +58,8 @@ clean_xlsx_cells_table_data <- function(
     cell_removal_patterns = NA, rows_to_check_for_removal = NA,
     combine_start_row_identifier = NA, combine_end_row_identifier = NA,
     columns_to_remove_patterns = NA, columns_to_remove_offset = NA,
-    columns_to_create = NA, first_header_row = NA
+    columns_to_create = NA, first_header_row = NA, target_all_rows = FALSE
 ) {
-
   # Where dates are given as headings, and this info appears in the date
   # column of xlsx_cells data we need to be able to access it in the character
   # column. (eg in MHCLG/DLUHC borrowing and investments)
@@ -97,7 +99,7 @@ clean_xlsx_cells_table_data <- function(
 
   cleaned <- remove_columns(
     rows_combined, columns_to_remove_patterns, columns_to_remove_offset,
-    first_header_row, header_row_count
+    first_header_row, header_row_count, target_all_rows
   )
 
   return(cleaned)
@@ -755,6 +757,8 @@ combine_rows_by_column <- function(dat, start_pattern=NA, end_pattern=NA){
 #' sec this variable is specified by columns_to_remove_offset.
 #' @param first_row integer. The first row in which column headings are found.
 #' @param header_count integer. The number of header rows.
+#' @param target_all_rows bool. Default is false. If false the pattern is looked
+#' for only in the header rows. If false the pattern is valid in any row.
 #'
 #' @returns dataframe. dat with rows relating to the matched columns removed.
 #' If a pattern matches character strings in more than one column it is not
@@ -779,7 +783,8 @@ combine_rows_by_column <- function(dat, start_pattern=NA, end_pattern=NA){
 #' rectify(output)
 #' }
 #' @export
-remove_columns <- function(dat, patterns, offset, first_row, header_count) {
+remove_columns <- function(dat, patterns, offset, first_row, header_count,
+                           target_all_rows=FALSE) {
 
   if (all(is.na(patterns))) {
     return(dat)
@@ -788,6 +793,8 @@ remove_columns <- function(dat, patterns, offset, first_row, header_count) {
     "Removing rows relating to columns specified as requiring removal in the ",
     "settings by columns_to_remove_patterns."
   )
+
+  if (is.na(target_all_rows)) {target_all_rows <- FALSE}
 
   # offset has to be a number but may not have been specified for every pattern:
   if (all(is.na(offset))) {
@@ -801,7 +808,12 @@ remove_columns <- function(dat, patterns, offset, first_row, header_count) {
     stop("A column to remove offset must be provided for every pattern")
   }
 
-  target_rows <- c(first_row:(first_row + header_count - 1))
+  if (target_all_rows) {
+    target_rows <- min(dat$row):max(dat$row)
+  } else {
+    target_rows <- first_row:(first_row + header_count - 1)
+  }
+
   columns_to_remove <- identify_columns_to_remove(
     dat, patterns, offset, target_rows
   )

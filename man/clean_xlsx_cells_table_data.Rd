@@ -16,7 +16,8 @@ clean_xlsx_cells_table_data(
   columns_to_remove_patterns = NA,
   columns_to_remove_offset = NA,
   columns_to_create = NA,
-  first_header_row = NA
+  first_header_row = NA,
+  target_all_rows = FALSE
 )
 }
 \arguments{
@@ -69,6 +70,10 @@ be created during behead. Used to calculate the number of header rows.}
 
 \item{first_header_row}{integer. the number of the first row in which there
 are headers.}
+
+\item{target_all_rows}{bool. Default is false. If false the
+columns_to_remove_patterns are only found if they have a match in the header
+rows. If false the pattern is valid in any row.}
 }
 \value{
 dataframe that is ready for un-pivotting.

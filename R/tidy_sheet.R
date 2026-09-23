@@ -316,7 +316,8 @@ tidy_sheet <- function(
       populated_rows_to_check_for_metadata_to_remove,
       combine_start_row_identifier, combine_end_row_identifier,
       columns_to_remove_patterns, columns_to_remove_offset,
-      columns_to_create, table_first_header_row
+      columns_to_create, table_first_header_row,
+      columns_to_remove_target_all_rows
       )
 
     unpivotted <- unpivot_data(
@@ -403,8 +404,8 @@ tidy_sheet <- function(
   }
 
   if (to_csv) {
-    write.csv(all_tables, output_filepath, row.names = FALSE,
-              fileEncoding = "UTF-8")
+    readr::write_csv(all_tables, output_filepath)#, row.names = FALSE,
+             # fileEncoding = "UTF-8")
     message("File saved as ", output_filepath)
   } else {
     return(all_tables)
@@ -444,6 +445,7 @@ get_variable_names <- function() {
     "populated_rows_to_check_for_metadata_to_remove",
     "combine_start_row_identifier", "combine_end_row_identifier",
     "columns_to_remove_patterns", "columns_to_remove_offset",
+    "columns_to_remove_target_all_rows",
     "columns_to_create", "tolerance",
     "left_headers", "header_to_split", "header_split_to", "split_points",
     "column_to_right_of_data_name_pattern",

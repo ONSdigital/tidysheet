@@ -61,9 +61,10 @@ should be made in.
 # see Wiki for example with illustration
 
 dat <- data.frame(
- id = 1:13,
+ row = 9:22,
  address = c("A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16",
-             "A17", "A18","A19","A20","A21"),
+             "A17", "A18","A19","A20","A21", "A22"),
+ col = 1,
  character = c("Acquisition of land & existing buildings", "...of which HPA",
                "Another character", "...of which expenditure", "More characters",
                "...of which grants","...of which HRA", "Even more characters",
@@ -72,7 +73,7 @@ dat <- data.frame(
 )
 
 result <- extend_row_value(
-    dat, "^\\\\s*\\\\.\\\\.\\\\.\\\\s*of\\\\s*which", "reverse", "below"
+    dat, "^\\\\s*\\\\.\\\\.\\\\.\\\\s*of\\\\s*which", "forward", "above"
     )
 }
 }

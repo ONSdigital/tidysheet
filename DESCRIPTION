@@ -25,5 +25,6 @@ Imports:
     magrittr,
     digest,
     unpivotr,
-    jsonlite
+    jsonlite,
+    readr
 Roxygen: list(markdown = TRUE)

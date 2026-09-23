@@ -26,7 +26,7 @@ add_time_period_columns(
 \item{dat}{dataframe.}
 
 \item{quarter_from_col_pattern}{character string. A regular expression that
-matches only the column containing quarter information (e.g. 'Q1',
+only matches the column containing quarter information (e.g. '2025 Q1',
 'quarter 1', or '1').}
 
 \item{quarter_col_name}{character string. The name of the column that quarter

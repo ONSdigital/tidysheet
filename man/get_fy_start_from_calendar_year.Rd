@@ -34,7 +34,7 @@ year. Column can be character or integer.}
 \item{month_col_pattern}{character string. Same as year_from_pattern but for
 month. Only required if quarter_col_name is not given.}
 
-\item{quarter_col_name}{character string. NAme of the coloumn containing the
+\item{quarter_col_name}{character string. Name of the coloumn containing the
 quarter number. Only required if month_col_pattern is not given.}
 }
 \value{
