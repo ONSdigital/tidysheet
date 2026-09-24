@@ -20,13 +20,16 @@
 #' to financial year start. Default is FALSE.
 #' @param q1_is_jan_to_mar boolean. TRUE if Jan to Mar is Q1. FALSE if Apr to
 #' Jun is Q1. Default is FALSE.
-#' @param quarter_pattern character string. Regular expression used to
-#' identify the column that contains only the quarter (e.g. 'Q1' or '1'). Not
-#' required if quarter_from_pattern is supplied.
+#' @param quarter_col_name character string. Exact name of the column that
+#' contains only the quarter number ('1', '2', '3', '4', or NA).
 #' @param month_pattern character string. Regular expression used to
 #' identify the column that contains only the month.
+#' @param fy_start_preference string, optional. Must be "quarter" or "month". If
+#' the year is given in both the month and the quarter column, and they do not
+#' match, this variable is used to decide which column to calculate fy_start
+#' from. If they do not match and this is not supplied, fy_start will be NA.
 #'
-#' @returns dataframe. Dat with fy_start added as a column. Depending on how
+#' @returns dataframe. dat with fy_start added as a column. Depending on how
 #' fy_start is ascertained, other columns may also be created ('year' and
 #' 'quarter').
 #'
@@ -42,18 +45,7 @@
 #'     fy_end_pattern = "fy"
 #'     )
 #'
-#' # 2. Only calendar year and quarter are available in a single column.
-#' dat <- data.frame(
-#'     year = c("2021 (Q4 jan-mar of 20-21)", "2021 (Q1 apr-jun of 21-22"),
-#'     value = c(1, 2)
-#'     )
-#' get_fy_start(
-#'     dat, year_from_pattern = "year", get_quarter = TRUE,
-#'     quarter_from_pattern = "year", quarter_col_name = "quarter",
-#'     calendar_to_fy_start = TRUE,  q1_is_jan_to_mar = FALSE,
-#'     )
-#'
-#' # 3. Only calendar year and month are available in separate columns.
+#' # 2. Only calendar year and month are available in separate columns.
 #' dat <- data.frame(
 #'     year = c("2021", "2021"),
 #'     month = c("jan-mar", "apr-jun"),
@@ -69,7 +61,7 @@ get_fy_start <- function(
     dat, year_from_pattern = NA, fy_from_fy_end = FALSE,
     fy_start_from_fy_end = FALSE, fy_end_pattern = NA,
     calendar_to_fy_start = FALSE, q1_is_jan_to_mar = FALSE,
-    quarter_pattern = NA, month_pattern = NA
+    quarter_col_name = NA, month_pattern = NA, fy_start_preference = NA
 ) {
 
   year_col_created <- dat %>%
@@ -81,7 +73,7 @@ get_fy_start <- function(
   output <- year_col_created %>%
     get_fy_start_from_calendar_year(
       calendar_to_fy_start, q1_is_jan_to_mar, "^year$", month_pattern,
-      quarter_pattern
+      quarter_col_name, fy_start_preference
     )
 
   return(output)
@@ -93,7 +85,7 @@ get_fy_start <- function(
 #'
 #' @description Find the column containing year using a regular expression,
 #' get the year from that column and put it in a new column called 'year'.
-#' 
+#'
 #' @details
 #' 'year' can contain either financial year, or calendar year,
 #' but not both. By default, if any of the years found in the specified column
@@ -420,8 +412,8 @@ get_fy_from_fy_end <- function(dat, end_year) {
 #' @title Get the year column name to be used by get_quarter
 #'
 #' @description Get the name of the column that matches the year pattern and
-#' contains a valid years. 
-#' 
+#' contains a valid years.
+#'
 #' @details
 #' If more than one year type is found, this function preferentially
 #' returns calendar year, then the column that contains at least some calendar
@@ -491,9 +483,9 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #'
 #' @details
 #' Where the output of tidysheet is used for calculations on a financial year
-#' basis, but the source data was published on a calendar year basis (where Q1 
-#' is the first quarter of the calendar year), financial year may not be given. 
-#' This function calculates financial year start from the calendar year and 
+#' basis, but the source data was published on a calendar year basis (where Q1
+#' is the first quarter of the calendar year), financial year may not be given.
+#' This function calculates financial year start from the calendar year and
 #' either the quarter or the month.
 #'
 #' See make_calendar_q1_month_and_quarter_patterns() for the accepted
@@ -517,11 +509,15 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #' will be seen as '2024'). There must be no numbers present other than the
 #' year. Column can be character or integer.
 #' @param month_col_pattern character string. Same as year_from_pattern but for
-#' month. Only required if quarter_col_pattern is not given.
-#' @param quarter_col_pattern character string. Same as year_from_pattern but for
-#' quarter. Only required if month_col_pattern is not given.
+#' month. Only required if quarter_col_name is not given.
+#' @param quarter_col_name character string. Name of the coloumn containing the
+#' quarter number. Only required if month_col_pattern is not given.
 #' @param calendar_year_to_fy_start boolean. Default is FALSE. TRUE if the
 #' action is to be performed, NA or FALSE to return the original data.
+#' @param fy_start_preference string, optional. Must be "quarter" or "month". If
+#' the year is given in both the month and the quarter column, and they do not
+#' match, this variable is used to decide between them. If they do not match and
+#' this is not supplied, NA will be given for fy_start.
 #'
 #' @returns dat with fy_start (character string) column if
 #' calendar_year_to_fy_start is TRUE, or the original dat if not.
@@ -539,7 +535,7 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #'     dat, calendar_year_to_fy_start = TRUE,
 #'     q1_is_jan_to_mar = FALSE,
 #'     year_from_pattern = "(?i)year",
-#'     quarter_col_pattern = "(?i)quarter",
+#'     quarter_col_name = "Quarter",
 #'     month_col_pattern = NA
 #'     )
 #'
@@ -554,7 +550,7 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #'     dat, calendar_year_to_fy_start = TRUE,
 #'     q1_is_jan_to_mar = FALSE,
 #'     year_from_pattern = "(?i)year",
-#'     quarter_col_pattern = "(?i)quarter"
+#'     quarter_col_name = "Quarter"
 #'     )
 #'
 #' # month is given for some rows, quarter is given for others, and some have both:
@@ -568,7 +564,7 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 #'     dat, calendar_year_to_fy_start = TRUE,
 #'     q1_is_jan_to_mar = FALSE,
 #'     year_from_pattern = "(?i)year",
-#'     quarter_col_pattern = "(?i)quarter",
+#'     quarter_col_name = "Quarter",
 #'     month_col_pattern = "(?i)month"
 #'     )
 #' }
@@ -576,20 +572,26 @@ get_year_col_to_drop_from_quarter <- function(dat, pattern) {
 get_fy_start_from_calendar_year <- function(
     dat, calendar_year_to_fy_start = FALSE, q1_is_jan_to_mar = TRUE,
     year_from_pattern = "(?i)year", month_col_pattern = NA,
-    quarter_col_pattern = NA
+    quarter_col_name = NA, fy_start_preference = NA
 ) {
 
   if (is.na(calendar_year_to_fy_start) | calendar_year_to_fy_start == FALSE) {
     return(dat)
   }
 
+  if(
+    !is.na(fy_start_preference)& !fy_start_preference %in% c("quarter", "month")
+  ) {
+    stop("fy_start_preference in settings must be NA, 'month' or 'quarter'.")
+  }
+
   message("Getting financial year start from column containing calendar year.")
 
-  if (all(is.na(month_col_pattern), is.na(quarter_col_pattern),
+  if (all(is.na(month_col_pattern), is.na(quarter_col_name),
           calendar_year_to_fy_start == TRUE)) {
     stop("calendar_year_to_fy_start is TRUE, but neither ",
-         "month_col_pattern, nor quarter_col_pattern has been supplied. ",
-         "Developer: please supply one of these in the data dictionary.")
+         "month_col_pattern, nor quarter_col_name has been supplied. ",
+         "Please supply one of these in the settings.")
   }
 
   if ("fy_start" %in% names(dat)) {
@@ -625,19 +627,32 @@ get_fy_start_from_calendar_year <- function(
     )
   }
 
+  # We used to use a user supplied pattern for finding the name of the quarter
+  # column, but that is now replaced with a known name in add_quarter_column so
+  # we can use the known name. So we change as little code as possible, we can
+  # just make the known name a pattern by tying it to the start (^) and end($):
+  if (!is.na(quarter_col_name)) {
+     quarter_col_pattern <- paste0("^", quarter_col_name, "$")
+  } else {
+    quarter_col_pattern <- NA
+  }
+
+
   period_col_names <- get_colnames_from_pattern(
     dat, c("month", "quarter"), c(month_col_pattern, quarter_col_pattern)
   )
+
   if (!is.na(month_col_pattern) & is.na(period_col_names["month"])) {
     stop(
       "Please fix the settings to address the issue with month_col_pattern. ",
       "month_col_pattern and/or calendar_year_to_fy_start may need to change."
     )
   }
-  if (!is.na(quarter_col_pattern) & is.na(period_col_names["quarter"])) {
+  if (!is.na(quarter_col_name) & is.na(period_col_names["quarter"])) {
     stop(
-      "Please fix the settings to address the issue with quarter_col_pattern. ",
-      "quarter_col_pattern and/or calendar_year_to_fy_start may need to change."
+      "Please fix the settings to address the issue with quarter_col_name. ",
+      "quarter_from_col_pattern and/or calendar_year_to_fy_start may need to ",
+      "change."
     )
   }
 
@@ -700,7 +715,11 @@ get_fy_start_from_calendar_year <- function(
         is.na(fy_start_month) ~ fy_start_quarter,
         is.na(fy_start_quarter) ~ fy_start_month,
         fy_start_month == fy_start_quarter ~ fy_start_month,
-        fy_start_month != fy_start_quarter ~ NA,
+        fy_start_month != fy_start_quarter
+        & fy_start_preference == "month" ~ fy_start_month,
+        fy_start_month != fy_start_quarter
+        & fy_start_preference == "quarter" ~ fy_start_quarter,
+        fy_start_month != fy_start_quarter & is.na(fy_start_preference) ~ NA,
         .default = NA
       ),
       fy_warning = case_when(
@@ -712,13 +731,22 @@ get_fy_start_from_calendar_year <- function(
 
   mismatches <- fy_starts_checked[!is.na(fy_starts_checked$fy_warning), ]
   if (nrow(mismatches) > 0) {
-    warning(
-      "fy_start calculated for month did not match fy_start calculated for ",
-      "quarter in ", nrow(mismatches), " row(s). The first instance is: '",
-      paste0("fy_start = ", mismatches$fy_start[1], "fy_start for month = ",
-             mismatches$fy_start_month[1], "fy_start for quarter = ",
-             mismatches$fy_start_month[1], "'.")
-    )
+    if(!is.na(fy_start_preference)) {
+      message(
+        "fy_start calculated for month did not match fy_start calculated for ",
+        "quarter in at least some rows. fy_start calculated from ",
+        fy_start_preference, " as selected by the setting fy_start_preference."
+        )
+    } else {
+      warning(
+        "fy_start calculated for month did not match fy_start calculated for ",
+        "quarter in ", nrow(mismatches), " row(s). The first instance is: '",
+        paste0("fy_start = ", mismatches$fy_start[1], "fy_start for month = ",
+               mismatches$fy_start_month[1], "fy_start for quarter = ",
+               mismatches$fy_start_month[1], "'.")
+      )
+    }
+
   }
 
   # Get fy_start for rows where financial year is given but not quarter or month

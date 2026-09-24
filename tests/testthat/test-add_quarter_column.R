@@ -101,18 +101,21 @@ test_that("add_quarter_column raises an error if quarter column is not found", {
 })
 
 
-test_that("add_quarter_column gives a warning if quarter column already exists and it is overwritten", {
+test_that("add_quarter_column gives a warning if quarter column already exists and it is renamed", {
   dat <-  tibble(
     Quarter = c("2023 Q1", "2023 Q2", "2023 Q3")
   )
 
-  expected <- tibble( Quarter = c("1", "2", "3"))
+  expected <- tibble(
+    Quarter = c("1", "2", "3"),
+    `_Quarter` = c("2023 Q1", "2023 Q2", "2023 Q3")
+    )
 
   expect_warning(
     result <- suppressMessages(
       add_quarter_column(dat, "(?i)quarter", "Quarter")
     ),
-    "'Quarter' is already a column in the data. It will be overwritten"
+    "'Quarter' is already a column in the data. It will be renamed"
   )
 
   expect_equal(result, expected)
@@ -141,7 +144,7 @@ one entry, and only the first is returned", {
 
 
 test_that("add_quarter_column gives a warning if no individaul quarters are found in
-an entry, and quarter is left blank fro those entries", {
+an entry, and quarter is left blank for those entries", {
   dat <-  tibble(
     Quarter = c("2023 Q1", "2023 Q2-Q3", "2023")
   )
@@ -158,3 +161,4 @@ an entry, and quarter is left blank fro those entries", {
   expect_equal(result, expected)
 
 })
+

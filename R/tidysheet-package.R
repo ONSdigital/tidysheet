@@ -34,6 +34,7 @@
 #' @importFrom dplyr summarise
 #' @importFrom dplyr ungroup
 #' @importFrom jsonlite fromJSON
+#' @importFrom readr write_csv
 #' @importFrom rlang :=
 #' @importFrom rlang sym
 #' @importFrom stringr fixed

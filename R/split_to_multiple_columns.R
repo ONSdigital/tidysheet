@@ -186,7 +186,12 @@ split_to_multiple_columns <- function(dat, from, to, split_point_descriptions) {
 
   split_point_presence <- flag_existing_split_points(dat, split_patterns, from)
 
-  splits_to_use <- get_split_order(split_point_presence)
+  splits_to_use <- get_split_order(split_point_presence) %>%
+    mutate(tmp_split_1 = ifelse(
+      is.na(tmp_split_1),
+      length(split_patterns) + 1, # so that a fake pattern is looked for
+      tmp_split_1))
+
 
   # If no splits have been found anywhere send a message that the data may have
   # changed, and just rename the column to split with the first name in

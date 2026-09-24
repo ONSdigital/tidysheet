@@ -8,6 +8,7 @@ unpivot_data(
   dat,
   columns_to_create,
   first_header_row,
+  first_data_row,
   tolerance = 0.4,
   left_headers,
   minimum_number_of_consecutive_columns,
@@ -32,6 +33,9 @@ second name in columns_to_create etc.}
 
 \item{first_header_row}{integer. the number of the first row in which there
 are headers.}
+
+\item{first_data_row}{integer. The row on which the first line of data may be
+found - the first populated row after the last header.}
 
 \item{tolerance}{numeric between 0 and 1. Defaults to 0.4. If tolerance is
 0.4, the column will be considered 'numeric' if 40\% or more of the cells

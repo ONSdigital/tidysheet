@@ -15,6 +15,8 @@
 #' second name in columns_to_create etc.
 #' @param first_header_row integer. the number of the first row in which there
 #' are headers.
+#' @param first_data_row integer. The row on which the first line of data may be
+#' found - the first populated row after the last header.
 #' @param tolerance numeric between 0 and 1. Defaults to 0.4. If tolerance is
 #' 0.4, the column will be considered 'numeric' if 40% or more of the cells
 #' in that row are numeric. 0.4 works for the vast majority of datasets.
@@ -64,6 +66,7 @@
 unpivot_data <- function(dat,
                          columns_to_create,
                          first_header_row,
+                         first_data_row,
                          tolerance = 0.4,
                          left_headers,
                          minimum_number_of_consecutive_columns,
@@ -99,12 +102,6 @@ unpivot_data <- function(dat,
   }
 
   header_row_count <- length(columns_to_create)
-  first_data_row <- first_header_row + header_row_count
-
-  message(
-    "The first row of data has been identified as row ",
-    first_data_row, "."
-  )
 
   # assume the first column of the right block is the first of consecutive
   # numeric columns (assuming no blank cols between them) -

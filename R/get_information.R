@@ -137,8 +137,8 @@ get_metadata <- function(
 #' @description
 #' Identify the row number of the first header in the dataset based on
 #' a specified regular expression, desired instance of the match (1st, 2nd etc),
-#' and the header row offset. 
-#' 
+#' and the header row offset.
+#'
 #' @details
 #' If the header row offset is not specified, the
 #' header row is assumed to be the row on which the specified instance of the
@@ -409,7 +409,7 @@ get_loc_from_instance <- function(possibilities, instance, offset_by) {
 
 #' @title Get column names that match regular expressions
 #'
-#' @description For each pattern supplied, the column name that matches is 
+#' @description For each pattern supplied, the column name that matches is
 #' returned as a value in a named list. The new name for the column is given
 #' as the name in the list (taken from 'identitites').
 #'
@@ -493,8 +493,8 @@ get_colnames_from_pattern <- function(dat, identities, patterns) {
 #'
 #' @description Return all column names from a dataset that match a regular
 #' expression.
-#' 
-#' @details See get_colnames_from_pattern for a similar function. 
+#'
+#' @details See get_colnames_from_pattern for a similar function.
 #'
 #' @param dat dataframe
 #' @param pattern string. Regular expression you want to match
@@ -525,7 +525,7 @@ get_matching_colnames <- function(dat, pattern){
 #' looking up a  column in an Excel file based on letters not numbers.
 #'
 #' @details
-#' For alternative code that gets excel column letters from column number 
+#' For alternative code that gets excel column letters from column number
 #' without an xlsx_cells dataframe for lookup, see
 #' https://stackoverflow.com/questions/9905533/convert-excel-column-alphabet-e-g-aa-to-number-e-g-25
 #'
@@ -851,18 +851,18 @@ get_release_number <- function(dat) {
 
 #' @title Record subtable title and it's location
 #'
-#' @description Find and record character strings and their row numbers. 
+#' @description Find and record character strings and their row numbers.
 #' This function is written for locating subtitles but could be used for other
 #' cases.
-#' 
+#'
 #' @details A set of regular expression patterns is used to locate a row. This
-#' row can be the row of the cell containing the subtitle, or a row that is a 
-#' known distance from the subtitle. The row that you want to locate must have 
-#' matches to _all_ provided patterns. Once that row number 
+#' row can be the row of the cell containing the subtitle, or a row that is a
+#' known distance from the subtitle. The row that you want to locate must have
+#' matches to _all_ provided patterns. Once that row number
 #' is identified, the row containing the subtitles can be identified through
 #' its relative position to the found row. If it is known to be two rows above,
-#' use offset = -2. 
-#' 
+#' use offset = -2.
+#'
 #' Ideally, the patterns provided will match the subtable title
 #' rows, in which case offset is 0 and does not need to be specified. Once the
 #' target row is identified, if there is more than one character cell in that
@@ -1005,3 +1005,119 @@ get_subtitles <- function(
 
   return (output)
 }
+
+#' @title Get the row number for the first line of data
+#'
+#' @description
+#' In all cases except where combine_rows_by_column is required, the number
+#' of the first row of data can be determined using first_header_row and the
+#' number of names in columns_to_create. However, where column names have
+#' been split over multiple rows, and need to be recombined, this method does
+#' not work. In such cases the combine_start_row_identifier and
+#' combine_end_row_identifier patterns are also required.
+#'
+#' @param dat dataframe imported using xlsx_cells and not yet pivotted i.e. all
+#' character strings are still in the character column.
+#' @param first_header_row integer. The row number on which the first row of
+#' headers can be found.
+#' @param columns_to_create integer. Vector of names that will be used for
+#' column names after unpivotting the data. If combine_end_row_identifier is NA,
+#' this will be the same length as the number of header rows.
+#' @param combine_start_row_identifier character string. Regular expression whose
+#' first match is in the last row of the headers prior to header rows being
+#' combined.
+#' @param combine_end_row_identifier character string. Regular expression whose
+#' first match is in the last row of the headers prior to header rows being
+#' combined.
+#'
+#' @returns integer. The number of the first populated row after the last header
+#' row
+#'
+#' @examples
+#' \dontrun{
+#'
+#' dat <- data.frame(
+#'     row = rep(1:5, each = 3),
+#'     col = rep(1:3, times = 5),
+#'     character = c(NA, "A", "B",
+#'                   NA, "messed", NA,
+#'                   NA, "up", NA,
+#'                   NA, "header", "simple",
+#'                   "count", NA, NA),
+#'     numeric = c(rep(NA, 13), 4, 1),
+#'     is_blank = c(TRUE, FALSE, FALSE,
+#'                 TRUE, FALSE, TRUE,
+#'                 TRUE, FALSE, TRUE,
+#'                 TRUE, FALSE, FALSE,
+#'                 FALSE, FALSE, FALSE)
+#'     )
+#'
+#' get_first_data_row_number(dat, 1, c("type", "name"), "messed", "simple")
+#'
+#' dat <- data.frame(
+#'     row = rep(1:5, each = 3),
+#'     col = rep(1:3, times = 5),
+#'     character = c(NA, "messed", NA,
+#'                   NA, "up", NA,
+#'                   NA, "header", "simple",
+#'                   NA, "A", "B",
+#'                   "count", NA, NA),
+#'     numeric = c(rep(NA, 13), 4, 1),
+#'     is_blank = c(TRUE, FALSE, TRUE,
+#'                 TRUE, FALSE, TRUE,
+#'                 TRUE, FALSE, FALSE,
+#'                 TRUE, FALSE, FALSE,
+#'                 FALSE, FALSE, FALSE)
+#'     )
+#' # With a blank row in headers
+#' dat <- data.frame(
+#'     row = rep(1:6, each = 3),
+#'     col = rep(1:3, times = 6),
+#'     character = c(NA, "messed", NA,
+#'                   NA, NA, NA,
+#'                   NA, "up", NA,
+#'                   NA, "header", "simple",
+#'                   NA, "A", "B",
+#'                   "count", NA, NA),
+#'     numeric = c(rep(NA, 16), 4, 1),
+#'     is_blank = c(TRUE, FALSE, TRUE,
+#'                 TRUE, TRUE, TRUE,
+#'                 TRUE, FALSE, TRUE,
+#'                 TRUE, FALSE, FALSE,
+#'                 TRUE, FALSE, FALSE,
+#'                 FALSE, FALSE, FALSE)
+#'     )
+#'
+#' }
+#'
+get_first_data_row_number <- function(
+  dat, first_header_row, columns_to_create, combine_start_row_identifier,
+  combine_end_row_identifier) {
+
+  dat <- arrange(dat, row)
+
+  header_count <- length(columns_to_create)
+  populated_rows <- unique(dat$row[dat$is_blank == FALSE])
+  rows <- populated_rows[populated_rows >= first_header_row]
+
+  if (!is.na(combine_end_row_identifier)){
+    first_row_to_combine <- (
+      get_first_instance(dat, combine_start_row_identifier, "row")
+    )
+    last_row_to_combine <- (
+      get_first_instance(dat, combine_end_row_identifier, "row")
+      )
+    # update rows so that the combined rows count as a single row
+    rows <- rows[rows < first_row_to_combine | rows >= last_row_to_combine]
+  }
+
+  last_header_row <- rows[header_count]
+
+  first_data_row <- rows[rows > last_header_row][1]
+
+  message("First data row: ", first_data_row)
+
+  return(first_data_row)
+}
+
+

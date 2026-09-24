@@ -183,15 +183,17 @@ tidy_sheet <- function(
   front_sheet <- get_data(input_filepath, tab_pattern_front_page)
   release_number <- get_release_number(front_sheet$character)
 
-  # remove cells--------------------------------------------------------------
+  # remove cells and treat cells with only spaces as blanks.--------------------
   cells_removed <- remove_from_input(
     source_data, cells_to_remove,
     input_filepath, hidden_character_strings_to_remove
     )
 
+  blanks_refined <- refine_blanks(cells_removed)
+
   # separate the info above the table from the main table and get metadata------
   full_sheet <- split_data_from_metadata(
-    cells_removed, header_identifier, header_identifier_instance,
+    blanks_refined, header_identifier, header_identifier_instance,
     header_row_offset
   )
   main_table <- full_sheet[['data']]
@@ -314,13 +316,20 @@ tidy_sheet <- function(
       populated_rows_to_check_for_metadata_to_remove,
       combine_start_row_identifier, combine_end_row_identifier,
       columns_to_remove_patterns, columns_to_remove_offset,
-      columns_to_create, table_first_header_row
+      columns_to_create, table_first_header_row,
+      columns_to_remove_target_all_rows
+      )
+
+    first_data_row <- get_first_data_row_number(
+      main_table, table_first_header_row, columns_to_create,
+      combine_start_row_identifier, combine_end_row_identifier
       )
 
     unpivotted <- unpivot_data(
       table_data_cleaned,
       columns_to_create,
       table_first_header_row,
+      first_data_row,
       tolerance,
       left_headers,
       minimum_number_of_consecutive_columns, right_block_offset,
@@ -355,9 +364,8 @@ tidy_sheet <- function(
     time_periods_added <- add_time_period_columns(
       wording_edited, quarter_from_col_pattern, quarter_col_name,
       year_from_pattern, fy_from_fy_end, fy_start_from_fy_end, fy_end_pattern,
-      calendar_year_to_fy_start, q1_is_jan_to_mar, quarter_col_pattern,
-      month_col_pattern,
-      year_col_pattern, single_year_of_data, year_for_column,
+      calendar_year_to_fy_start, q1_is_jan_to_mar, fy_start_preference,
+      month_col_pattern, year_col_pattern, single_year_of_data, year_for_column,
       single_year_overrides_all, multi_year_range_is_not_valid
       )
 
@@ -402,8 +410,8 @@ tidy_sheet <- function(
   }
 
   if (to_csv) {
-    write.csv(all_tables, output_filepath, row.names = FALSE,
-              fileEncoding = "UTF-8")
+    readr::write_csv(all_tables, output_filepath)#, row.names = FALSE,
+             # fileEncoding = "UTF-8")
     message("File saved as ", output_filepath)
   } else {
     return(all_tables)
@@ -443,6 +451,7 @@ get_variable_names <- function() {
     "populated_rows_to_check_for_metadata_to_remove",
     "combine_start_row_identifier", "combine_end_row_identifier",
     "columns_to_remove_patterns", "columns_to_remove_offset",
+    "columns_to_remove_target_all_rows",
     "columns_to_create", "tolerance",
     "left_headers", "header_to_split", "header_split_to", "split_points",
     "column_to_right_of_data_name_pattern",
@@ -464,9 +473,9 @@ get_variable_names <- function() {
     "quarter_from_col_pattern", "quarter_col_name",
     "year_from_pattern", "fy_from_fy_end", "fy_start_from_fy_end",
     "fy_end_pattern",
-    "calendar_year_to_fy_start", "q1_is_jan_to_mar", "quarter_col_pattern",
+    "calendar_year_to_fy_start", "q1_is_jan_to_mar", "fy_start_preference",
     "month_col_pattern", "year_col_pattern", "single_year_of_data",
-    "year_for_column", "single_year_overrides_all",
+    "single_year_overrides_all",
     "multi_year_range_is_not_valid",
     "columns_to_rename_patterns", "columns_to_rename_names",
     "col_patterns_to_drop_NA_rows",
@@ -502,7 +511,7 @@ get_pattern_names <- function() {
     "replace_string_from_col_patterns", "col_pattern_with_blanks_to_replace",
     "col_pattern_to_replace_blanks_with", "rename_duplicate_pattern",
     "quarter_from_col_pattern", "year_from_pattern",
-    "fy_end_pattern", "quarter_col_pattern", "month_col_pattern",
+    "fy_end_pattern", "month_col_pattern",
     "year_col_pattern", "columns_to_rename_patterns",
     "col_patterns_to_drop_NA_rows", "columns_to_combine_patterns",
     "col_patterns_with_values_to_drop", "value_patterns_to_drop",

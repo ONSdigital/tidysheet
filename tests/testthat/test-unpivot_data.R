@@ -20,6 +20,7 @@ test_that("unpivot_data uses reformat_tidy_data if tidy_data is TRUE", {
       unpivot_data(
         columns_to_create = NA,
         first_header_row = 1,
+        first_data_row = 2,
         tolerance = 0.4,
         left_headers = NA,
         minimum_number_of_consecutive_columns = NA,
@@ -57,6 +58,7 @@ test_that("unpivot_data raises an error if header to split is specified, but not
       unpivot_data(
         columns_to_create = "description",
         first_header_row = 1,
+        first_data_row = 2,
         tolerance = 0.4,
         left_headers = NA,
         minimum_number_of_consecutive_columns = NA,
@@ -93,6 +95,7 @@ test_that("unpivot_data raises an error if no numeric columns are found", {
         unpivot_data(
           columns_to_create = "description_1",
           first_header_row = 1,
+          first_data_row = 2,
           tolerance = 0.6,
           left_headers = NA,
           minimum_number_of_consecutive_columns = NA,
@@ -149,6 +152,7 @@ in line with the second row of headers", {
       unpivot_data(
         columns_to_create = c("description_1", "description_2"),
         first_header_row = 1,
+        first_data_row = 3,
         tolerance = 0.4,
         left_headers = NA,
         minimum_number_of_consecutive_columns = NA,
@@ -207,6 +211,7 @@ which needs splitting, and left headers in line with the second row of headers",
     unpivot_data(
       columns_to_create = c("description_1", "description_2_and_3"),
       first_header_row = 1,
+      first_data_row = 3,
       tolerance = 0.4,
       left_headers = NA,
       minimum_number_of_consecutive_columns = NA,
@@ -268,6 +273,7 @@ right, 2 header rows and left headers in line with the second row of headers", {
       unpivot_data(
         columns_to_create = c("description_1", "description_2"),
         first_header_row = 1,
+        first_data_row = 3,
         tolerance = 0.4,
         left_headers = NA,
         minimum_number_of_consecutive_columns = NA,
@@ -321,6 +327,7 @@ high left headers", {
       unpivot_data(
         columns_to_create = c("description_1", "description_2"),
         first_header_row = 1,
+        first_data_row = 3,
         tolerance = 0.4,
         left_headers = NA,
         minimum_number_of_consecutive_columns = NA,
@@ -371,6 +378,7 @@ test_that("unpivot_data works for a single header row", {
       unpivot_data(
         columns_to_create = "description_1",
         first_header_row = 1,
+        first_data_row = 2,
         tolerance = 0.4,
         left_headers = NA,
         minimum_number_of_consecutive_columns = NA,
@@ -426,6 +434,7 @@ test_that("unpivot_data works for a single row header but with duplicate headers
       unpivot_data(
         columns_to_create = "description_1",
         first_header_row = 1,
+        first_data_row = 2,
         tolerance = 0.4,
         left_headers = NA,
         minimum_number_of_consecutive_columns = NA,
@@ -447,7 +456,7 @@ test_that("unpivot data raises an error if more than one header to split is prov
 
   expect_error(
     unpivot_data(
-      data.frame(), NA, "a", 1, 0.4, NA, c("a", "b"), "a", ".", NA, NA, NA
+      data.frame(), NA, NA, "a", 1, 0.4, NA, c("a", "b"), "a", ".", NA, NA, NA
     ),
     "When tidy_data is FALSE, columns_to_create is required"
   )
@@ -501,6 +510,7 @@ columns in the left block of descriptors", {
         unpivot_data(
           columns_to_create = c("description_1", "description_2"),
           first_header_row = 1,
+          first_data_row = 3,
           tolerance = 0.4,
           left_headers = NA,
           minimum_number_of_consecutive_columns = 3,

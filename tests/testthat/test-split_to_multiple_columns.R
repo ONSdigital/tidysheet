@@ -295,3 +295,22 @@ test_that("split_to_multiple_columns gives a warning if no split patterns are fo
 
 })
 
+
+test_that("split_to_multiple_columns works when there are no splits in some rows, and splits in others", {
+  dat <- data.frame(
+    col_to_split = c("no split", "has the split"),
+    value = 1:2
+  )
+
+  expected <- dat %>%
+    mutate(
+      A = c("no split", "has"),
+      B = c("no split", "the split")
+    )
+
+  result <- split_to_multiple_columns(
+    dat, "col_to_split", c("A", "B"), "ALT_=the"
+    )
+
+  expect_equal(result, expected)
+})

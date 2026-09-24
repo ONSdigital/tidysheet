@@ -15,7 +15,7 @@ test_that("get_fy_start_from_calendar_year uses Q1 as Jan-Mar when q1_is_jan_to_
       q1_is_jan_to_mar = NA,
       calendar_year_to_fy_start = TRUE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter")
+      quarter_col_name = "Quarter")
   )
   expect_equal(quarter_specified, expected)
 })
@@ -39,7 +39,7 @@ test_that("get_fy_start_from_calendar_year returns expected output when Q1 is Ja
       q1_is_jan_to_mar = TRUE,
       calendar_year_to_fy_start = TRUE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter")
+      quarter_col_name = "Quarter")
   )
   expect_equal(quarter_specified, expected)
 
@@ -63,7 +63,7 @@ test_that("get_fy_start_from_calendar_year returns expected output when Q1 is Ja
   patterns_specified_but_not_wanted <-  get_fy_start_from_calendar_year(
     dat = dat,
     calendar_year_to_fy_start = FALSE,
-    year_from_pattern = "(?i)year", quarter_col_pattern = "(?i)quarter"
+    year_from_pattern = "(?i)year", quarter_col_name = "Quarter"
   )
   expect_equal(patterns_specified_but_not_wanted, dat)
 
@@ -86,7 +86,7 @@ test_that("get_fy_start_from_calendar_year returns expected output when Q1 is Ap
       q1_is_jan_to_mar = FALSE,
       calendar_year_to_fy_start = TRUE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter")
+      quarter_col_name = "Quarter")
   )
   expect_equal(quarter_specified, expected)
 
@@ -161,7 +161,7 @@ financial year, regardless of q1_is_jan_to_mar setting", {
       q1_is_jan_to_mar = TRUE,
       calendar_year_to_fy_start = TRUE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter"
+      quarter_col_name = "Quarter"
     )
   )
 
@@ -171,7 +171,7 @@ financial year, regardless of q1_is_jan_to_mar setting", {
       q1_is_jan_to_mar = FALSE,
       calendar_year_to_fy_start = TRUE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter"
+      quarter_col_name = "Quarter"
     )
   )
 
@@ -196,7 +196,7 @@ are calendar when q1_is_jan_to_mar is FALSE", {
       q1_is_jan_to_mar = FALSE,
       calendar_year_to_fy_start = TRUE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter"
+      quarter_col_name = "Quarter"
     )
   )
 
@@ -220,7 +220,7 @@ are calendar when q1_is_jan_to_mar is TRUE", {
       q1_is_jan_to_mar = TRUE,
       calendar_year_to_fy_start = TRUE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter"
+      quarter_col_name = "Quarter"
     )
   )
 
@@ -244,7 +244,7 @@ test_that("get_fy_start_from_calendar_year can handle month and year being speci
       dat, calendar_year_to_fy_start = TRUE,
       q1_is_jan_to_mar = FALSE,
       year_from_pattern = "(?i)year",
-      quarter_col_pattern = "(?i)quarter",
+      quarter_col_name = "Quarter",
       month_col_pattern = "(?i)month"
     )
   )
@@ -277,7 +277,7 @@ test_that("get_fy_start_from_calendar_year throws expected errors", {
       year_from_pattern = "(?i)year"
     ),
   ),
-  "calendar_year_to_fy_start is TRUE, but neither month_col_pattern, nor quarter_col_pattern has been supplied"
+  "calendar_year_to_fy_start is TRUE, but neither month_col_pattern, nor quarter_col_name has been supplied"
   )
 
   # fy_start is already a col in dat
@@ -330,9 +330,9 @@ test_that("get_fy_start_from_calendar_year raises an error if quarter is specifi
         q1_is_jan_to_mar = NA,
         calendar_year_to_fy_start = TRUE,
         year_from_pattern = "(?i)year",
-          quarter_col_pattern = "q")
+          quarter_col_name = "q")
     )),
-    "quarter_col_pattern and/or calendar_year_to_fy_start may need to change."
+    "quarter_from_col_pattern and/or calendar_year_to_fy_start may need to change."
   )
 })
 
@@ -355,11 +355,57 @@ dont give the same result and fy_start is set to NA", {
         q1_is_jan_to_mar = NA,
         calendar_year_to_fy_start = TRUE,
         year_from_pattern = "(?i)year",
-        quarter_col_pattern = "(?i)quarter",
+        quarter_col_name = "Quarter",
         month_col_pattern = "(?i)month"
         )
     ),
     "fy_start calculated for month did not match fy_start calculated for quarter in 1 row"
   )
+})
+
+
+test_that("get_fy_start_from_calendar_year does not give a warning if quarter
+and month dont give the same result and fy_start is set to NA, but
+fy_start_preference is set", {
+  dat <- tibble(
+    Year = "2021",
+    Quarter = "Q1",
+    Month = "Q2",
+    Value = 1
+  )
+
+  expected_q <- mutate(dat, fy_start = 2020)
+
+  expect_no_warning(
+    result_q <- suppressMessages(
+      get_fy_start_from_calendar_year(
+        dat = dat,
+        q1_is_jan_to_mar = TRUE,
+        calendar_year_to_fy_start = TRUE,
+        year_from_pattern = "(?i)year",
+        quarter_col_name = "Quarter",
+        month_col_pattern = "(?i)month",
+        fy_start_preference = "quarter"
+      )
+    ))
+  expect_equal(result_q, expected_q)
+
+  #--- and with month as the preference
+
+  expected_m <- mutate(dat, fy_start = 2021)
+
+  expect_no_warning(
+    result_m <- suppressMessages(
+      get_fy_start_from_calendar_year(
+        dat = dat,
+        q1_is_jan_to_mar = TRUE,
+        calendar_year_to_fy_start = TRUE,
+        year_from_pattern = "(?i)year",
+        quarter_col_name = "Quarter",
+        month_col_pattern = "(?i)month",
+        fy_start_preference = "month"
+      )
+    ))
+  expect_equal(result_m, expected_m)
 })
 

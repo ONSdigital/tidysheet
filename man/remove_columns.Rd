@@ -4,7 +4,14 @@
 \alias{remove_columns}
 \title{Remove columns from the Excel data where a string matches a pattern}
 \usage{
-remove_columns(dat, patterns, offset, first_row, header_count)
+remove_columns(
+  dat,
+  patterns,
+  offset,
+  first_row,
+  header_count,
+  target_all_rows = FALSE
+)
 }
 \arguments{
 \item{dat}{dataframe imported using tidyxl::xlsx_cells.}
@@ -22,6 +29,9 @@ sec this variable is specified by columns_to_remove_offset.}
 \item{first_row}{integer. The first row in which column headings are found.}
 
 \item{header_count}{integer. The number of header rows.}
+
+\item{target_all_rows}{bool. Default is false. If false the pattern is looked
+for only in the header rows. If false the pattern is valid in any row.}
 }
 \value{
 dataframe. dat with rows relating to the matched columns removed.

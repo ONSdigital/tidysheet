@@ -10,7 +10,8 @@ get_fy_start_from_calendar_year(
   q1_is_jan_to_mar = TRUE,
   year_from_pattern = "(?i)year",
   month_col_pattern = NA,
-  quarter_col_pattern = NA
+  quarter_col_name = NA,
+  fy_start_preference = NA
 )
 }
 \arguments{
@@ -32,10 +33,15 @@ will be seen as '2024'). There must be no numbers present other than the
 year. Column can be character or integer.}
 
 \item{month_col_pattern}{character string. Same as year_from_pattern but for
-month. Only required if quarter_col_pattern is not given.}
+month. Only required if quarter_col_name is not given.}
 
-\item{quarter_col_pattern}{character string. Same as year_from_pattern but for
-quarter. Only required if month_col_pattern is not given.}
+\item{quarter_col_name}{character string. Name of the coloumn containing the
+quarter number. Only required if month_col_pattern is not given.}
+
+\item{fy_start_preference}{string, optional. Must be "quarter" or "month". If
+the year is given in both the month and the quarter column, and they do not
+match, this variable is used to decide between them. If they do not match and
+this is not supplied, NA will be given for fy_start.}
 }
 \value{
 dat with fy_start (character string) column if
@@ -74,7 +80,7 @@ get_fy_start_from_calendar_year(
     dat, calendar_year_to_fy_start = TRUE,
     q1_is_jan_to_mar = FALSE,
     year_from_pattern = "(?i)year",
-    quarter_col_pattern = "(?i)quarter",
+    quarter_col_name = "Quarter",
     month_col_pattern = NA
     )
 
@@ -89,7 +95,7 @@ get_fy_start_from_calendar_year(
     dat, calendar_year_to_fy_start = TRUE,
     q1_is_jan_to_mar = FALSE,
     year_from_pattern = "(?i)year",
-    quarter_col_pattern = "(?i)quarter"
+    quarter_col_name = "Quarter"
     )
 
 # month is given for some rows, quarter is given for others, and some have both:
@@ -103,7 +109,7 @@ get_fy_start_from_calendar_year(
     dat, calendar_year_to_fy_start = TRUE,
     q1_is_jan_to_mar = FALSE,
     year_from_pattern = "(?i)year",
-    quarter_col_pattern = "(?i)quarter",
+    quarter_col_name = "Quarter",
     month_col_pattern = "(?i)month"
     )
 }
