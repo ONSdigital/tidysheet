@@ -10,7 +10,8 @@ get_fy_start_from_calendar_year(
   q1_is_jan_to_mar = TRUE,
   year_from_pattern = "(?i)year",
   month_col_pattern = NA,
-  quarter_col_name = NA
+  quarter_col_name = NA,
+  fy_start_preference = NA
 )
 }
 \arguments{
@@ -36,6 +37,11 @@ month. Only required if quarter_col_name is not given.}
 
 \item{quarter_col_name}{character string. Name of the coloumn containing the
 quarter number. Only required if month_col_pattern is not given.}
+
+\item{fy_start_preference}{string, optional. Must be "quarter" or "month". If
+the year is given in both the month and the quarter column, and they do not
+match, this variable is used to decide between them. If they do not match and
+this is not supplied, NA will be given for fy_start.}
 }
 \value{
 dat with fy_start (character string) column if

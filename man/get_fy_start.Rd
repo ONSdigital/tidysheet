@@ -13,7 +13,8 @@ get_fy_start(
   calendar_to_fy_start = FALSE,
   q1_is_jan_to_mar = FALSE,
   quarter_col_name = NA,
-  month_pattern = NA
+  month_pattern = NA,
+  fy_start_preference = NA
 )
 }
 \arguments{
@@ -44,9 +45,14 @@ contains only the quarter number ('1', '2', '3', '4', or NA).}
 
 \item{month_pattern}{character string. Regular expression used to
 identify the column that contains only the month.}
+
+\item{fy_start_preference}{string, optional. Must be "quarter" or "month". If
+the year is given in both the month and the quarter column, and they do not
+match, this variable is used to decide which column to calculate fy_start
+from. If they do not match and this is not supplied, fy_start will be NA.}
 }
 \value{
-dataframe. Dat with fy_start added as a column. Depending on how
+dataframe. dat with fy_start added as a column. Depending on how
 fy_start is ascertained, other columns may also be created ('year' and
 'quarter').
 }

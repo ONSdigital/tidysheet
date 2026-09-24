@@ -14,6 +14,7 @@ add_time_period_columns(
   fy_end_pattern,
   calendar_year_to_fy_start,
   q1_is_jan_to_mar,
+  fy_start_preference,
   month_col_pattern,
   year_col_pattern,
   single_year_of_data,
@@ -52,6 +53,11 @@ converted to financial year start. Default is FALSE.}
 
 \item{q1_is_jan_to_mar}{boolean. TRUE if Jan to Mar is Q1. FALSE if Apr to
 Jun is Q1. Default is FALSE.}
+
+\item{fy_start_preference}{string, optional. Must be "quarter" or "month". If
+the year is given in both the month and the quarter column, and they do not
+match, this variable is used to decide which column to calculate fy_start
+from. If they do not match and this is not supplied, fy_start will be NA.}
 
 \item{month_col_pattern}{character string. Regular expression used to
 identify the column that contains only the month.}

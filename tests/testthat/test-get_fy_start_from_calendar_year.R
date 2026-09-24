@@ -363,3 +363,49 @@ dont give the same result and fy_start is set to NA", {
   )
 })
 
+
+test_that("get_fy_start_from_calendar_year does not give a warning if quarter
+and month dont give the same result and fy_start is set to NA, but
+fy_start_preference is set", {
+  dat <- tibble(
+    Year = "2021",
+    Quarter = "Q1",
+    Month = "Q2",
+    Value = 1
+  )
+
+  expected_q <- mutate(dat, fy_start = 2020)
+
+  expect_no_warning(
+    result_q <- suppressMessages(
+      get_fy_start_from_calendar_year(
+        dat = dat,
+        q1_is_jan_to_mar = TRUE,
+        calendar_year_to_fy_start = TRUE,
+        year_from_pattern = "(?i)year",
+        quarter_col_name = "Quarter",
+        month_col_pattern = "(?i)month",
+        fy_start_preference = "quarter"
+      )
+    ))
+  expect_equal(result_q, expected_q)
+
+  #--- and with month as the preference
+
+  expected_m <- mutate(dat, fy_start = 2021)
+
+  expect_no_warning(
+    result_m <- suppressMessages(
+      get_fy_start_from_calendar_year(
+        dat = dat,
+        q1_is_jan_to_mar = TRUE,
+        calendar_year_to_fy_start = TRUE,
+        year_from_pattern = "(?i)year",
+        quarter_col_name = "Quarter",
+        month_col_pattern = "(?i)month",
+        fy_start_preference = "month"
+      )
+    ))
+  expect_equal(result_m, expected_m)
+})
+
