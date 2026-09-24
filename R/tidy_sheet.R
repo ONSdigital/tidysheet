@@ -320,10 +320,16 @@ tidy_sheet <- function(
       columns_to_remove_target_all_rows
       )
 
+    first_data_row <- get_first_data_row_number(
+      main_table, table_first_header_row, columns_to_create,
+      combine_start_row_identifier, combine_end_row_identifier
+      )
+
     unpivotted <- unpivot_data(
       table_data_cleaned,
       columns_to_create,
       table_first_header_row,
+      first_data_row,
       tolerance,
       left_headers,
       minimum_number_of_consecutive_columns, right_block_offset,
